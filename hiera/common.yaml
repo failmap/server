@@ -1,0 +1,51 @@
+classes:
+  - apt
+  - unattended_upgrades
+  - firewall
+  - ssh
+  - pam_ssh_agent_auth
+  - accounts
+
+# users & sudo permissions
+accounts::users:
+  test:
+    ensure: absent
+  aequitas:
+    sudo: true
+    keys:
+      key1:
+        type: ssh-rsa
+        key: AAAAB3NzaC1yc2EAAAABIwAAAQEAzTqFM62DY6nnBSEpO6lnFp80cAqs12rIfZ9iDZh/TvXuvVgrsKPaKTM5fLiulH+CntCxjmywEochYrLUiq2RnVVaoKGQsdRdCY9UGNhAK5l4v+5V5DiZBxVCEgfYwIdw1Jya+vMGKxhZ0VQprj5Yw98OfwvyX5ZksIJnHevNW+gYkeZtr0D8ETatx2ph7JI34bkSOQG607aaed8YB2U7oziTHiiuD553bSoVP26HozhLViliLGaGNOdhLZR8ionZKmc6zCrzSDb2iGPUOdjalYVxi9sqLjHwo0Mfj40AzsRYEhJ1E0LrTNA3pSjJULCWdheDEjzXpUViJlvN/2/HhQ==
+
+# basic firewall config
+firewall:
+  100 allow related, established:
+    proto: all
+    state:
+      - RELATED
+      - ESTABLISHED
+    action: accept
+  100 allow icmp:
+    proto: icmp
+    action: accept
+  100 allow local:
+    proto: all
+    iniface: lo
+    action: accept
+  200 allow ssh:
+    dport: ssh
+    action: accept
+  300 allow http traffic in:
+    dport: http
+    action: accept
+  300 allow https traffic in:
+    dport: https
+    action: accept
+  999 drop the rest:
+    action: drop
+
+# ssh server configuration
+# https://forge.puppetlabs.com/saz/ssh#hiera-example
+ssh::storeconfigs_enabled: false
+ssh::server_options:
+  PasswordAuthentication: 'no'
