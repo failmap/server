@@ -1,10 +1,13 @@
 classes:
-  - apt
-  - unattended_upgrades
-  - firewall
-  - ssh
-  - pam_ssh_agent_auth
-  - accounts
+  - sites
+  - sites::faalkaart
+
+# site config
+sites::realm: faalserver.faalkaart.nl
+sites::mysql_root_pw: changeme
+
+# letsencrypt account settings
+letsencrypt::email: info@faalkaart.nl
 
 # users & sudo permissions
 accounts::users:
