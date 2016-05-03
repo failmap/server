@@ -1,0 +1,3 @@
+# settings for vagrant test environment
+letsencrypt::staging: true
+sites::realm: faalserver.faalkaart.dev

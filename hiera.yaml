@@ -6,7 +6,7 @@
   :datadir: hiera
 
 :hierarchy:
-  - "%{fqdn}"
+  - "%{::fqdn}"
   - common
 
 :merge_behavior: deeper

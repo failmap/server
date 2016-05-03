@@ -1,0 +1,3 @@
+[submodule "modules/sites/files/faalkaart"]
+	path = modules/sites/files/faalkaart
+	url = git@github.com:failmap/website.git

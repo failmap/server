@@ -7,15 +7,8 @@ class sites::faalkaart(
   ensure_packages(['git'], {'ensure' => 'present'})
 
   # configure vhost and clone source into webroot
-  sites::vhosts::php { 'faalkaart.nl': } ->
-  vcsrepo { '/var/www/faalkaart.nl':
-    ensure   => latest,
-    revision => master,
-    owner    => 'www-data',
-    group    => 'www-data',
-    provider => git,
-    source   => 'git://github.com/failmap/website.git',
-    # excludes => 'configuration.php',
+  sites::vhosts::php { 'faalkaart.nl':
+    source => 'puppet:///modules/sites/faalkaart/html',
   }
 
   # create database

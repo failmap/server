@@ -3,6 +3,7 @@ define sites::vhosts::php (
   $domain=$name,
   $realm=$sites::realm,
   $webroot="/var/www/${name}/html/",
+  $source=undef,
   $server_name=$name,
   $listen_options=undef,
   $rewrite_to_https=true,
@@ -45,8 +46,11 @@ define sites::vhosts::php (
     $webroot:
       ensure => directory,
       owner  => www-data,
-      group  => www-data;
-  } ->
+      group  => www-data,
+      source => $source,
+      recurse => true;
+  }
+
   nginx::resource::vhost { $name:
     server_name      => [$server_name, $realm_name],
     www_root         => $webroot,

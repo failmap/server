@@ -7,6 +7,8 @@ class letsencrypt(
 ){
     include renew
 
+    ensure_packages(['curl'], {ensure => 'present'})
+
     File {
         owner  => root,
         group  => root,

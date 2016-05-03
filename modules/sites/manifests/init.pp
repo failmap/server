@@ -7,13 +7,17 @@ class sites (
   $default_vhost_content='',
 ){
   # nginx
+  class {'nginx': }
+  # bugfix: https://github.com/jfryman/puppet-nginx/issues/610
+  Class['::nginx::config'] -> Nginx::Resource::Vhost <| |>
+  Class['::nginx::config'] -> Nginx::Resource::Upstream <| |>
+
   file { '/var/www/':
       ensure => directory,
   }
   file { '/var/www/cache':
       ensure => directory,
-  } ->
-  class {'nginx': }
+  }
 
   # certificates
   class { 'letsencrypt': }
