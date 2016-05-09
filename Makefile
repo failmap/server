@@ -3,7 +3,8 @@
 host = faalkaart
 
 Puppetfile.lock: Puppetfile .librarian/puppet/config
-	librarian-puppet install
+	# updating puppet modules, takes a while
+	librarian-puppet install --clean
 	touch $@
 
 apply deploy: Puppetfile.lock

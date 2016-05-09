@@ -11,13 +11,15 @@ define sites::vhosts::webroot (
 ){
   if $server_name == '_' {
     $realm_name = $realm
+    $letsencrypt_name = $realm
   } else {
     $realm_host = regsubst($server_name, '\.', '_')
     $realm_name = "${realm_host}.${realm}"
+    $letsencrypt_name = $server_name
   }
 
-  $certfile = "${::letsencrypt::cert_root}/${server_name}/fullchain.pem"
-  $keyfile = "${::letsencrypt::cert_root}/${server_name}/privkey.pem"
+  $certfile = "${::letsencrypt::cert_root}/${letsencrypt_name}/fullchain.pem"
+  $keyfile = "${::letsencrypt::cert_root}/${letsencrypt_name}/privkey.pem"
 
   file {
     "/var/www/${name}/":
@@ -43,7 +45,7 @@ define sites::vhosts::webroot (
     }
 
     # configure letsencrypt
-    letsencrypt::domain{ $server_name: }
+    letsencrypt::domain{ $letsencrypt_name: }
     nginx::resource::location { "letsencrypt_${name}":
     location       => '/.well-known/acme-challenge',
     vhost          => $name,

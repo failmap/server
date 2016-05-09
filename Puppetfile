@@ -13,5 +13,6 @@ mod 'puppetlabs-stdlib'
 
 mod 'puppetlabs-vcsrepo'
 mod 'jfryman-nginx', '0.3.0'
+mod 'puppetlabs-concat'
 mod 'thias-php'
 mod 'puppetlabs-mysql'
