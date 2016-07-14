@@ -46,6 +46,9 @@ firewall:
     action: accept
   999 drop the rest:
     action: drop
+  999 drop the rest:
+    action: drop
+    provider: ip6tables
 
 # ssh server configuration
 # https://forge.puppetlabs.com/saz/ssh#hiera-example
