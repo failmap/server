@@ -1,6 +1,6 @@
 .PHONY: deploy
 
-host = faalkaart
+host = faalserver.faalkaart.nl
 
 Puppetfile.lock: Puppetfile .librarian/puppet/config
 	# updating puppet modules, takes a while
