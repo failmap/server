@@ -34,7 +34,7 @@ class sites (
       remove_default_accounts => true,
   }
 
-  # default vhost
+  # default realm vhost
   sites::vhosts::webroot {$realm:
       server_name    => '_',
       listen_options => 'default_server',

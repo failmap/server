@@ -18,6 +18,9 @@ class letsencrypt(
         $config_root:
             ensure => directory;
 
+        "${config_root}/logs":
+            ensure => directory;
+
         "${config_root}/letsencrypt.sh":
             ensure => present,
             source => 'puppet:///modules/letsencrypt/letsencrypt.sh',

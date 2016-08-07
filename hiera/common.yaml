@@ -5,6 +5,7 @@ classes:
 # site config
 sites::realm: faalserver.faalkaart.nl
 sites::mysql_root_pw: changeme
+sites::default_vhost_content: faal
 
 # letsencrypt account settings
 letsencrypt::email: info@faalkaart.nl

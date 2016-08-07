@@ -51,9 +51,9 @@ load_config() {
   # Check for config in various locations
   if [[ -z "${CONFIG:-}" ]]; then
     for check_config in "/etc/letsencrypt.sh" "/usr/local/etc/letsencrypt.sh" "${PWD}" "${SCRIPTDIR}"; do
-      if [[ -e "${check_config}/config.sh" ]]; then
+      if [[ -e "${check_config}/config" ]]; then
         BASEDIR="${check_config}"
-        CONFIG="${check_config}/config.sh"
+        CONFIG="${check_config}/config"
         break
       fi
     done
@@ -64,6 +64,7 @@ load_config() {
   LICENSE="https://letsencrypt.org/documents/LE-SA-v1.0.1-July-27-2015.pdf"
   CHALLENGETYPE="http-01"
   CONFIG_D=
+  DOMAINS_TXT=
   HOOK=
   HOOK_CHAIN="no"
   RENEW_DAYS="30"
@@ -71,6 +72,7 @@ load_config() {
   ACCOUNT_KEY_JSON=
   KEYSIZE="4096"
   WELLKNOWN=
+  PRIVATE_KEY_RENEW="yes"
   KEY_ALGO=rsa
   OPENSSL_CNF="$(openssl version -d | cut -d\" -f2)/openssl.cnf"
   CONTACT_EMAIL=
@@ -116,6 +118,7 @@ load_config() {
 
   [[ -z "${ACCOUNT_KEY}" ]] && ACCOUNT_KEY="${BASEDIR}/private_key.pem"
   [[ -z "${ACCOUNT_KEY_JSON}" ]] && ACCOUNT_KEY_JSON="${BASEDIR}/private_key.json"
+  [[ -z "${DOMAINS_TXT}" ]] && DOMAINS_TXT="${BASEDIR}/domains.txt"
   [[ -z "${WELLKNOWN}" ]] && WELLKNOWN="${BASEDIR}/.acme-challenges"
   [[ -z "${LOCKFILE}" ]] && LOCKFILE="${BASEDIR}/lock"
 
@@ -206,6 +209,11 @@ _sed() {
 _exiterr() {
   echo "ERROR: ${1}" >&2
   exit 1
+}
+
+# Remove newlines and whitespace from json
+clean_json() {
+  tr -d '\r\n' | _sed -e 's/ +/ /g' -e 's/\{ /{/g' -e 's/ \}/}/g' -e 's/\[ /[/g' -e 's/ \]/]/g'
 }
 
 # Encode data as url-safe formatted base64
@@ -375,7 +383,7 @@ sign_csr() {
   for altname in ${altnames}; do
     # Ask the acme-server for new challenge token and extract them from the resulting json block
     echo " + Requesting challenge for ${altname}..."
-    response="$(signed_request "${CA_NEW_AUTHZ}" '{"resource": "new-authz", "identifier": {"type": "dns", "value": "'"${altname}"'"}}')"
+    response="$(signed_request "${CA_NEW_AUTHZ}" '{"resource": "new-authz", "identifier": {"type": "dns", "value": "'"${altname}"'"}}' | clean_json)"
 
     challenges="$(printf '%s\n' "${response}" | sed -n 's/.*\("challenges":[^\[]*\[[^]]*]\).*/\1/p')"
     repl=$'\n''{' # fix syntax highlighting in Vim
@@ -427,7 +435,7 @@ sign_csr() {
 
     # Ask the acme-server to verify our challenge and wait until it is no longer pending
     echo " + Responding to challenge for ${altname}..."
-    result="$(signed_request "${challenge_uris[${idx}]}" '{"resource": "challenge", "keyAuthorization": "'"${keyauth}"'"}')"
+    result="$(signed_request "${challenge_uris[${idx}]}" '{"resource": "challenge", "keyAuthorization": "'"${keyauth}"'"}' | clean_json)"
 
     reqstatus="$(printf '%s\n' "${result}" | get_json_string_value status)"
 
@@ -502,12 +510,16 @@ sign_domain() {
     mkdir -p "${BASEDIR}/certs/${domain}"
   fi
 
-  echo " + Generating private key..."
-  privkey="privkey-${timestamp}.pem"
-  case "${KEY_ALGO}" in
-    rsa) _openssl genrsa -out "${BASEDIR}/certs/${domain}/privkey-${timestamp}.pem" "${KEYSIZE}";;
-    prime256v1|secp384r1) _openssl ecparam -genkey -name "${KEY_ALGO}" -out "${BASEDIR}/certs/${domain}/privkey-${timestamp}.pem";;
-  esac
+  privkey="privkey.pem"
+  # generate a new private key if we need or want one
+  if [[ ! -r "${BASEDIR}/certs/${domain}/privkey.pem" ]] || [[ "${PRIVATE_KEY_RENEW}" = "yes" ]]; then
+    echo " + Generating private key..."
+    privkey="privkey-${timestamp}.pem"
+    case "${KEY_ALGO}" in
+      rsa) _openssl genrsa -out "${BASEDIR}/certs/${domain}/privkey-${timestamp}.pem" "${KEYSIZE}";;
+      prime256v1|secp384r1) _openssl ecparam -genkey -name "${KEY_ALGO}" -out "${BASEDIR}/certs/${domain}/privkey-${timestamp}.pem";;
+    esac
+  fi
 
   # Generate signing request config and the actual signing request
   echo " + Generating signing request..."
@@ -560,8 +572,10 @@ command_sign_domains() {
   if [[ -n "${PARAM_DOMAIN:-}" ]]; then
     DOMAINS_TXT="$(_mktemp)"
     printf -- "${PARAM_DOMAIN}" > "${DOMAINS_TXT}"
-  elif [[ -e "${BASEDIR}/domains.txt" ]]; then
-    DOMAINS_TXT="${BASEDIR}/domains.txt"
+  elif [[ -e "${DOMAINS_TXT}" ]]; then
+    if [[ ! -r "${DOMAINS_TXT}" ]]; then
+      _exiterr "domains.txt found but not readable"
+    fi
   else
     _exiterr "domains.txt not found and --domain not given"
   fi
@@ -673,7 +687,7 @@ command_revoke() {
   echo "Revoking ${cert}"
 
   cert64="$(openssl x509 -in "${cert}" -inform PEM -outform DER | urlbase64)"
-  response="$(signed_request "${CA_REVOKE_CERT}" '{"resource": "revoke-cert", "certificate": "'"${cert64}"'"}')"
+  response="$(signed_request "${CA_REVOKE_CERT}" '{"resource": "revoke-cert", "certificate": "'"${cert64}"'"}' | clean_json)"
   # if there is a problem with our revoke request _request (via signed_request) will report this and "exit 1" out
   # so if we are here, it is safe to assume the request was successful
   echo " + Done."
@@ -761,7 +775,7 @@ command_help() {
 command_env() {
   echo "# letsencrypt.sh configuration"
   load_config
-  typeset -p CA LICENSE CHALLENGETYPE HOOK HOOK_CHAIN RENEW_DAYS ACCOUNT_KEY ACCOUNT_KEY_JSON KEYSIZE WELLKNOWN OPENSSL_CNF CONTACT_EMAIL LOCKFILE
+  typeset -p CA LICENSE CHALLENGETYPE DOMAINS_TXT HOOK HOOK_CHAIN RENEW_DAYS ACCOUNT_KEY ACCOUNT_KEY_JSON KEYSIZE WELLKNOWN PRIVATE_KEY_RENEW OPENSSL_CNF CONTACT_EMAIL LOCKFILE
 }
 
 # Main method (parses script arguments and calls command_* methods)
@@ -845,7 +859,7 @@ main() {
         PARAM_ACCOUNT_KEY="${1}"
         ;;
 
-      # PARAM_Usage: --config (-f) path/to/config.sh
+      # PARAM_Usage: --config (-f) path/to/config
       # PARAM_Description: Use specified config file
       --config|-f)
         shift 1
