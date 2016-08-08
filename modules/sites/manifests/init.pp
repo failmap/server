@@ -8,6 +8,7 @@ class sites (
 ){
   # nginx
   class {'nginx': }
+
   # bugfix: https://github.com/jfryman/puppet-nginx/issues/610
   Class['::nginx::config'] -> Nginx::Resource::Vhost <| |>
   Class['::nginx::config'] -> Nginx::Resource::Upstream <| |>

@@ -42,13 +42,16 @@ define sites::vhosts::php (
     "/var/www/${name}/":
       ensure => directory,
       owner  => www-data,
-      group  => www-data;
-    $webroot:
-      ensure => directory,
-      owner  => www-data,
       group  => www-data,
-      source => $source,
-      recurse => true;
+    }
+  if $source {
+    file { $webroot:
+      ensure  => directory,
+      owner   => www-data,
+      group   => www-data,
+      source  => $source,
+      recurse => true,
+    }
   }
 
   nginx::resource::vhost { $name:
@@ -63,6 +66,13 @@ define sites::vhosts::php (
     rewrite_to_https => $rewrite_to_https,
     location_allow   => $location_allow,
     location_deny    => $location_deny,
+    vhost_cfg_append => {
+      'fastcgi_cache'            => 'default',
+      'fastcgi_cache_valid'      => '200 30m',
+      'access_log'               => "/var/log/nginx/${server_name}.cache.log cache",
+      # "if (\$remote_addr == '127.0.0.1')" => "{set \$revalidate 1}",
+      'fastcgi_cache_revalidate' => on,
+    }
   }
 
   nginx::resource::location { $name:

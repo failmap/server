@@ -10,6 +10,16 @@ sites::default_vhost_content: faal
 # letsencrypt account settings
 letsencrypt::email: info@faalkaart.nl
 
+# nginx default config
+nginx::config::fastcgi_cache_path: /var/www/cache/
+nginx::config::fastcgi_cache_key: '"$scheme$request_method$host$request_uri"'
+nginx::config::fastcgi_cache_keys_zone: default:250m
+nginx::config::fastcgi_cache_max_size: 500m
+nginx::config::fastcgi_cache_inactive: 30m
+nginx::config::log_format:
+  cache: "$remote_addr - $upstream_cache_status [$time_local] $request $status $body_bytes_sent $http_referer $http_user_agent"
+
+
 # users & sudo permissions
 accounts::users:
   test:
