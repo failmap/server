@@ -11,7 +11,7 @@ define sites::vhosts::php (
   $location_deny=undef,
   $subdomains=[],
   # http://no-www.org/index.php
-  $nowww_compliance="class_b",
+  $nowww_compliance='class_b',
 ){
   if $server_name == '_' {
     $realm_name = $realm
@@ -25,12 +25,12 @@ define sites::vhosts::php (
 
   $server_names = concat([], $server_name, $subdomains, $realm_name)
 
-  if $nowww_compliance == "class_b" {
+  if $nowww_compliance == 'class_b' {
     $rewrite_www_to_non_www = true
     # make sure letsencrypt has valid config for www. redirect vhosts.
     $le_subdomains = concat($subdomains, prefix(concat([], $server_name, $subdomains), 'www.'))
     $validate_domains = join($server_names, ' ')
-    validate_re($validate_domains, "^(?!.*www\\.).*$", 
+    validate_re($validate_domains, '^(?!.*www\\.).*$',
         "Class B no-www compliance specified but a wwww. domain in subdomains: ${validate_domains}.")
   }
 
@@ -69,19 +69,19 @@ define sites::vhosts::php (
   }
 
   nginx::resource::vhost { $name:
-    server_name      => $server_names,
-    www_root         => $webroot,
-    index_files      => ['index.php'],
-    try_files        => ["\$uri", "\$uri/", '/index.php?$args'],
-    listen_options   => $listen_options,
-    ssl              => true,
-    ssl_key          => $keyfile,
-    ssl_cert         => $certfile,
+    server_name            => $server_names,
+    www_root               => $webroot,
+    index_files            => ['index.php'],
+    try_files              => ["\$uri", "\$uri/", '/index.php?$args'],
+    listen_options         => $listen_options,
+    ssl                    => true,
+    ssl_key                => $keyfile,
+    ssl_cert               => $certfile,
     rewrite_to_https       => $rewrite_to_https,
     rewrite_www_to_non_www => $rewrite_www_to_non_www,
-    location_allow   => $location_allow,
-    location_deny    => $location_deny,
-    vhost_cfg_append => {
+    location_allow         => $location_allow,
+    location_deny          => $location_deny,
+    vhost_cfg_append       => {
       'fastcgi_cache'            => 'default',
       'fastcgi_cache_valid'      => '200 30m',
       'access_log'               => "/var/log/nginx/${server_name}.cache.log cache",
@@ -101,8 +101,8 @@ define sites::vhosts::php (
   }
 
   # configure letsencrypt
-  letsencrypt::domain{ $server_name: 
-    subdomains => $le_subdomains,  
+  letsencrypt::domain{ $server_name:
+    subdomains => $le_subdomains,
   }
   nginx::resource::location { "letsencrypt_${name}":
     location       => '/.well-known/acme-challenge',

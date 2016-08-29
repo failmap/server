@@ -8,7 +8,7 @@ class sites::faalkaart(
 
   # configure vhost and clone source into webroot
   sites::vhosts::php { 'faalkaart.nl':
-    source => undef,
+    source     => undef,
   }
 
   # create database
