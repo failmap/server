@@ -30,7 +30,7 @@ define sites::vhosts::php (
     # make sure letsencrypt has valid config for www. redirect vhosts.
     $le_subdomains = concat($subdomains, prefix(concat([], $server_name, $subdomains), 'www.'))
     $validate_domains = join($server_names, ' ')
-    validate_re($validate_domains, '^(?!.*www\\.).*$',
+    validate_re($validate_domains, '^(?!.*www\.).*$',
         "Class B no-www compliance specified but a wwww. domain in subdomains: ${validate_domains}.")
   }
 
