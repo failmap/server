@@ -13,6 +13,14 @@ apply deploy: Puppetfile.lock
 plan: Puppetfile.lock
 	scripts/deploy.sh ${host} --noop ${args}
 
+fix:
+	puppet-lint --fix manifests
+	puppet-lint --fix modules
+
+check:
+	puppet-lint manifests
+	puppet-lint modules
+
 bootstrap:
 	scp scripts/bootstrap.sh ${host}:
 	ssh ${host} /bin/bash bootstrap.sh
