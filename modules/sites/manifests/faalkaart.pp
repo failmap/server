@@ -26,7 +26,8 @@ class sites::faalkaart(
     provider => git,
     source   => 'https://github.com/failmap/website.git',
     revision => master,
-    force    => true,
+    owner    => www-data,
+    group    => www-data,
   } ->
   file { '/var/www/faalkaart.nl/configuration.php':
     owner   => 'www-data',
