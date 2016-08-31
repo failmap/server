@@ -87,6 +87,7 @@ define sites::vhosts::php (
       'access_log'               => "/var/log/nginx/${server_name}.cache.log cache",
       # "if (\$remote_addr == '127.0.0.1')" => "{set \$revalidate 1}",
       'fastcgi_cache_revalidate' => on,
+      'expires'                  => '30m',
     }
   }
 

@@ -57,7 +57,36 @@ firewall:
     action: accept
   999 drop the rest:
     action: drop
-  999 drop the rest:
+  # ipv6
+  100 v6 allow related, established:
+    proto: all
+    state:
+      - RELATED
+      - ESTABLISHED
+    action: accept
+    provider: ip6tables
+  100 v6 allow icmp:
+    proto: icmp
+    action: accept
+    provider: ip6tables
+  100 v6 allow local:
+    proto: all
+    iniface: lo
+    action: accept
+    provider: ip6tables
+  200 v6 allow ssh:
+    dport: ssh
+    action: accept
+    provider: ip6tables
+  300 v6 allow http traffic in:
+    dport: http
+    action: reject
+    provider: ip6tables
+  300 v6 allow https traffic in:
+    dport: https
+    action: reject
+    provider: ip6tables
+  999 v6 drop the rest:
     action: drop
     provider: ip6tables
 

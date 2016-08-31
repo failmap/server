@@ -37,6 +37,7 @@ class sites::faalkaart(
 
   cron { 'cache-warming':
     command => '/usr/bin/curl -ks -Hhost:faalkaart.nl https://localhost 2>&1 >/dev/null',
+    minute  => '*/10',
   }
 
 }
