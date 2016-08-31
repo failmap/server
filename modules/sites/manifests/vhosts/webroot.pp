@@ -58,14 +58,22 @@ define sites::vhosts::webroot (
     location_deny    => $location_deny,
   }
 
+  nginx::resource::location { $name:
+    vhost          => $name,
+    ssl            => true,
+    www_root       => $webroot,
+    location       => '~ \.php$',
+    location_deny  => ['all'],
+  }
+
   # configure letsencrypt
   letsencrypt::domain{ $letsencrypt_name:
     subdomains => $le_subdomains,
   }
   nginx::resource::location { "letsencrypt_${name}":
-  location       => '/.well-known/acme-challenge',
-  vhost          => $name,
-  location_alias => $::letsencrypt::www_root,
-  ssl            => true,
+    location       => '/.well-known/acme-challenge',
+    vhost          => $name,
+    location_alias => $::letsencrypt::www_root,
+    ssl            => true,
   }
 }

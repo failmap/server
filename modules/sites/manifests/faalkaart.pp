@@ -6,10 +6,8 @@ class sites::faalkaart(
 ){
   ensure_packages(['git'], {'ensure' => 'present'})
 
-  # configure vhost and clone source into webroot
-  sites::vhosts::php { 'faalkaart.nl':
-    source     => undef,
-  }
+  # configure vhost
+  sites::vhosts::webroot { 'faalkaart.nl': }
 
   # create database
   # create wordpress DB
@@ -35,9 +33,10 @@ class sites::faalkaart(
     content => template('sites/faalkaart.configuration.php.erb')
   }
 
-  cron { 'cache-warming':
-    command => '/usr/bin/curl -ks -Hhost:faalkaart.nl https://localhost 2>&1 >/dev/null',
+  # generate index.html for index.php file every 10 minutes.
+  cron { 'failmap-static-generation':
+    command => 'cd /var/www/faalkaart.nl/html/; /usr/bin/php index.php > index.html',
     minute  => '*/10',
+    user    => 'www-data',
   }
-
 }

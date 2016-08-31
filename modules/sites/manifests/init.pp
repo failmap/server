@@ -24,9 +24,6 @@ class sites (
   class { 'letsencrypt': }
 
   # php related
-  class {'::php::fpm::daemon': }
-  create_resources('php::fpm::conf', hiera_hash('php::fpm::config', {}))
-
   php::module { [ 'gd', 'mysql']: }
 
   # dbs

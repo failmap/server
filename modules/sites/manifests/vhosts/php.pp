@@ -13,6 +13,8 @@ define sites::vhosts::php (
   # http://no-www.org/index.php
   $nowww_compliance='class_b',
 ){
+  include ::sites::php::fpm
+
   if $server_name == '_' {
     $realm_name = $realm
   } else {
