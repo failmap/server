@@ -11,6 +11,8 @@ define sites::vhosts::webroot (
   $subdomains=[],
   # http://no-www.org/index.php
   $nowww_compliance='class_b',
+  $expires='10m',
+  $static_expires='30d',
 ){
   if $server_name == '_' {
     $realm_name = $realm
@@ -56,14 +58,29 @@ define sites::vhosts::webroot (
     rewrite_to_https => $rewrite_to_https,
     location_allow   => $location_allow,
     location_deny    => $location_deny,
+    vhost_cfg_append => {
+      'expires' => $expires,
+    }
   }
 
-  nginx::resource::location { $name:
-    vhost          => $name,
-    ssl            => true,
-    www_root       => $webroot,
-    location       => '~ \.php$',
-    location_deny  => ['all'],
+  # disable exposing php files
+  nginx::resource::location { "${name}-php":
+    vhost         => $name,
+    ssl           => true,
+    www_root      => $webroot,
+    location      => '~ \.php$',
+    location_deny => ['all'],
+  }
+
+  # cache static files a lot
+  nginx::resource::location { "${name}-static_cache":
+    vhost            => $name,
+    ssl              => true,
+    www_root         => $webroot,
+    location         => '~* \.(?:ico|css|js|gif|jpe?g|png)$',
+    location_cfg_append => {
+      'expires' => $static_expires,
+    }
   }
 
   # configure letsencrypt
