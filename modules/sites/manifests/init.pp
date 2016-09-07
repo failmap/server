@@ -34,8 +34,7 @@ class sites (
 
   # default realm vhost
   sites::vhosts::webroot {$realm:
-      server_name    => '_',
-      listen_options => 'default_server',
+      default_vhost => true,
   }
   file { "/var/www/${realm}/html/index.html":
     content => $default_vhost_content,
