@@ -4,6 +4,9 @@ class sites::faalkaart(
   $db_password='kaartfaal',
   $db_name='faalkaart',
 ){
+  package { 'php5-cli': }
+  include ::base::cron
+
   ensure_packages(['git'], {'ensure' => 'present'})
 
   # configure vhost
@@ -37,6 +40,14 @@ class sites::faalkaart(
   cron { 'failmap-static-generation':
     command => 'cd /var/www/faalkaart.nl/html/; /usr/bin/php index.php > index.html',
     minute  => '*/10',
+    user    => 'www-data',
+  }
+
+  Package['php5-cli'] ->
+  exec { 'initial generate':
+    command => '/usr/bin/php index.php > index.html',
+    cwd     => '/var/www/faalkaart.nl/html/',
+    creates => '/var/www/faalkaart.nl/html/index.html',
     user    => 'www-data',
   }
 }
