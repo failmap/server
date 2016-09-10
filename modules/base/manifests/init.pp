@@ -31,7 +31,12 @@ class base {
   }
 
   # enable ssh server
-  class { '::ssh': }
+  class { '::ssh':
+    storeconfigs_enabled => false,
+    server_options       => {
+      'PasswordAuthentication' => no,
+    }
+  }
 
   # let sudoers know not to change anything outside of puppet
   file {
