@@ -3,7 +3,8 @@ image: debian:jessie
 before_script:
   # install provision dependencies
   - apt-get update -yqq
-  - apt-get install -yqq make librarian-puppet
+  - apt-get install -yqq make ruby
+  - gem install librarian-puppet
   # bootstrap provisioning
   - scripts/bootstrap.sh
 
