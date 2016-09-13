@@ -1,5 +1,9 @@
 image: debian:jessie
 
+variables:
+  FACTER_env: gitlab
+  FACTER_fqdn: faalserver.faalkaart.dev
+
 before_script:
   # install provision dependencies
   - apt-get update -yqq

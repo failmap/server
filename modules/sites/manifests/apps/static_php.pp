@@ -55,7 +55,7 @@ define sites::apps::static_php (
       host     => $mysql_db_host,
       grant    => ['SELECT', 'UPDATE', 'INSERT', 'DELETE'],
       sql      => $schema,
-    }
+    } -> Exec["${title} generate"]
   }
 
   file { "${root}/generate.sh":

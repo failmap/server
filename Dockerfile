@@ -13,6 +13,7 @@ ADD hiera hiera/
 ADD Makefile hiera.yaml ./
 
 ENV facter_env docker
+ENV facter_fqdn faalserver.faalkaart.dev
 RUN scripts/apply.sh
 
 RUN apt-get install -yqq netcat
