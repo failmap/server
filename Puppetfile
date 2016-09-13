@@ -18,3 +18,6 @@ mod 'jfryman-nginx',
 mod 'puppetlabs-concat'
 mod 'thias-php'
 mod 'puppetlabs-mysql'
+mod 'aequitas/letsencrypt',
+  :git => 'git@github.com:aequitas/puppet-letsencrypt.git',
+  :ref => 'master'

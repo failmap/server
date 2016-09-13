@@ -1,8 +1,8 @@
 image: debian:jessie
 
 before_script:
+  # provision requirements
   - scripts/bootstrap.sh
-  - apt-get install puppet-lint
 
 stages:
   - check
@@ -11,6 +11,9 @@ stages:
 
 check:
   stage: check
+  before_script:
+    # check requirements
+    - apt-get install make puppet-lint shellcheck
   script:
     - make check
 

@@ -1,8 +1,0 @@
-<% if @staging -%>
-CA="https://acme-staging.api.letsencrypt.org/directory"
-<% end -%>
-WELLKNOWN="/var/www/letsencrypt"
-
-<% if @email -%>
-CONTACT_EMAIL=<%= @email %>
-<% end -%>

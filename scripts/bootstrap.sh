@@ -2,7 +2,7 @@
 
 # install puppet and dependencies
 
-if ! test $(whoami) == "root";then
+if ! test "$(whoami)" == "root";then
   echo "Must run as root!"
   exit 1
 fi

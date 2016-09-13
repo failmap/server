@@ -10,6 +10,7 @@ Puppetfile.lock: Puppetfile .librarian/puppet/config
 apply deploy: Puppetfile.lock
 	scripts/deploy.sh ${host} ${args}
 
+plan: args=--test
 plan: Puppetfile.lock
 	scripts/deploy.sh ${host} --noop ${args}
 
@@ -18,6 +19,7 @@ fix:
 	puppet-lint --fix modules
 
 check:
+	shellcheck scripts/*.sh
 	puppet-lint manifests
 	puppet-lint modules
 

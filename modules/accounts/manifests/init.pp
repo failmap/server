@@ -1,3 +1,4 @@
+# create user account from hiera
 class accounts (
   $users={},
 ){
