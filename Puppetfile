@@ -12,7 +12,7 @@ mod 'petems/swap_file'
 mod 'puppetlabs-stdlib'
 
 mod 'puppetlabs-vcsrepo'
-mod 'voxpopuli-nginx'
+mod 'puppet-nginx'
 mod 'puppetlabs-concat'
 mod 'thias-php'
 mod 'puppetlabs-mysql'
