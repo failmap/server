@@ -59,7 +59,7 @@ define sites::apps::static_php (
   }
 
   file { "${root}/generate.sh":
-    content => "cd ${webroot}/; /usr/bin/php index.php > index.html;\n",
+    content => "cd ${webroot}/; /usr/bin/php index.php > index.html_;mv index.html_ index.html\n",
     mode    => '0755',
     owner   => $web_user,
     group   => $web_user,
