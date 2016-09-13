@@ -1,7 +1,10 @@
 image: debian:jessie
 
 before_script:
-  # provision requirements
+  # install provision dependencies
+  - apt-get update -yqq
+  - apt-get install -yqq make librarian-puppet
+  # bootstrap provisioning
   - scripts/bootstrap.sh
 
 stages:
@@ -21,7 +24,8 @@ check:
 provision:
   stage: provision
   script:
-    - scripts/apply.sh
+    # provision with puppet
+    - make apply
 
 test:
   stage: test
