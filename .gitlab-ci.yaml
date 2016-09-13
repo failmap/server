@@ -1,0 +1,17 @@
+image: debian:jessie
+
+before_script:
+  - scripts/bootstrap.sh
+
+stages:
+  - provision
+  - test
+
+provision:
+  stage: provision
+  script:
+    scripts/apply.sh
+
+test:
+  stage: test
+  script: test.sh
