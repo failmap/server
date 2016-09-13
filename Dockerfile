@@ -5,6 +5,7 @@ WORKDIR /root/
 ADD scripts/ scripts/
 RUN scripts/bootstrap.sh
 
+ADD Puppetfile.lock ./
 ADD vendor vendor/
 ADD manifests manifests/
 ADD modules modules/

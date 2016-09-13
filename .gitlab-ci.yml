@@ -26,7 +26,7 @@ provision:
   stage: provision
   script:
     # provision with puppet
-    - make apply
+    - scripts/apply.sh
   artifacts:
     paths:
       - Puppetfile.lock
