@@ -27,3 +27,11 @@ bootstrap:
 
 mrproper clean:
 	rm -rf vendor Puppetfile.lock
+
+# Docker stuff
+
+test:
+	docker build -t faalkaart .
+
+test_inspect:
+	docker run -p 80:80 -p 443:443 -ti faalkaart /bin/bash

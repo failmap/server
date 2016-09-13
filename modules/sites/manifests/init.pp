@@ -6,7 +6,10 @@ class sites (
   $pma_allow=[],
   $default_vhost_content='',
   $apps_static_php={},
+  $ssl=true,
 ){
+  include base::cron
+
   create_resources(apps::static_php, $apps_static_php, {})
 
   # nginx
@@ -34,7 +37,9 @@ class sites (
   }
 
   # certificates
-  class { 'letsencrypt': }
+  if $ssl {
+    class { 'letsencrypt': }
+  }
 
   # php related
   php::module { [ 'gd', 'mysql']: }

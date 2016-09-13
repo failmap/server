@@ -14,6 +14,6 @@ ADD Makefile hiera.yaml ./
 ENV facter_env docker
 RUN scripts/apply.sh
 
-RUN cp /sbin/init /sbin/init.real
-
-CMD /usr/sbin/nginx -g 'daemon off;'
+RUN apt-get install -yqq netcat
+ADD test.sh /
+RUN /test.sh

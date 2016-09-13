@@ -11,13 +11,14 @@ define sites::apps::static_php (
   $mysql_db_user=$title,
   $mysql_db_password=$title,
   $mysql_db_host=localhost,
+  $mysql_db_init_filename=undef,
 
   # manage vhost
   $vhost=true,
   $web_user='www-data',
 ){
-  $root = "/var/www/${title}/"
-  $webroot = "${root}/html/"
+  $root = "/var/www/${title}"
+  $webroot = "${root}/html"
 
   ensure_packages(['php5-cli'], {'ensure' => 'present'})
 
@@ -43,12 +44,17 @@ define sites::apps::static_php (
   }
 
   if $mysql_manage_db {
+    if $mysql_db_init_filename {
+      $schema = "${root}/${mysql_db_init_filename}"
+    } else {
+      $schema = "/var/backups/mysql/${title}.sql"
+    }
     mysql::db { $mysql_db_name:
       user     => $mysql_db_user,
       password => $mysql_db_password,
       host     => $mysql_db_host,
       grant    => ['SELECT', 'UPDATE', 'INSERT', 'DELETE'],
-      sql      => "/var/backups/mysql/${title}.sql",
+      sql      => $schema,
     }
   }
 
@@ -66,11 +72,14 @@ define sites::apps::static_php (
     user    => $web_user,
   }
 
-  Package['php5-cli'] ->
   exec { "${title} generate":
     command => "${root}/generate.sh",
     creates => "${webroot}/index.html",
     user    => $web_user,
+    require => [
+      Package['php5-cli'],
+      File["${root}/generate.sh"]
+    ]
   }
 
   if $vhost {

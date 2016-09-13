@@ -4,7 +4,6 @@ define sites::vhosts::webroot (
   $realm=$sites::realm,
   $webroot="/var/www/${name}/html/",
   $default_vhost=false,
-  $rewrite_to_https=true,
   $location_allow=undef,
   $location_deny=undef,
   $subdomains=[],
@@ -12,6 +11,8 @@ define sites::vhosts::webroot (
   $nowww_compliance='class_b',
   $expires='10m',
   $static_expires='30d',
+  $ssl=$::sites::ssl,
+  $rewrite_to_https=$::sites::ssl,
 ){
   if $default_vhost {
     $server_name = '_'
@@ -27,8 +28,13 @@ define sites::vhosts::webroot (
     $_nowww_compliance = $nowww_compliance
   }
 
-  $certfile = "${::letsencrypt::cert_root}/${letsencrypt_name}/fullchain.pem"
-  $keyfile = "${::letsencrypt::cert_root}/${letsencrypt_name}/privkey.pem"
+  if $ssl {
+    $certfile = "${::letsencrypt::cert_root}/${letsencrypt_name}/fullchain.pem"
+    $keyfile = "${::letsencrypt::cert_root}/${letsencrypt_name}/privkey.pem"
+  } else {
+    $certfile = undef
+    $keyfile = undef
+  }
 
   # array of all server names to listen for
   $server_names = concat([], $server_name, $subdomains, $realm_name)
@@ -77,7 +83,7 @@ define sites::vhosts::webroot (
     www_root               => $webroot,
     index_files            => ['index.html'],
     listen_options         => $listen_options,
-    ssl                    => true,
+    ssl                    => $ssl,
     ssl_key                => $keyfile,
     ssl_cert               => $certfile,
     rewrite_to_https       => $rewrite_to_https,
@@ -92,7 +98,7 @@ define sites::vhosts::webroot (
   # disable exposing php files
   nginx::resource::location { "${name}-php":
     vhost         => $name,
-    ssl           => true,
+    ssl           => $ssl,
     www_root      => $webroot,
     location      => '~ \.php$',
     location_deny => ['all'],
@@ -101,7 +107,7 @@ define sites::vhosts::webroot (
   # cache static files a lot
   nginx::resource::location { "${name}-static_cache":
     vhost               => $name,
-    ssl                 => true,
+    ssl                 => $ssl,
     www_root            => $webroot,
     location            => '~* \.(?:ico|css|js|gif|jpe?g|png)$',
     location_cfg_append => {
@@ -110,13 +116,15 @@ define sites::vhosts::webroot (
   }
 
   # configure letsencrypt
-  letsencrypt::domain{ $letsencrypt_name:
-    subdomains => $le_subdomains,
-  }
-  nginx::resource::location { "letsencrypt_${name}":
-    location       => '/.well-known/acme-challenge',
-    vhost          => $name,
-    location_alias => $::letsencrypt::www_root,
-    ssl            => true,
+  if $ssl {
+    letsencrypt::domain{ $letsencrypt_name:
+      subdomains => $le_subdomains,
+    }
+    nginx::resource::location { "letsencrypt_${name}":
+      location       => '/.well-known/acme-challenge',
+      vhost          => $name,
+      location_alias => $::letsencrypt::www_root,
+      ssl            => true,
+    }
   }
 }
