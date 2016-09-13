@@ -32,7 +32,7 @@ provision:
     # provision with puppet
     - scripts/apply.sh
     # test
-    - test.sh
+    - ./test.sh
   artifacts:
     paths:
       - Puppetfile.lock
