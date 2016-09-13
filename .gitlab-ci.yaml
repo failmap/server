@@ -4,6 +4,7 @@ before_script:
   - scripts/bootstrap.sh
 
 stages:
+<<<<<<< HEAD
   - check
   - provision
   - test
@@ -22,3 +23,16 @@ test:
   stage: test
   script:
     - test.sh
+=======
+  - provision
+  - test
+
+provision:
+  stage: provision
+  script:
+    scripts/apply.sh
+
+test:
+  stage: test
+  script: test.sh
+>>>>>>> gitlab/master
