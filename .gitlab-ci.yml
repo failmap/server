@@ -12,8 +12,9 @@ stages:
 check:
   stage: check
   before_script:
-    # check requirements
-    - apt-get install make puppet-lint shellcheck
+    # install check requirements
+    - apt-get update -yqq
+    - apt-get install -yqq make puppet-lint shellcheck
   script:
     - make check
 
