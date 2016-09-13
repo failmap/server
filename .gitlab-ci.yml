@@ -16,7 +16,6 @@ before_script:
 stages:
   - check
   - provision
-  - test
 
 check:
   stage: check
@@ -32,11 +31,8 @@ provision:
   script:
     # provision with puppet
     - scripts/apply.sh
+    # test
+    - test.sh
   artifacts:
     paths:
       - Puppetfile.lock
-
-test:
-  stage: test
-  script:
-    - test.sh
