@@ -2,6 +2,7 @@ image: debian:jessie
 
 before_script:
   - scripts/bootstrap.sh
+  - apt-get install puppet-lint
 
 stages:
   - check
