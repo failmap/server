@@ -26,30 +26,36 @@ timeout 10 /bin/sh -c 'while ! nc localhost 80 -w1 2>/dev/null >/dev/null ;do sl
 /var/www/faalkaart.nl/generate.sh
 
 # ok scenario
-response=$(curl -sIk https://localhost -H host:faalkaart.nl)
+response=$(curl -sSIk https://localhost -H host:faalkaart.nl)
 echo "$response" | grep 200 || failed "$response"
 
-response=$(curl -sIk https://localhost/index.html -H host:faalkaart.nl)
+response=$(curl -sSIk https://localhost/index.html -H host:faalkaart.nl)
 echo "$response" | grep 200 || failed "$response"
 
-response=$(curl -sIk https://localhost/favicon.ico -H host:faalkaart.nl)
+response=$(curl -sSIk https://localhost/favicon.ico -H host:faalkaart.nl)
 echo "$response" | grep 200 || failed "$response"
 
-response=$(curl -sk https://localhost -H host:faalkaart.nl)
+response=$(curl -sSk https://localhost -H host:faalkaart.nl)
 echo "$response" | grep MSPAINT || failed "$(echo "$response"| tail)"
+
+# HSTS enabled
+response=$(curl -sSIk https://localhost -H host:faalkaart.nl)
+echo "$response" | grep 'Strict-Transport-Security: "max-age=31536000; includeSubdomains"' || failed "$(echo "$response"| tail)"
+response=$(curl -sSI http://localhost -H host:faalkaart.nl)
+echo "$response" | grep 'Strict-Transport-Security: "max-age=31536000; includeSubdomains"' || failed "$(echo "$response"| tail)"
 
 ## test domains and redirections
 
 # http -> https
-response=$(curl -sI http://localhost -H host:faalkaart.nl)
+response=$(curl -sSI http://localhost -H host:faalkaart.nl)
 echo "$response" | grep 301 || failed "$response"
 echo "$response" | grep 'Location: https://faalkaart.nl' || failed "$response"
 
 # www -> no-www
-response=$(curl -sIk https://localhost -H host:www.faalkaart.nl)
+response=$(curl -sSIk https://localhost -H host:www.faalkaart.nl)
 echo "$response" | grep 301 || failed "$response"
 echo "$response" | grep 'Location: https://faalkaart.nl' || failed "$response"
 
 ## access denied
-response=$(curl -sk https://localhost/index.php -H host:faalkaart.nl)
+response=$(curl -sSk https://localhost/index.php -H host:faalkaart.nl)
 echo "$response" | grep 403 || failed "$response"

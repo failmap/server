@@ -32,8 +32,12 @@ provision:
     # provision with puppet
     - scripts/apply.sh
     # test
-    - ./test.sh
+    - scripts//test.sh
+    # save content for artifact
+    - curl -sSk https://localhost -H host:faalkaart.nl > index.html
+    - curl -sSkI https://localhost -H host:faalkaart.nl > response.txt
   artifacts:
     paths:
       - Puppetfile.lock
-      - /var/www/faalkaart.nl/html/index.html
+      - index.html
+      - response.txt

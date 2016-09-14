@@ -19,3 +19,6 @@ mod 'puppetlabs-mysql'
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',
   :ref => 'master'
+mod 'aequitas/sites',
+  :git => 'https://github.com/aequitas/puppet-sites.git',
+  :ref => 'master'
