@@ -32,7 +32,7 @@ provision:
     # provision with puppet
     - scripts/apply.sh
     # test
-    - scripts//test.sh
+    - scripts/test.sh
     # save content for artifact
     - curl -sSk https://localhost -H host:faalkaart.nl > index.html
     - curl -sSkI https://localhost -H host:faalkaart.nl > response.txt

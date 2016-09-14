@@ -2,20 +2,24 @@ FROM debian:jessie
 
 WORKDIR /root/
 
-ADD scripts/ scripts/
+ADD scripts/bootstrap.sh scripts/bootstrap.sh
+RUN apt-get update -yqq
+RUN apt-get install -yqq make ruby git netcat puppet-lint shellcheck
+
+RUN gem install librarian-puppet
+
 RUN scripts/bootstrap.sh
 
-ADD Puppetfile.lock ./
 ADD vendor vendor/
 ADD manifests manifests/
 ADD modules modules/
 ADD hiera hiera/
-ADD Makefile hiera.yaml ./
+ADD hiera.yaml ./
 
 ENV facter_env docker
 ENV facter_fqdn faalserver.faalkaart.dev
+ADD scripts/apply.sh scripts/
 RUN scripts/apply.sh
 
-RUN apt-get install -yqq netcat
-ADD test.sh /
-RUN /test.sh
+ADD scripts/test.sh scripts/
+RUN scripts/test.sh

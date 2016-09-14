@@ -40,9 +40,9 @@ echo "$response" | grep MSPAINT || failed "$(echo "$response"| tail)"
 
 # HSTS enabled
 response=$(curl -sSIk https://localhost -H host:faalkaart.nl)
-echo "$response" | grep 'Strict-Transport-Security: "max-age=31536000; includeSubdomains"' || failed "$(echo "$response"| tail)"
+echo "$response" | grep 'Strict-Transport-Security: max-age=31536000; includeSubdomains' || failed "$(echo "$response"| tail)"
 response=$(curl -sSI http://localhost -H host:faalkaart.nl)
-echo "$response" | grep 'Strict-Transport-Security: "max-age=31536000; includeSubdomains"' || failed "$(echo "$response"| tail)"
+echo "$response" | grep 'Strict-Transport-Security: max-age=31536000; includeSubdomains' || failed "$(echo "$response"| tail)"
 
 ## test domains and redirections
 

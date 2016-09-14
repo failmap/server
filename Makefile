@@ -33,7 +33,7 @@ mrproper clean:
 # Docker stuff
 
 test:
-	docker build -t faalkaart .
+	docker build ${args} -t faalkaart .
 
 test_inspect:
 	docker run -p 80:80 -p 443:443 -ti faalkaart /bin/bash
