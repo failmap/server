@@ -36,3 +36,4 @@ provision:
   artifacts:
     paths:
       - Puppetfile.lock
+      - /var/www/faalkaart.nl/html/index.html
