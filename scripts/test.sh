@@ -44,6 +44,19 @@ echo "$response" | grep 'Strict-Transport-Security: max-age=31536000; includeSub
 response=$(curl -sSI http://localhost -H host:faalkaart.nl)
 echo "$response" | grep 'Strict-Transport-Security: max-age=31536000; includeSubdomains' || failed "$(echo "$response"| tail)"
 
+# no weak crypto
+weak_cryptos="TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA
+TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA
+TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+TLS_DHE_RSA_WITH_AES_128_CBC_SHA
+TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
+TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"
+
+ciphers=$(nmap --script ssl-enum-ciphers -p 443 localhost)
+! echo "$ciphers" | grep "$(echo "$weak_cryptos"|tr '\n' '|')" || failed "$ciphers"
+
 ## test domains and redirections
 
 # http -> https

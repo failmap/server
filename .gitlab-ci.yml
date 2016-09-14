@@ -7,7 +7,7 @@ variables:
 before_script:
   # install provision dependencies
   - apt-get update -yqq
-  - apt-get install -yqq make ruby git netcat
+  - apt-get install -yqq make ruby git netcat nmap
   - gem install librarian-puppet
   # bootstrap provisioning
   - scripts/bootstrap.sh

@@ -4,7 +4,7 @@ WORKDIR /root/
 
 ADD scripts/bootstrap.sh scripts/bootstrap.sh
 RUN apt-get update -yqq
-RUN apt-get install -yqq make ruby git netcat puppet-lint shellcheck
+RUN apt-get install -yqq make ruby git netcat nmap puppet-lint shellcheck
 
 RUN gem install librarian-puppet
 
