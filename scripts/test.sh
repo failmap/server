@@ -45,10 +45,20 @@ response=$(curl -sSI http://localhost -H host:faalkaart.nl)
 echo "$response" | grep 'Strict-Transport-Security: max-age=31536000; includeSubdomains' || failed "$(echo "$response"| tail)"
 
 # no weak crypto
-weak_cryptos="DHE 1024 bits"
+weak_cryptos="DHE 1024 bits
+AES128-GCM-SHA256
+AES256-GCM-SHA384
+AES128-SHA
+AES128-SHA256
+AES256-SHA
+AES256-SHA256
+CAMELLIA128-SHA
+CAMELLIA256-SHA
+DES-CBC3-SHA"
 
-ciphers=$(sslscan -p 443 localhost)
-! echo "$ciphers" | egrep "$(echo "$weak_cryptos"|tr '\n' '|')" || failed "$ciphers"
+ciphers=$(sslscan --no-color -p 443 127.0.0.1)
+regex="\s($(echo -n "$weak_cryptos"|tr '\n' '|'))\s"
+! echo "$ciphers" | egrep --color=always "$regex" || failed "$ciphers"
 
 ## test domains and redirections
 
