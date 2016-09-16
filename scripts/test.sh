@@ -20,6 +20,10 @@ timeout 10 /bin/sh -c 'while ! nc localhost 3306 -w1 >/dev/null ;do sleep 1; don
 /usr/sbin/nginx -g 'daemon off;' &
 timeout 10 /bin/sh -c 'while ! nc localhost 80 -w1 2>/dev/null >/dev/null ;do sleep 1; done'
 
+# recent version of sslscan
+wget https://launchpad.net/ubuntu/+source/sslscan/1.11.5-rbsec-1/+build/9647622/+files/sslscan_1.11.5-rbsec-1_i386.deb
+dpkg -i sslscan_1.11.5-rbsec-1_i386.deb
+
 ### TESTS
 
 # generate site
@@ -45,17 +49,10 @@ response=$(curl -sSI http://localhost -H host:faalkaart.nl)
 echo "$response" | grep 'Strict-Transport-Security: max-age=31536000; includeSubdomains' || failed "$(echo "$response"| tail)"
 
 # no weak crypto
-weak_cryptos="TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA
-TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA
-TLS_DHE_RSA_WITH_AES_256_CBC_SHA
-TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
-TLS_DHE_RSA_WITH_AES_128_CBC_SHA
-TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
-TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
-TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"
+weak_cryptos="DHE 1024 bits"
 
-ciphers=$(nmap --script ssl-enum-ciphers -p 443 localhost)
-! echo "$ciphers" | grep "$(echo "$weak_cryptos"|tr '\n' '|')" || failed "$ciphers"
+ciphers=$(sslscan -p 443 localhost)
+! echo "$ciphers" | egrep "$(echo "$weak_cryptos"|tr '\n' '|')" || failed "$ciphers"
 
 ## test domains and redirections
 
