@@ -5,9 +5,11 @@ variables:
   FACTER_fqdn: faalserver.faalkaart.dev
 
 before_script:
-  # install provision dependencies
+  # install provision and test dependencies
   - apt-get update -yqq
-  - apt-get install -yqq make ruby git netcat nmap
+  - apt-get install -yqq make ruby git netcat
+  - wget https://launchpad.net/ubuntu/+source/sslscan/1.11.5-rbsec-1/+build/9647622/+files/sslscan_1.11.5-rbsec-1_i386.deb
+  - dpkg -i sslscan_1.11.5-rbsec-1_i386.deb
   - gem install librarian-puppet
   # bootstrap provisioning
   - scripts/bootstrap.sh

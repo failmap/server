@@ -20,10 +20,6 @@ timeout 10 /bin/sh -c 'while ! nc localhost 3306 -w1 >/dev/null ;do sleep 1; don
 /usr/sbin/nginx -g 'daemon off;' &
 timeout 10 /bin/sh -c 'while ! nc localhost 80 -w1 2>/dev/null >/dev/null ;do sleep 1; done'
 
-# recent version of sslscan
-wget https://launchpad.net/ubuntu/+source/sslscan/1.11.5-rbsec-1/+build/9647622/+files/sslscan_1.11.5-rbsec-1_i386.deb
-dpkg -i sslscan_1.11.5-rbsec-1_i386.deb
-
 ### TESTS
 
 # generate site
