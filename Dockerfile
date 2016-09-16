@@ -4,10 +4,13 @@ WORKDIR /root/
 
 ADD scripts/bootstrap.sh scripts/bootstrap.sh
 RUN apt-get update -yqq
-RUN apt-get install -yqq make ruby git netcat puppet-lint shellcheck
-ADD https://launchpad.net/ubuntu/+source/sslscan/1.11.5-rbsec-1/+build/9647622/+files/sslscan_1.11.5-rbsec-1_i386.deb ./
-RUN dpkg -i sslscan_1.11.5-rbsec-1_i386.deb
-
+RUN apt-get install -yqq make ruby git netcat puppet-lint shellcheck build-essential libssl-dev
+ADD https://github.com/rbsec/sslscan/archive/1.11.0-rbsec.tar.gz ./
+RUN tar zxf 1.11.0-rbsec.tar.gz
+WORKDIR sslscan-1.11.0-rbsec/
+RUN make sslscan
+RUN install sslscan /usr/local/bin/
+WORKDIR /root/
 
 RUN gem install librarian-puppet
 
