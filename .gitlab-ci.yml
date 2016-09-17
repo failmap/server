@@ -3,6 +3,7 @@ image: debian:jessie
 variables:
   FACTER_env: gitlab
   FACTER_fqdn: faalserver.faalkaart.dev
+  FACTER_ipaddress6: ::1
 
 before_script:
   # install provision and test dependencies

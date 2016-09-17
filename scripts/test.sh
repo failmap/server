@@ -26,7 +26,12 @@ timeout 10 /bin/sh -c 'while ! nc localhost 80 -w1 2>/dev/null >/dev/null ;do sl
 /var/www/faalkaart.nl/generate.sh
 
 # ok scenario
+# site should be accessible over IPv4 HTTPS
 response=$(curl -sSIk https://localhost -H host:faalkaart.nl)
+echo "$response" | grep 200 || failed "$response"
+
+# site should be accessible over IPv6 HTTPS
+response=$(curl -6 -sSIk https://localhost -H host:faalkaart.nl)
 echo "$response" | grep 200 || failed "$response"
 
 response=$(curl -sSIk https://localhost/index.html -H host:faalkaart.nl)
