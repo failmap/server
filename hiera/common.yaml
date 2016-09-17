@@ -89,11 +89,11 @@ firewall:
     provider: ip6tables
   300 v6 allow http traffic in:
     dport: http
-    action: reject
+    action: accept
     provider: ip6tables
   300 v6 allow https traffic in:
     dport: https
-    action: reject
+    action: accept
     provider: ip6tables
   999 v6 drop the rest:
     action: drop
