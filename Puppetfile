@@ -4,15 +4,13 @@
 forge "https://forgeapi.puppetlabs.com"
 
 mod 'saz-ssh'
-mod 'puppetlabs-apt'
 mod 'puppet-unattended_upgrades'
 mod 'puppetlabs-firewall'
-mod 'puppetlabs-ntp'
+mod 'puppetlabs-ntp', '<4.2.0'
 mod 'petems/swap_file'
 mod 'puppetlabs-stdlib'
 
 mod 'puppetlabs-vcsrepo'
-mod 'puppet-nginx'
 mod 'puppetlabs-concat'
 mod 'thias-php'
 mod 'puppetlabs-mysql'
@@ -21,4 +19,4 @@ mod 'aequitas/letsencrypt',
   :ref => 'master'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
-  :ref => 'bbc2cf50e0023670fe15b11c15973f9c70066a22'
+  :ref => '6d90f1b22ee6b48d3f7a30ca8f091d7bf20b307a'

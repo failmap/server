@@ -67,6 +67,7 @@ firewall:
     dport: https
     action: accept
   999 drop the rest:
+    proto: all
     action: drop
   # ipv6
   100 v6 allow related, established:
@@ -98,6 +99,7 @@ firewall:
     action: accept
     provider: ip6tables
   999 v6 drop the rest:
+    proto: all
     action: drop
     provider: ip6tables
 
