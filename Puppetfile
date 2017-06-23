@@ -19,4 +19,4 @@ mod 'aequitas/letsencrypt',
   :ref => 'master'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
-  :ref => '6d90f1b22ee6b48d3f7a30ca8f091d7bf20b307a'
+  :ref => '057c68b3c39468cf36c97a4185913646487099b1'
