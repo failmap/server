@@ -13,6 +13,7 @@ letsencrypt::email: info@faalkaart.nl
 sites::apps_static_php:
   faalkaart.nl:
     git_source: https://github.com/failmap/website.git
+    git_revision: stable
     config_filename: configuration.php
     config_template: |
       <?php
