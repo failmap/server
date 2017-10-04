@@ -4,7 +4,8 @@
 forge "https://forgeapi.puppetlabs.com"
 
 mod 'saz-ssh'
-mod 'puppet-unattended_upgrades'
+# pin to latest puppet 3.x supported version
+mod 'puppet-unattended_upgrades', '<=2.2.0'
 mod 'puppetlabs-firewall'
 # pin to latest puppet 3.x supported version
 mod 'puppetlabs-ntp', '<4.2.0'
@@ -12,7 +13,8 @@ mod 'petems/swap_file'
 mod 'puppetlabs-stdlib'
 mod 'puppetlabs-vcsrepo'
 mod 'thias-php'
-mod 'puppetlabs-mysql'
+# pin to latest puppet 3.x supported version
+mod 'puppetlabs-mysql', '<4.0.0'
 
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',
