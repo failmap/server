@@ -1,0 +1,70 @@
+FORGE
+  remote: https://forgeapi.puppetlabs.com
+  specs:
+    herculesteam-augeasproviders_core (2.1.4)
+      puppetlabs-stdlib (< 5.0.0, >= 3.2.0)
+    herculesteam-augeasproviders_sysctl (2.2.0)
+      herculesteam-augeasproviders_core (< 3.0.0, >= 2.1.0)
+    petems-swap_file (4.0.0)
+      herculesteam-augeasproviders_core (< 3.0.0, >= 2.1.0)
+      herculesteam-augeasproviders_sysctl (< 3.0.0, >= 2.1.0)
+      puppetlabs-stdlib (< 5.0.0, >= 4.7.0)
+    puppet-nginx (0.6.0)
+      puppetlabs-apt (< 3.0.0, >= 2.1.0)
+      puppetlabs-concat (< 3.0.0, >= 1.2.5)
+      puppetlabs-stdlib (< 5.0.0, >= 4.6.0)
+    puppet-staging (2.2.0)
+    puppet-unattended_upgrades (3.0.0)
+      puppetlabs-apt (< 5.0.0, >= 2.2.0)
+      puppetlabs-stdlib (< 5.0.0, >= 4.13.1)
+    puppetlabs-apt (2.4.0)
+      puppetlabs-stdlib (< 5.0.0, >= 4.13.0)
+    puppetlabs-concat (2.2.1)
+      puppetlabs-stdlib (< 5.0.0, >= 4.2.0)
+    puppetlabs-firewall (1.9.0)
+    puppetlabs-mysql (4.0.1)
+      puppet-staging (< 3.0.0, >= 1.0.1)
+      puppetlabs-stdlib (< 5.0.0, >= 3.2.0)
+    puppetlabs-ntp (4.1.2)
+      puppetlabs-stdlib (< 5.0.0, >= 4.6.0)
+    puppetlabs-stdlib (4.20.0)
+    puppetlabs-vcsrepo (2.0.0)
+    rodjek-logrotate (1.1.1)
+    saz-ssh (3.0.1)
+      puppetlabs-concat (< 3.0.0, >= 1.2.5)
+      puppetlabs-stdlib (< 5.0.0, >= 4.6.0)
+    thias-php (1.2.1)
+
+GIT
+  remote: https://github.com/aequitas/puppet-letsencrypt.git
+  ref: master
+  sha: da0abd4d2b7acb68a13353a9b696f3481ddff09a
+  specs:
+    aequitas-letsencrypt (0.1.1)
+      puppetlabs-stdlib (>= 1.0.0)
+
+GIT
+  remote: https://github.com/aequitas/puppet-sites.git
+  ref: 057c68b3c39468cf36c97a4185913646487099b1
+  sha: 057c68b3c39468cf36c97a4185913646487099b1
+  specs:
+    aequitas-sites (0.1.0)
+      puppet-nginx (>= 0.6.0)
+      puppetlabs-stdlib (>= 1.0.0)
+      rodjek-logrotate (>= 1.1.1)
+
+DEPENDENCIES
+  aequitas-letsencrypt (>= 0)
+  aequitas-sites (>= 0)
+  petems-swap_file (>= 0)
+  puppet-nginx (= 0.6.0)
+  puppet-unattended_upgrades (>= 0)
+  puppetlabs-apt (< 3.0.0)
+  puppetlabs-firewall (>= 0)
+  puppetlabs-mysql (>= 0)
+  puppetlabs-ntp (< 4.2.0)
+  puppetlabs-stdlib (>= 0)
+  puppetlabs-vcsrepo (>= 0)
+  saz-ssh (>= 0)
+  thias-php (>= 0)
+

@@ -1,4 +1,3 @@
 .tmp/
 vendor/modules/
-Puppetfile.lock
 .vagrant/

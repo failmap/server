@@ -2,12 +2,13 @@
 
 host = faalserver.faalkaart.nl
 
-Puppetfile.lock: Puppetfile .librarian/puppet/config
-	# updating puppet modules, takes a while
-	librarian-puppet install
-	touch $@
+all: vendor/modules
 
-apply deploy: Puppetfile.lock
+vendor/modules Puppetfile.lock: Puppetfile .librarian/puppet/config
+	librarian-puppet install
+	touch vendor/modules Puppetfile.lock
+
+apply deploy: vendor/modules
 	scripts/deploy.sh ${host} ${args}
 
 plan: args=--test
@@ -28,7 +29,7 @@ bootstrap:
 	ssh ${host} /bin/bash bootstrap.sh
 
 mrproper clean:
-	rm -rf vendor Puppetfile.lock
+	rm -rf vendor
 
 # Docker stuff
 
