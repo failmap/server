@@ -4,7 +4,7 @@ host = faalserver.faalkaart.nl
 
 Puppetfile.lock: Puppetfile .librarian/puppet/config
 	# updating puppet modules, takes a while
-	librarian-puppet install --clean
+	librarian-puppet install
 	touch $@
 
 apply deploy: Puppetfile.lock
