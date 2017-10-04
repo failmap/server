@@ -19,7 +19,7 @@ before_script:
   - popd
   # bootstrap provisioning
   - scripts/bootstrap.sh
-  - make Puppetfile.lock
+  - make vendor/modules
 
 stages:
   - check
