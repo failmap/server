@@ -2,9 +2,6 @@ classes:
   - sites
 
 # site config
-sites::mysql_root_pw: changeme
-sites::mysql_backup_pw: changemetoo
-sites::mysql_backuprotate: 2
 sites::default_vhost_content: faal
 
 # letsencrypt account settings

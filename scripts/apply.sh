@@ -2,6 +2,11 @@
 
 cd "$(dirname "$0")/.." || exit
 
+# ensure secret random seed is present on the host
+seedfile=/var/lib/puppet/.random_seed
+test -f "$seedfile" || \
+  head /dev/urandom | tr -dc A-Za-z0-9 | head -c 64 > "$seedfile"
+
 puppet apply \
   --detailed-exitcodes \
   --modulepath=modules:vendor/modules \

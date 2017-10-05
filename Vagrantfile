@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
   # enable development hostname resolving
   config.landrush.enabled = true
   config.landrush.tld = "faalkaart.test"
-  config.vm.hostname = "faalserver"
+  config.vm.hostname = "faalserver.faalkaart.test"
 
   # ensure virtualbox shared folders are used
   # debian box does not have vbguest extensions by default (install vagrant-vbguest plugin)
