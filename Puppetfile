@@ -15,6 +15,7 @@ mod 'puppetlabs-vcsrepo'
 mod 'thias-php'
 # pin to latest puppet 3.x supported version
 mod 'puppetlabs-mysql', '<4.0.0'
+mod 'example42-network'
 
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',

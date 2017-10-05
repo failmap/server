@@ -1,2 +1,14 @@
 classes:
   - base
+  - network
+
+# ensure default ipv4 config and enable static ipv6
+network::interfaces_hash:
+  eth0:
+    enable_dhcp: true
+  eth0_v6:
+    interface: eth0
+    family: inet6
+    ipaddress: 2a01:7c8:aac0:56b:5054:ff:fe1f:cce8
+    netmask: 48
+    gateway: 2a01:7c8:aac0::1
