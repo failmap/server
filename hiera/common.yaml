@@ -84,7 +84,7 @@ firewall:
     action: accept
     provider: ip6tables
   100 v6 allow icmp:
-    proto: icmp
+    proto: ipv6-icmp
     action: accept
     provider: ip6tables
   100 v6 allow local:
