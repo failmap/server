@@ -14,7 +14,12 @@ before_script:
   - scripts/bootstrap.sh
   - make vendor/modules
 
+stages:
+  - check
+  - test
+
 check:
+  stage: check
   before_script:
     # install check requirements
     - apt-get update -yqq
@@ -23,6 +28,7 @@ check:
     - make check
 
 .provision_template: &provision_template
+  stage: test
   script:
     # provision with puppet
     - scripts/apply.sh
