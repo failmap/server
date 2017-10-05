@@ -23,7 +23,7 @@ ADD hiera hiera/
 ADD hiera.yaml ./
 
 ENV facter_env docker
-ENV facter_fqdn faalserver.faalkaart.dev
+ENV facter_fqdn faalserver.faalkaart.test
 ENV facter_ipaddress6 ::1
 ADD scripts/apply.sh scripts/
 RUN scripts/apply.sh

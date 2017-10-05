@@ -7,6 +7,11 @@ Vagrant.configure("2") do |config|
   # enable ipv6
   config.vm.network "private_network", ip: "fde4:8dba:82e1::c4"
 
+  # enable development hostname resolving
+  config.landrush.enabled = true
+  config.landrush.tld = "faalkaart.test"
+  config.vm.hostname = "faalserver"
+
   # ensure virtualbox shared folders are used
   # debian box does not have vbguest extensions by default (install vagrant-vbguest plugin)
   # and will default to rsync instead, which is broken and a less seamless experience

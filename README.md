@@ -11,7 +11,7 @@ The following tools are required to run the virtual machine:
 - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 - [Vagrant](https://www.vagrantup.com/downloads.html)
 - vagrant-vbguest (`vagrant plugin install vagrant-vbguest`)
-- vagrant-landrush (`vagrant plugin install vagrant-landrush`)
+- vagrant-landrush (`vagrant plugin install landrush`)
 
 ## Instructions
 
@@ -32,4 +32,4 @@ And can be stopped/removed using these commands:
 
 To access the website point your browser to:
 
-    http://faalserver.faalkaart.dev
+    http://faalserver.faalkaart.test

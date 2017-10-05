@@ -3,4 +3,4 @@
 # do not use production letsencrypt endpoint
 letsencrypt::staging: true
 
-sites::realm: faalserver.faalkaart.dev
+sites::realm: faalserver.faalkaart.test
