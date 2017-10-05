@@ -8,5 +8,5 @@ wget https://github.com/rbsec/sslscan/archive/1.11.0-rbsec.tar.gz
 tar zxf 1.11.0-rbsec.tar.gz
 pushd sslscan-1.11.0-rbsec/
 make sslscan
-sudo install sslscan /usr/local/bin/
+install sslscan /usr/local/bin/
 popd
