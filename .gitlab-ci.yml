@@ -1,4 +1,8 @@
-image: debian:jessie
+test:debian:
+  image: debian:jessie
+ 
+test:ubuntu:
+  image: ubuntu:xenial
 
 variables:
   FACTER_env: gitlab
