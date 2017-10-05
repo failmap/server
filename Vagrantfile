@@ -14,14 +14,14 @@ Vagrant.configure("2") do |config|
 
   # provision using puppet
   config.vm.provision "shell", inline: <<-SHELL
-    /vagrant/scripts/bootstrap.sh
-    /vagrant/scripts/apply.sh
+    /vagrant/scripts/bootstrap.sh || exit 1
+    /vagrant/scripts/apply.sh || exit 1
   SHELL
 
   # testsuite
   config.vm.provision "shell", inline: <<-SHELL
-    /vagrant/scripts/install_sslscan.sh
-    /vagrant/scripts/test.sh
+    /vagrant/scripts/install_sslscan.sh || exit 1
+    /vagrant/scripts/test.sh || exit 1
   SHELL
 
 end
