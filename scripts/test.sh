@@ -10,16 +10,6 @@ function failed {
   exit 1
 }
 
-### SETUP
-
-# start and wait for mysql
-/usr/sbin/mysqld &
-timeout 10 /bin/sh -c 'while ! nc localhost 3306 -w1 >/dev/null ;do sleep 1; done'
-
-# start and wait for nginx
-/usr/sbin/nginx -g 'daemon off;' &
-timeout 10 /bin/sh -c 'while ! nc localhost 80 -w1 2>/dev/null >/dev/null ;do sleep 1; done'
-
 ### TESTS
 
 # generate site
@@ -40,6 +30,7 @@ echo "$response" | grep 200 || failed "$response"
 response=$(curl -sSIk https://localhost/favicon.ico -H host:faalkaart.nl)
 echo "$response" | grep 200 || failed "$response"
 
+# content renders to the end
 response=$(curl -sSk https://localhost -H host:faalkaart.nl)
 echo "$response" | grep MSPAINT || failed "$(echo "$response"| tail)"
 
@@ -80,3 +71,9 @@ echo "$response" | grep 'Location: https://faalkaart.nl' || failed "$response"
 ## access denied
 response=$(curl -sSk https://localhost/index.php -H host:faalkaart.nl)
 echo "$response" | grep 403 || failed "$response"
+
+# success
+set +v
+echo
+echo -e "\e[92mAll good!\e[39m"
+echo
