@@ -2,12 +2,12 @@
 class pam_ssh_agent_auth (
   $key_dir='/etc/sudo_ssh_authorized_keys',
 ){
-  file { '/tmp/pam-ssh-agent-auth_0.10.2-0ubuntu0ppa1_amd64.deb':
+  file { '/var/tmp/pam-ssh-agent-auth_0.10.2-0ubuntu0ppa1_amd64.deb':
     source => 'puppet:///modules/pam_ssh_agent_auth/pam-ssh-agent-auth_0.10.2-0ubuntu0ppa1_amd64.deb',
   } ->
   package { 'pam-ssh-agent-auth':
     ensure   => latest,
-    source   => '/tmp/pam-ssh-agent-auth_0.10.2-0ubuntu0ppa1_amd64.deb',
+    source   => '/var/tmp/pam-ssh-agent-auth_0.10.2-0ubuntu0ppa1_amd64.deb',
     provider => dpkg,
   }
 
