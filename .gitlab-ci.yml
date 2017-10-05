@@ -1,7 +1,47 @@
-test:debian:
+variables:
+  FACTER_env: gitlab
+  FACTER_fqdn: faalserver.faalkaart.test
+  FACTER_ipaddress6: ::1
+
+before_script:
+  # install provision and test dependencies
+  - apt-get update -yqq
+  - apt-get install -yqq make ruby git netcat wget
+  - gem install librarian-puppet
+  # build and install sslscan
+  - scripts/install_sslscan.sh
+  # bootstrap provisioning
+  - scripts/bootstrap.sh
+  - make vendor/modules
+
+check:
+  before_script:
+    # install check requirements
+    - apt-get update -yqq
+    - apt-get install -yqq make puppet-lint shellcheck
+  script:
+    - make check
+
+.provision_template: &provision_template
+  script:
+    # provision with puppet
+    - scripts/apply.sh
+    # test
+    - scripts/test.sh
+    # save content for artifact
+    - curl -sSk https://localhost -H host:faalkaart.nl > index.html
+    - curl -sSkI https://localhost -H host:faalkaart.nl > response.txt
+  artifacts:
+    paths:
+      - index.html
+      - response.txt
+
+provision:debian:
+  <<: *provision_template
   image: debian:jessie
  
-test:ubuntu:
+provision:ubuntu:
+  <<: *provision_template
   image: ubuntu:xenial
 
 variables:
@@ -20,12 +60,7 @@ before_script:
   - scripts/bootstrap.sh
   - make vendor/modules
 
-stages:
-  - check
-  - provision
-
 check:
-  stage: check
   before_script:
     # install check requirements
     - apt-get update -yqq
@@ -33,8 +68,7 @@ check:
   script:
     - make check
 
-provision:
-  stage: provision
+.provision_template: &provision_template
   script:
     # provision with puppet
     - scripts/apply.sh
@@ -47,3 +81,12 @@ provision:
     paths:
       - index.html
       - response.txt
+
+provision:debian:
+  <<: *provision_template
+  image: debian:jessie
+ 
+provision:ubuntu:
+  <<: *provision_template
+  image: ubuntu:xenial
+
