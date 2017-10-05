@@ -8,15 +8,10 @@ variables:
 before_script:
   # install provision and test dependencies
   - apt-get update -yqq
-  - apt-get install -yqq make ruby git netcat build-essential libssl-dev wget
+  - apt-get install -yqq make ruby git netcat wget
   - gem install librarian-puppet
   # build and install sslscan
-  - wget https://github.com/rbsec/sslscan/archive/1.11.0-rbsec.tar.gz
-  - tar zxf 1.11.0-rbsec.tar.gz
-  - pushd sslscan-1.11.0-rbsec/
-  - make sslscan
-  - install sslscan /usr/local/bin/
-  - popd
+  - scripts/install_sslscan.sh
   # bootstrap provisioning
   - scripts/bootstrap.sh
   - make vendor/modules
