@@ -46,6 +46,5 @@ provision:
     - curl -sSkI https://localhost -H host:faalkaart.nl > response.txt
   artifacts:
     paths:
-      - Puppetfile.lock
       - index.html
       - response.txt
