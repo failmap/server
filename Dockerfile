@@ -28,5 +28,7 @@ ENV facter_ipaddress6 ::1
 ADD scripts/apply.sh scripts/
 RUN scripts/apply.sh
 
+ADD scripts/docker_test.sh scripts/
 ADD scripts/test.sh scripts/
-RUN scripts/test.sh
+
+RUN scripts/docker_test.sh
