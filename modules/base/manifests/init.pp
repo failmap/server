@@ -15,6 +15,9 @@ class base {
 
   # setup firewall
   class { '::firewall': }
+  resources { 'firewall':
+    purge => true,
+  }
   create_resources('firewall', hiera_hash('firewall', {}))
 
   # utility packages
