@@ -10,6 +10,9 @@ function failed {
   exit 1
 }
 
+### DEBUG CONTEXT
+netstat -talpen
+
 ### TESTS
 
 # generate site
