@@ -1,5 +1,8 @@
 classes:
   - sites
+  - docker
+  - docker::images
+  - docker::run_instance
 
 # site config
 sites::default_vhost_content: faal
@@ -28,6 +31,16 @@ sites::apps_static_php:
     mysql_db_user: faalkaart
     mysql_db_password: kaartfaal
     mysql_db_init_filename: sql/init.sql
+
+docker::images::images:
+    registry.gitlab.com/failmap/admin:
+      ensure: latest
+      image_tag: latest
+
+docker::run_instance::instance:
+    docker_test:
+      image: 'registry.gitlab.com/failmap/admin:latest'
+      command: 'runuwsgi'
 
 # users & sudo permissions
 accounts::users:

@@ -20,6 +20,9 @@ Vagrant.configure("2") do |config|
   # provision using puppet
   config.vm.provision "shell", inline: <<-SHELL
     /vagrant/scripts/bootstrap.sh || exit 1
+    # pull in puppet modules if required
+    # use tmp directory outside of vagrant root for performance and host conflict prevention
+    LIBRARIAN_PUPPET_TMP=/tmp make -C /vagrant Puppetfile.lock
     /vagrant/scripts/apply.sh || exit 1
   SHELL
 
