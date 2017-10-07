@@ -1,6 +1,7 @@
 # Configure the Admin frontend as well as the basic service requirements (database, queue broker)
 class apps::failmap::admin {
   $hostname = 'admin.faalkaart.nl'
+  $appname = 'failmap-admin'
 
   $db_name = 'failmap'
   $db_user = $db_name
@@ -20,7 +21,7 @@ class apps::failmap::admin {
     ensure    => latest,
     image_tag => latest,
   }
-  docker::run { 'failmap-admin':
+  docker::run { $appname:
     image   => 'registry.gitlab.com/failmap/admin:latest',
     command => 'runuwsgi',
     volumes => [
@@ -38,6 +39,6 @@ class apps::failmap::admin {
   }
 
   sites::vhosts::proxy { $hostname:
-    proxy => 'failmap-admin.docker:8000'
+    proxy => "${appname}.docker:8000",
   }
 }

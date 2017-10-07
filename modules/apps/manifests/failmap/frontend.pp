@@ -39,6 +39,6 @@ class apps::failmap::frontend (
   }
 
   sites::vhosts::proxy { $hostname:
-    proxy => "${appname}.docker:8000"
+    proxy => "${appname}.docker:8000",
   }
 }
