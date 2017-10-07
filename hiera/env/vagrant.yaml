@@ -1,0 +1,5 @@
+# configuration specific to Vagrant dev/test environment
+classes:
+  # configure and run docker daemon
+  - docker
+

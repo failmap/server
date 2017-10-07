@@ -1,5 +1,5 @@
 variables:
-  FACTER_env: gitlab
+  FACTER_env: gitlab-ci
   FACTER_fqdn: faalserver.faalkaart.test
   FACTER_ipaddress6: ::1
 

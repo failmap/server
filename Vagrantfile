@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
     # pull in puppet modules if required
     # use tmp directory outside of vagrant root for performance and host conflict prevention
     LIBRARIAN_PUPPET_TMP=/tmp make -C /vagrant Puppetfile.lock
-    /vagrant/scripts/apply.sh || exit 1
+    FACTER_env=vagrant /vagrant/scripts/apply.sh || exit 1
   SHELL
 
   # testsuite
