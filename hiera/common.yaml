@@ -4,6 +4,7 @@ classes:
   - sites
   - base::docker
   - apps::failmap::admin
+  - apps::failmap::frontend
 
 # site config
 sites::default_vhost_content: faal
@@ -32,3 +33,6 @@ sites::apps_static_php:
     mysql_db_user: faalkaart
     mysql_db_password: kaartfaal
     mysql_db_init_filename: sql/init.sql
+
+# temporary use different hostname demo purposes until current frontend can be replaced
+apps::failmap::frontend::hostname: demo.faalkaart.nl

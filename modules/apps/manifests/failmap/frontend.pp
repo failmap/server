@@ -1,26 +1,26 @@
-# Configure the Admin frontend as well as the basic service requirements (database, queue broker)
+# Configure the failmap frontend
 class apps::failmap::frontend (
   $hostname = 'faalkaart.nl'
 ){
+  include common
+
   $appname = 'failmap-frontend'
 
   $db_name = 'failmap'
-  $db_user = "${db_name}_ro"
+  $db_user = "${db_name}ro"
 
   # database readonly user
   $random_seed = file('/var/lib/puppet/.random_seed')
   $db_password = fqdn_rand_string(32, '', "${random_seed}${db_user}")
   mysql_user { "${db_user}@localhost":
-    password => $db_password,
-  }
-  mysql_grant { "${db_user}@localhost":
+    password_hash => mysql_password($db_password),
+  } ->
+  mysql_grant { "${db_user}@localhost/${db_name}.*":
+    user       => "${db_user}@localhost",
+    table      => "${db_name}.*",
     privileges => ['SELECT'],
   }
 
-  docker::image { 'registry.gitlab.com/failmap/admin':
-    ensure    => latest,
-    image_tag => latest,
-  }
   docker::run { $appname:
     image   => 'registry.gitlab.com/failmap/admin:latest',
     command => 'runuwsgi',
@@ -37,6 +37,9 @@ class apps::failmap::frontend (
       'ALLOWED_HOSTS' => $hostname,
     }
   }
+  # ensure containers are up before restarting nginx
+  # https://gitlab.com/failmap/server/issues/8
+  Docker::Run[$appname] -> Service['nginx']
 
   sites::vhosts::proxy { $hostname:
     proxy => "${appname}.docker:8000",

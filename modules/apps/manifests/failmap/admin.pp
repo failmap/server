@@ -1,5 +1,7 @@
 # Configure the Admin frontend as well as the basic service requirements (database, queue broker)
 class apps::failmap::admin {
+  include common
+
   $hostname = 'admin.faalkaart.nl'
   $appname = 'failmap-admin'
 
@@ -17,10 +19,6 @@ class apps::failmap::admin {
   }
 
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
-  docker::image { 'registry.gitlab.com/failmap/admin':
-    ensure    => latest,
-    image_tag => latest,
-  }
   docker::run { $appname:
     image   => 'registry.gitlab.com/failmap/admin:latest',
     command => 'runuwsgi',
@@ -37,8 +35,12 @@ class apps::failmap::admin {
       "ALLOWED_HOSTS=${hostname}",
     ]
   }
+  # ensure containers are up before restarting nginx
+  # https://gitlab.com/failmap/server/issues/8
+  Docker::Run[$appname] -> Service['nginx']
 
   sites::vhosts::proxy { $hostname:
-    proxy => "${appname}.docker:8000",
+    proxy            => "${appname}.docker:8000",
+    nowww_compliance => class_c,
   }
 }

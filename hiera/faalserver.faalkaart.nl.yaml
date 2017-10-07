@@ -22,6 +22,3 @@ network::interfaces_hash:
     ipaddress: 2a01:7c8:aac0:56b:5054:ff:fe1f:cce8
     netmask: 48
     gateway: 2a01:7c8:aac0::1
-
-# temporary use different hostname demo purposes until current frontend can be replaced
-apps::failmap::frontend::hostname: demo.faalkaart.nl
