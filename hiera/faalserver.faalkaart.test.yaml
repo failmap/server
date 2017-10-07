@@ -10,8 +10,7 @@ letsencrypt::staging: true
 sites::realm: faalserver.faalkaart.test
 
 # map public hostnames back to dev hostnames for test convenience
-hosts:
-  faalkaart.nl:
-    ip: 127.0.0.1
-  admin.faalkaart.nl:
-    ip: 127.0.0.1
+base::localhost_redirects:
+  - faalkaart.nl
+  - www.faalkaart.nl
+  - admin.faalkaart.nl
