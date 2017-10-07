@@ -15,7 +15,7 @@ class apps::failmap::admin {
     user     => $db_user,
     password => $db_password,
     host     => 'localhost',
-    grant    => ['SELECT', 'UPDATE', 'INSERT', 'DELETE'],
+    grant    => ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'CREATE', 'INDEX', 'DROP', 'ALTER'],
   }
 
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
