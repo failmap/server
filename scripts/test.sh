@@ -75,6 +75,12 @@ echo "$response" | grep 'Location: https://faalkaart.nl' || failed "$response"
 response=$(curl -sSk https://localhost/index.php -H host:faalkaart.nl)
 echo "$response" | grep 403 || failed "$response"
 
+## Admin frontend
+
+# should be alive
+response=$(curl -sSIk https://admin.faalkaart.nl)
+echo "$response" | grep 200 || failed "$response"
+
 # success
 set +v
 echo

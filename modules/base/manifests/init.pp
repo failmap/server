@@ -4,9 +4,6 @@ class base {
 
   include cron
 
-  # add some resource creations for modules not supporting them natively
-  create_resources('host', hiera_hash('hosts', {}))
-
   # some generic config for every host
 
   # enable apt unattended security upgrades

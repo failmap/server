@@ -1,6 +1,15 @@
 # settings for vagrant test environment
+classes:
+  - base
 
 # do not use production letsencrypt endpoint
 letsencrypt::staging: true
 
 sites::realm: faalserver.faalkaart.test
+
+hosts:
+  # map public hostnames back to dev hostnames
+  faalkaart.nl:
+    ip: 127.0.0.1
+  admin.faalkaart.nl:
+    ip: 127.0.0.1
