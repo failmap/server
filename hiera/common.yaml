@@ -1,14 +1,15 @@
+# application configuration independent of location or environment
 classes:
+  - base
   - sites
-  - docker
-  - docker::run_instance
+  - base::docker
   - apps::failmap::admin
 
 # site config
 sites::default_vhost_content: faal
 
 # letsencrypt account settings
-letsencrypt::email: info@faalkaart.nl
+letsencrypt::email: postmaster@example.com
 
 sites::apps_static_php:
   faalkaart.nl:
@@ -31,94 +32,3 @@ sites::apps_static_php:
     mysql_db_user: faalkaart
     mysql_db_password: kaartfaal
     mysql_db_init_filename: sql/init.sql
-
-docker::run_instance::instance:
-    resolver:
-      image: 'mgood/resolvable'
-      command: 'runuwsgi'
-      volumes:
-        - "/var/run/docker.sock:/tmp/docker.sock"
-        - "/etc/resolv.conf:/tmp/resolv.conf"
-
-# users & sudo permissions
-accounts::users:
-  test:
-    ensure: absent
-  aequitas:
-    sudo: true
-    keys:
-      key1:
-        type: ssh-rsa
-        key: AAAAB3NzaC1yc2EAAAABIwAAAQEAzTqFM62DY6nnBSEpO6lnFp80cAqs12rIfZ9iDZh/TvXuvVgrsKPaKTM5fLiulH+CntCxjmywEochYrLUiq2RnVVaoKGQsdRdCY9UGNhAK5l4v+5V5DiZBxVCEgfYwIdw1Jya+vMGKxhZ0VQprj5Yw98OfwvyX5ZksIJnHevNW+gYkeZtr0D8ETatx2ph7JI34bkSOQG607aaed8YB2U7oziTHiiuD553bSoVP26HozhLViliLGaGNOdhLZR8ionZKmc6zCrzSDb2iGPUOdjalYVxi9sqLjHwo0Mfj40AzsRYEhJ1E0LrTNA3pSjJULCWdheDEjzXpUViJlvN/2/HhQ==
-  failenschmidt:
-    keys:
-      failenschmidt:
-        type: ssh-rsa
-        key: AAAAB3NzaC1yc2EAAAADAQABAAABAQDqzPKED7azmfqjDQ6/qOOZwe6V9bZ3YDJ6UDJ9OHUPVaiKtaKDl+1OhTh3TRA+XkeOKk/8/de/TsbHYQ/100hOqx6yr+TW5ClGRVDNNBZ1LMDSk5WURFnT2cjodDznzLCdGLagMA2Trwc9yrv/m8lvn7cuAshgDj/7CTNGgPnnRvVnjp4Hu0Ca8e7RKEvqZvgqcuwPe304svE/PGT1Dth9xS26Xhjs82NOmJweZS+VycOV17pvtTDCmnMp6eBDQhgz90UuVK5n+8bMNA2PcIE/r21Pt8bJyIchRImEeLLs7IpS6gUfEQ5sGmyzP0yaztdE3aJi4LX+lzc3RHY9dXwf
-
-# basic firewall config
-firewall:
-  100 allow related, established:
-    proto: all
-    state:
-      - RELATED
-      - ESTABLISHED
-    action: accept
-  100 allow icmp:
-    proto: icmp
-    action: accept
-  100 allow local:
-    proto: all
-    iniface: lo
-    action: accept
-  200 allow ssh:
-    dport: ssh
-    action: accept
-  300 allow http traffic in:
-    dport: http
-    action: accept
-  300 allow https traffic in:
-    dport: https
-    action: accept
-  999 drop the rest:
-    proto: all
-    action: drop
-  # ipv6
-  100 v6 allow related, established:
-    proto: all
-    state:
-      - RELATED
-      - ESTABLISHED
-    action: accept
-    provider: ip6tables
-  100 v6 allow icmp:
-    proto: ipv6-icmp
-    action: accept
-    provider: ip6tables
-  100 v6 allow local:
-    proto: all
-    iniface: lo
-    action: accept
-    provider: ip6tables
-  200 v6 allow ssh:
-    dport: ssh
-    action: accept
-    provider: ip6tables
-  300 v6 allow http traffic in:
-    dport: http
-    action: accept
-    provider: ip6tables
-  300 v6 allow https traffic in:
-    dport: https
-    action: accept
-    provider: ip6tables
-  999 v6 drop the rest:
-    proto: all
-    action: drop
-    provider: ip6tables
-
-# ssh server configuration
-# https://forge.puppetlabs.com/saz/ssh#hiera-example
-ssh::storeconfigs_enabled: false
-ssh::server_options:
-  PasswordAuthentication: 'no'

@@ -1,6 +1,15 @@
+# configuration for production server
+# do not use these settings unless you are hosting for Internet cleanup foundation
+
 classes:
-  - base
+  # required for interface hash
   - network
+
+# letsencrypt account settings
+letsencrypt::email: info@faalkaart.nl
+
+# include settings for generic hosted/production instance
+env: hosted
 
 # ensure default ipv4 config and enable static ipv6
 network::interfaces_hash:
@@ -9,6 +18,7 @@ network::interfaces_hash:
   eth0_v6:
     interface: eth0
     family: inet6
+    # assigned by transip
     ipaddress: 2a01:7c8:aac0:56b:5054:ff:fe1f:cce8
     netmask: 48
     gateway: 2a01:7c8:aac0::1
