@@ -1,0 +1,6 @@
+FROM debian:jessie
+
+ADD scripts/bootstrap.sh scripts/bootstrap.sh
+RUN scripts/bootstrap.sh
+
+CMD ["/bin/bash"]

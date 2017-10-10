@@ -1,5 +1,8 @@
 # configuration dev/test
 
+# do not start docker daemon or assume systemd is available to manage containers
+base::docker::systemd: false
+
 # do not use production letsencrypt endpoint
 letsencrypt::staging: true
 

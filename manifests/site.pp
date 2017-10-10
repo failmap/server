@@ -10,3 +10,8 @@ notice("fqdn: ${::fqdn}, env: ${env}")
 # https://docs.puppet.com/hiera/3.1/puppet.html#assigning-classes-to-nodes-with-hiera-hierainclude
 hiera_include('classes', [])
 
+# # prevent calling systemd commands during container creation
+# Docker::Run {
+#   restart => no,
+#   volumes_from => 'resolver,
+# }

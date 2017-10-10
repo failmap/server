@@ -22,13 +22,14 @@ ADD modules modules/
 ADD hiera hiera/
 ADD hiera.yaml ./
 
-ENV facter_env docker
-ENV facter_fqdn faalserver.faalkaart.test
-ENV facter_ipaddress6 ::1
+ENV FACTER_env docker
+ENV FACTER_fqdn faalserver.faalkaart.test
+ENV FACTER_ipaddress6 ::1
 ADD scripts/apply.sh scripts/
-RUN scripts/apply.sh
 
-ADD scripts/docker_test.sh scripts/
-ADD scripts/test.sh scripts/
+# RUN scripts/apply.sh
+#
+# ADD scripts/docker_test.sh scripts/
+# ADD scripts/test.sh scripts/
 
-RUN scripts/docker_test.sh
+CMD [ "scripts/apply.sh" ]

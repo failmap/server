@@ -5,7 +5,7 @@ class base (
   include cron
 
   # utility packages
-  package { ['sl', 'atop', 'htop', 'unzip']:
+  package { ['sl', 'atop', 'htop', 'unzip', 'netcat']:
     ensure => latest,
   }
 

@@ -33,8 +33,17 @@ mrproper clean:
 
 # Docker stuff
 
+# Run test suite using Docker
 test:
-	docker build ${args} -t faalkaart .
+	docker run -ti \
+		--env FACTER_env=docker \
+		--env FACTER_fqdn=faalserver.faalkaart.test \
+		--env FACTER_ipaddress6=::1 \
+		--env DEBIAN_FRONTEND=noninteractive \
+		--volume /var/run/docker.sock:/var/run/docker.sock \
+		--volume $$PWD:/source/ \
+		bootstrapped \
+		source/scripts/docker_test.sh
 
 test_inspect:
 	docker run -p 80:80 -p 443:443 -ti faalkaart /bin/bash
