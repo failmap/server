@@ -34,7 +34,8 @@ class apps::failmap::admin {
       # make mysql accesible from within container
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       # expose static files to host for direct serving by webserver
-      "${appname}-static:/srv/${appname}",
+      # /srv/failmap-admin is a hardcoded path in admin app settings
+      "${appname}-static:/srv/failmap-admin/",
     ],
     env     => [
       'DB_ENGINE=mysql',
@@ -47,7 +48,6 @@ class apps::failmap::admin {
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
     ],
-    expose => [8000],
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8
@@ -58,6 +58,6 @@ class apps::failmap::admin {
     webroot          => "/srv/${appname}/",
     nowww_compliance => class_c,
     # use consul as proxy resolver
-    resolver         => ['localhost:8600'],
+    resolver         => ['127.0.0.1:8600'],
   }
 }
