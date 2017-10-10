@@ -5,7 +5,7 @@ host = faalserver.faalkaart.nl
 all: vendor/modules
 
 vendor/modules Puppetfile.lock: Puppetfile .librarian/puppet/config
-	librarian-puppet install
+	librarian-puppet install --verbose
 	touch vendor/modules Puppetfile.lock
 
 apply deploy: vendor/modules

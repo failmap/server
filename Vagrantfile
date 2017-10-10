@@ -19,17 +19,19 @@ Vagrant.configure("2") do |config|
 
   # provision using puppet
   config.vm.provision "shell", inline: <<-SHELL
-    /vagrant/scripts/bootstrap.sh || exit 1
+    set -e
+    /vagrant/scripts/bootstrap.sh
     # pull in puppet modules if required
     # use tmp directory outside of vagrant root for performance and host conflict prevention
     LIBRARIAN_PUPPET_TMP=/tmp make -C /vagrant Puppetfile.lock
-    FACTER_env=vagrant /vagrant/scripts/apply.sh || exit 1
+    FACTER_env=vagrant /vagrant/scripts/apply.sh
   SHELL
 
   # testsuite
   config.vm.provision "shell", inline: <<-SHELL
-    /vagrant/scripts/install_sslscan.sh || exit 1
-    /vagrant/scripts/test.sh || exit 1
+    set -e
+    /vagrant/scripts/install_sslscan.sh
+    /vagrant/scripts/test.sh
   SHELL
 
 end

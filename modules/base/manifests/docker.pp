@@ -1,11 +1,15 @@
 # application independent generic docker daemon configuration
 class base::docker {
-  # make docker container names resolvable on host OS
-  docker::run {'resolver':
-    image   => 'mgood/resolvable',
+  # use consul to provide service discovery and host->container DNS
+  include consul
+
+  # register docker container with consul for service discovery
+  docker::run {'register':
+    image   => 'gliderlabs/registrator:latest',
+    net     => host,
     volumes => [
       '/var/run/docker.sock:/tmp/docker.sock',
-      '/etc/resolv.conf:/tmp/resolv.conf',
     ],
+    command => '-internal consul://localhost:8500',
   }
 }

@@ -1,6 +1,9 @@
 FORGE
   remote: https://forgeapi.puppetlabs.com
   specs:
+    KyleAnderson-consul (3.0.0)
+      puppet-archive (< 2.0.0, >= 1.0.0)
+      puppetlabs-stdlib (< 5.0.0, >= 4.6.0)
     example42-network (3.3.9)
       puppetlabs-concat (< 6.0.0, >= 1.0.0)
       puppetlabs-stdlib (< 6.0.0, >= 2.0.1)
@@ -16,6 +19,8 @@ FORGE
       herculesteam-augeasproviders_core (< 3.0.0, >= 2.1.0)
       herculesteam-augeasproviders_sysctl (< 3.0.0, >= 2.1.0)
       puppetlabs-stdlib (< 5.0.0, >= 4.7.0)
+    puppet-archive (1.3.0)
+      puppetlabs-stdlib (< 5.0.0, >= 4.6.0)
     puppet-nginx (0.6.0)
       puppetlabs-apt (< 3.0.0, >= 2.1.0)
       puppetlabs-concat (< 3.0.0, >= 1.2.5)
@@ -54,8 +59,8 @@ GIT
 
 GIT
   remote: https://github.com/aequitas/puppet-sites.git
-  ref: 9eef5c8b94c03af447cba6022beb54e84950dbca
-  sha: 9eef5c8b94c03af447cba6022beb54e84950dbca
+  ref: 0358dadecfe21e6b28fc0eba622f68a9255d382e
+  sha: 0358dadecfe21e6b28fc0eba622f68a9255d382e
   specs:
     aequitas-sites (0.1.0)
       puppet-nginx (>= 0.6.0)
@@ -63,6 +68,7 @@ GIT
       rodjek-logrotate (>= 1.1.1)
 
 DEPENDENCIES
+  KyleAnderson-consul (>= 3.0.0)
   aequitas-letsencrypt (>= 0)
   aequitas-sites (>= 0)
   example42-network (>= 0)
