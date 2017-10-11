@@ -42,13 +42,16 @@ class apps::failmap::frontend (
       "${appname}-static:/srv/failmap-admin/",
     ],
     env     => [
+      # database settings
       'DB_ENGINE=mysql',
       'DB_HOST=/var/run/mysqld/mysqld.sock',
       "DB_NAME=${db_name}",
       "DB_USER=${db_user}",
       "DB_PASSWORD=${db_password}",
+      # django generic settings
       "SECRET_KEY=${secret_key}",
       "ALLOWED_HOSTS=${hostname}",
+      'DEBUG=0',
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
     ],

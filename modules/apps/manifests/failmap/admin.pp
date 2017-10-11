@@ -53,6 +53,7 @@ class apps::failmap::admin {
       # django generic settings
       "SECRET_KEY=${secret_key}",
       "ALLOWED_HOSTS=${hostname}",
+      'DEBUG=0',
       # message broker settings
       "CELERY_BROKER_URL=${broker}",
       # name by which service is known to service discovery (consul)
