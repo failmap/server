@@ -2,40 +2,48 @@
 
 # setup test environment and run crude integration tests
 
-exec 2>&1
-set -ve -o pipefail
+domain=${1:-faalkaart.nl}
+
+if ping6 -c1 "$domain"; then
+  v6=true
+else
+  echo "Notice: Skipping IPv6 tests due to IPv6 unavailability!"
+  v6=false
+fi
 
 function failed {
   echo "$1"
   exit 1
 }
 
-### DEBUG CONTEXT
-netstat -talpen
+exec 2>&1
+set -ve -o pipefail
 
 ### TESTS
 
 # ok scenario
 # site should be accessible over IPv4 HTTPS
-response=$(curl -sSIk https://faalkaart.nl)
+response=$(curl -sSIk "https://$domain")
 echo "$response" | grep 200 || failed "$response"
 
-# site should be accessible over IPv6 HTTPS
-response=$(curl -6 -sSIk https://faalkaart.nl)
+if $v6;then
+  # site should be accessible over IPv6 HTTPS
+  response=$(curl -6 -sSIk "https://$domain")
+  echo "$response" | grep 200 || failed "$response"
+fi
+
+response=$(curl -sSIk "https://$domain/index.html")
 echo "$response" | grep 200 || failed "$response"
 
-response=$(curl -sSIk https://faalkaart.nl/index.html)
-echo "$response" | grep 200 || failed "$response"
-
-response=$(curl -sSIk https://faalkaart.nl/favicon.ico)
+response=$(curl -sSIk "https://$domain/favicon.ico")
 echo "$response" | grep 200 || failed "$response"
 
 # content renders to the end
-response=$(curl -sSk https://faalkaart.nl)
+response=$(curl -sSk "https://$domain")
 echo "$response" | grep MSPAINT || failed "$(echo "$response"| tail)"
 
 # HSTS enabled
-response=$(curl -sSIk https://faalkaart.nl)
+response=$(curl -sSIk "https://$domain")
 echo "$response" | grep 'Strict-Transport-Security: max-age=31536000; includeSubdomains' || failed "$(echo "$response"| tail)"
 response=$(curl -sSI http://faalkaart.nl)
 echo "$response" | grep 'Strict-Transport-Security: max-age=31536000; includeSubdomains' || failed "$(echo "$response"| tail)"
@@ -61,21 +69,21 @@ regex="\s($(echo -n "$weak_cryptos"|tr '\n' '|'))\s"
 # http -> https
 response=$(curl -sSI http://faalkaart.nl)
 echo "$response" | grep 301 || failed "$response"
-echo "$response" | grep 'Location: https://faalkaart.nl' || failed "$response"
+echo "$response" | grep "Location: https://$domain" || failed "$response"
 
 # www -> no-www
 response=$(curl -sSIk https://www.faalkaart.nl)
 echo "$response" | grep 301 || failed "$response"
-echo "$response" | grep 'Location: https://faalkaart.nl' || failed "$response"
+echo "$response" | grep "Location: https://$domain" || failed "$response"
 
 ## access denied
-response=$(curl -sSk https://faalkaart.nl/index.php)
+response=$(curl -sSk "https://$domain/index.php")
 echo "$response" | grep 403 || failed "$response"
 
 ## Admin frontend
 
 # should be alive
-response=$(curl -sSIk https://admin.faalkaart.nl)
+response=$(curl -sSIk "https://admin.$domain")
 echo "$response" | grep 200 || failed "$response"
 
 # success
