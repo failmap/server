@@ -14,7 +14,7 @@ class base::env::hosted (
     # remove all unmanaged firewall rules except for docker engine rules.
     firewallchain { 'FORWARD:filter:IPv4':
       purge  => true,
-      ignore => [ 'docker', 'DOCKER-ISOLATION' ],
+      ignore => [ '(?i)(docker|DOCKER-ISOLATION|br-)' ],
     }
     firewallchain { 'DOCKER:filter:IPv4':
       purge  => false,
@@ -27,7 +27,7 @@ class base::env::hosted (
     }
     firewallchain { 'POSTROUTING:nat:IPv4':
       purge  => true,
-      ignore => [ 'docker', '172.17' ],
+      ignore => [ 'docker', '172\.' ],
     }
     firewallchain { 'PREROUTING:nat:IPv4':
       purge  => true,

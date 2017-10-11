@@ -6,7 +6,7 @@ classes:
   - docker
 
 # use docker friendly firewall purge on hosted environment
-base::end::hosted::docker: true
+base::env::hosted::docker: true
 
 # users & sudo permissions
 accounts::users:
