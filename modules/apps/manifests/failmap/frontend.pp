@@ -51,7 +51,7 @@ class apps::failmap::frontend (
       # django generic settings
       "SECRET_KEY=${secret_key}",
       "ALLOWED_HOSTS=${hostname}",
-      'DEBUG=0',
+      'DEBUG=',
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
     ],
