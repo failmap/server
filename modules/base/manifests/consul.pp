@@ -2,6 +2,7 @@
 class base::consul (
   $dc = dc1,
 ){
+  Package['unzip'] ->
   class { '::consul':
     version       => '0.9.3',
     config_hash   => {

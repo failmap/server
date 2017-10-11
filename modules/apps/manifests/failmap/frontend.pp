@@ -21,6 +21,7 @@ class apps::failmap::frontend (
     privileges => ['SELECT'],
   }
 
+  Class['docker'] ->
   file { "/srv/${appname}/":
     ensure => directory,
   } ->

@@ -22,6 +22,7 @@ class apps::failmap::admin {
     grant    => ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'CREATE', 'INDEX', 'DROP', 'ALTER'],
   }
 
+  Class['docker'] ->
   file { "/srv/${appname}/":
     ensure => directory,
   } ->
