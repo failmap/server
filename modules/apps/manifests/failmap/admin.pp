@@ -1,7 +1,7 @@
 # Configure the Admin frontend as well as the basic service requirements (database, queue broker)
-class apps::failmap::admin {
-  include common
-
+class apps::failmap::admin (
+  $pod = $apps::failmap::pod
+){
   $broker = 'amqp://guest:guest@broker:5672//'
 
   $hostname = 'admin.faalkaart.nl'
@@ -59,12 +59,12 @@ class apps::failmap::admin {
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
     ],
+    net => $pod,
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8
   Docker::Run[$appname] -> Service['nginx']
 
-  base::docker::network_connect { "broker@${appname}": }
 
   sites::vhosts::proxy { $hostname:
     proxy            => "${appname}.service.${base::consul::dc}.consul:8000",

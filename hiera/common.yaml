@@ -3,7 +3,8 @@ classes:
   - base
   - sites
   - base::docker
-  - base::broker
+  - apps::failmap
+  - apps::failmap::broker
   - apps::failmap::admin
   - apps::failmap::frontend
   - apps::failmap::worker

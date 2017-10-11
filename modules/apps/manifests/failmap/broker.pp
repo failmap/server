@@ -1,8 +1,9 @@
 # configure message broker (rmq)
-class base::broker {
-  Docker_network[broker] ->
+class apps::failmap::broker (
+  $pod = $apps::failmap::pod
+){
   docker::run {'broker':
     image => 'rabbitmq',
-    net   => 'broker'
+    net   => $pod
   }
 }

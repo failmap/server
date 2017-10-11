@@ -1,9 +1,8 @@
 # Configure the failmap frontend
 class apps::failmap::frontend (
-  $hostname = 'faalkaart.nl'
+  $hostname = 'faalkaart.nl',
+  $pod = $apps::failmap::pod,
 ){
-  include common
-
   $appname = 'failmap-frontend'
 
   $db_name = 'failmap'
@@ -55,6 +54,7 @@ class apps::failmap::frontend (
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
     ],
+    net => $pod,
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8

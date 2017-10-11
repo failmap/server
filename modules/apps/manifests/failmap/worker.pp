@@ -1,9 +1,8 @@
 # Configure the failmap worker
 class apps::failmap::worker (
-  $hostname = 'faalkaart.nl'
+  $hostname = 'faalkaart.nl',
+  $pod = $apps::failmap::pod,
 ){
-  include common
-
   $appname = 'failmap-worker'
 
   $broker = 'amqp://guest:guest@broker:5672//'
@@ -16,6 +15,6 @@ class apps::failmap::worker (
       "SERVICE_NAME=${appname}",
       "CELERY_BROKER_URL=${broker}",
     ],
-    net     => 'broker',
+    net     => $pod,
   }
 }
