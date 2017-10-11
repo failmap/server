@@ -4,6 +4,11 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "debian/jessie64"
 
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2500
+    v.cpus = 3
+  end
+
   # enable ipv6
   config.vm.network "private_network", ip: "fde4:8dba:82e1::c4"
 
