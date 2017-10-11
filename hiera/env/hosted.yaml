@@ -5,6 +5,9 @@ classes:
   # configure and run docker daemon
   - docker
 
+# use docker friendly firewall purge on hosted environment
+base::end::hosted::docker: true
+
 # users & sudo permissions
 accounts::users:
   test:

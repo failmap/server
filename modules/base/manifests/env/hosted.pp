@@ -1,6 +1,8 @@
 # include base configuration applying only to hosted environment and which don't fit easily in hiera
 # generic system configuration (users, accounts, ntp, ssh, security, etc)
-class base::env::hosted {
+class base::env::hosted (
+  $docker=false,
+){
 
   # enable apt unattended security upgrades
   class { '::apt': }
@@ -8,9 +10,42 @@ class base::env::hosted {
 
   # setup firewall
   class { '::firewall': }
-  resources { 'firewall':
-    purge => true,
+  if $docker {
+    # remove all unmanaged firewall rules except for docker engine rules.
+    firewallchain { 'FORWARD:filter:IPv4':
+      purge  => true,
+      ignore => [ 'docker', 'DOCKER-ISOLATION' ],
+    }
+    firewallchain { 'DOCKER:filter:IPv4':
+      purge  => false,
+    }
+    firewallchain { 'DOCKER-ISOLATION:filter:IPv4':
+      purge  => false,
+    }
+    firewallchain { 'DOCKER:nat:IPv4':
+      purge  => false,
+    }
+    firewallchain { 'POSTROUTING:nat:IPv4':
+      purge  => true,
+      ignore => [ 'docker', '172.17' ],
+    }
+    firewallchain { 'PREROUTING:nat:IPv4':
+      purge  => true,
+      ignore => [ 'DOCKER' ],
+    }
+
+    #ensure input rules are cleaned out
+    firewallchain { 'INPUT:filter:IPv4':
+      ensure => present,
+      purge  => true,
+    }
+  } else {
+    # remove all unmanaged firewall rules
+    resources { 'firewall':
+      purge => true,
+    }
   }
+
   create_resources('firewall', hiera_hash('firewall', {}))
 
   # enable ntp
