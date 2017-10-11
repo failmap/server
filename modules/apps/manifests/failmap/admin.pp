@@ -2,11 +2,15 @@
 class apps::failmap::admin {
   include common
 
+  $broker = 'amqp://guest:guest@broker:5672//'
+
   $hostname = 'admin.faalkaart.nl'
   $appname = 'failmap-admin'
 
   $db_name = 'failmap'
   $db_user = $db_name
+
+  $image = 'registry.gitlab.com/failmap/admin:latest'
 
   # database
   $random_seed = file('/var/lib/puppet/.random_seed')
@@ -27,8 +31,9 @@ class apps::failmap::admin {
   } -> Docker::Run[$appname]
 
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
+  Docker::Image['registry.gitlab.com/failmap/admin'] ~>
   docker::run { $appname:
-    image   => 'registry.gitlab.com/failmap/admin:latest',
+    image   => $image,
     command => 'runuwsgi',
     volumes => [
       # make mysql accesible from within container
@@ -38,15 +43,22 @@ class apps::failmap::admin {
       "${appname}-static:/srv/failmap-admin/",
     ],
     env     => [
+      # database settings
       'DB_ENGINE=mysql',
       'DB_HOST=/var/run/mysqld/mysqld.sock',
       "DB_NAME=${db_name}",
       "DB_USER=${db_user}",
       "DB_PASSWORD=${db_password}",
+      # django generic settings
       "SECRET_KEY=${secret_key}",
       "ALLOWED_HOSTS=${hostname}",
+      # message broker settings
+      "CELERY_BROKER_URL=${broker}",
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
+    ],
+    links   => [
+      'broker:broker',
     ],
   }
   # ensure containers are up before restarting nginx
@@ -60,4 +72,15 @@ class apps::failmap::admin {
     # use consul as proxy resolver
     resolver         => ['127.0.0.1:8600'],
   }
+
+  # add convenience command to run admin actions via container
+  file { '/usr/local/bin/failmap-admin':
+    content => "#!/bin/bash\n/usr/bin/docker exec -ti ${appname} $(basename \"\$0\") \$*",
+    mode    => '0755',
+  }
+  file { '/usr/local/bin/failmap-admin-shell':
+    content => "#!/bin/bash\n/usr/bin/docker exec -ti ${appname} /bin/bash",
+    mode    => '0755',
+  }
+
 }

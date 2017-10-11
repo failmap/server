@@ -3,8 +3,10 @@ classes:
   - base
   - sites
   - base::docker
+  - base::broker
   - apps::failmap::admin
   - apps::failmap::frontend
+  - apps::failmap::worker
 
 # site config
 sites::default_vhost_content: faal

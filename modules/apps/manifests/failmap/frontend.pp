@@ -30,6 +30,7 @@ class apps::failmap::frontend (
   } -> Docker::Run[$appname]
 
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
+  Docker::Image['registry.gitlab.com/failmap/admin'] ~>
   docker::run { $appname:
     image   => 'registry.gitlab.com/failmap/admin:latest',
     command => 'runuwsgi',
