@@ -59,13 +59,12 @@ class apps::failmap::admin {
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
     ],
-    links   => [
-      'broker:broker',
-    ],
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8
   Docker::Run[$appname] -> Service['nginx']
+
+  base::docker::network_connect { "broker@${appname}": }
 
   sites::vhosts::proxy { $hostname:
     proxy            => "${appname}.service.${base::consul::dc}.consul:8000",

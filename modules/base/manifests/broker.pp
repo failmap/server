@@ -1,6 +1,8 @@
 # configure message broker (rmq)
 class base::broker {
+  Docker_network[broker] ->
   docker::run {'broker':
-    image   => 'rabbitmq',
+    image => 'rabbitmq',
+    net   => 'broker'
   }
 }

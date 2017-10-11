@@ -4,4 +4,8 @@ class apps::failmap::common {
     ensure    => latest,
     image_tag => latest,
   }
+
+  docker_network { 'broker':
+    ensure => present,
+  }
 }

@@ -16,8 +16,6 @@ class apps::failmap::worker (
       "SERVICE_NAME=${appname}",
       "CELERY_BROKER_URL=${broker}",
     ],
-    links   => [
-      'broker:broker',
-    ],
+    net     => 'broker',
   }
 }
