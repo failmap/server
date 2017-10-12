@@ -18,13 +18,14 @@ mod 'puppetlabs-mysql', '<4.0.0'
 mod 'example42-network'
 mod 'garethr-docker'
 mod 'KyleAnderson/consul', '>=3.0.0'
+mod 'vshn/gitlab'
 
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',
   :ref => 'master'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
-  :ref => '0358dadecfe21e6b28fc0eba622f68a9255d382e'
+  :ref => '6e9b91baec8eee5352d9dd31a71f6f73007a5393'
   # :path => '../../puppet-sites'
 
 # indirect dependencies to pin version

@@ -48,6 +48,9 @@ FORGE
     stahnma-epel (1.2.2)
       puppetlabs-stdlib (>= 3.0.0)
     thias-php (1.2.1)
+    vshn-gitlab (1.15.2)
+      puppetlabs-apt (< 3.0.0, >= 2.1.0)
+      puppetlabs-stdlib (~> 4.0)
 
 GIT
   remote: https://github.com/aequitas/puppet-letsencrypt.git
@@ -59,8 +62,8 @@ GIT
 
 GIT
   remote: https://github.com/aequitas/puppet-sites.git
-  ref: 0358dadecfe21e6b28fc0eba622f68a9255d382e
-  sha: 0358dadecfe21e6b28fc0eba622f68a9255d382e
+  ref: 6e9b91baec8eee5352d9dd31a71f6f73007a5393
+  sha: 6e9b91baec8eee5352d9dd31a71f6f73007a5393
   specs:
     aequitas-sites (0.1.0)
       puppet-nginx (>= 0.6.0)
@@ -84,4 +87,5 @@ DEPENDENCIES
   puppetlabs-vcsrepo (>= 0)
   saz-ssh (>= 0)
   thias-php (>= 0)
+  vshn-gitlab (>= 0)
 

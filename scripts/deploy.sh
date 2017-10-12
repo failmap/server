@@ -5,7 +5,7 @@ set -e
 host=$1
 shift
 
-sync=(hiera manifests modules scripts hiera.yaml vendor)
+sync=(hiera manifests modules scripts keys hiera.yaml vendor)
 
 rsync -v -a --delete --no-motd \
   --include 'vendor/modules/*/files/' \

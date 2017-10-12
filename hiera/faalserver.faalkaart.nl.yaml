@@ -4,6 +4,8 @@
 classes:
   # required for interface hash
   - network
+  - base::gitlab_cirunner
+
 
 # letsencrypt account settings
 letsencrypt::email: info@faalkaart.nl
@@ -22,3 +24,14 @@ network::interfaces_hash:
     ipaddress: 2a01:7c8:aac0:56b:5054:ff:fe1f:cce8
     netmask: 48
     gateway: 2a01:7c8:aac0::1
+
+gitlab::cirunner::concurrent: 4
+gitlab_ci_runners:
+  test_runner1: {}
+  test_runner2: {}
+  test_runner3: {}
+  test_runner4: {}
+gitlab_ci_runners_defaults:
+  url: "https://gitlab.com"
+  executor: "docker"
+  docker-image: "ubuntu:trusty"
