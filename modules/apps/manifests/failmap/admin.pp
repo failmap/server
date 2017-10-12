@@ -1,6 +1,7 @@
 # Configure the Admin frontend as well as the basic service requirements (database, queue broker)
 class apps::failmap::admin (
-  $pod = $apps::failmap::pod
+  $pod = $apps::failmap::pod,
+  $client_ca=undef,
 ){
   $broker = 'amqp://guest:guest@broker:5672//'
 
@@ -76,6 +77,7 @@ class apps::failmap::admin (
     nowww_compliance => class_c,
     # use consul as proxy resolver
     resolver         => ['127.0.0.1:8600'],
+    client_ca        => $client_ca,
   }
 
   # add convenience command to run admin actions via container
