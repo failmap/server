@@ -19,6 +19,10 @@ class apps::failmap::admin (
     user     => $db_user,
     password => $db_password,
     host     => 'localhost',
+    # make default charset and collate explicit
+    charset  => utf8,
+    collate  => utf8_general_ci,
+    # admin requires all permissions to manage database (and migrations)
     grant    => ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'CREATE', 'INDEX', 'DROP', 'ALTER'],
   }
 
@@ -59,7 +63,7 @@ class apps::failmap::admin (
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
     ],
-    net => $pod,
+    net     => $pod,
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8
