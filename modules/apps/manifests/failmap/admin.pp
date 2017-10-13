@@ -78,6 +78,9 @@ class apps::failmap::admin (
     # use consul as proxy resolver
     resolver         => ['127.0.0.1:8600'],
     client_ca        => $client_ca,
+    # admin is accessible for authenticated users only that need to see a live view
+    # of changes, do not cache anything
+    caching          => disabled,
   }
 
   # add convenience command to run admin actions via container

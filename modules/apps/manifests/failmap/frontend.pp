@@ -54,7 +54,7 @@ class apps::failmap::frontend (
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
     ],
-    net => $pod,
+    net     => $pod,
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8
@@ -66,5 +66,8 @@ class apps::failmap::frontend (
     nowww_compliance => class_c,
     # use consul as proxy resolver
     resolver         => ['127.0.0.1:8600'],
+    # allow upstream to set caching headers, cache upstream responses
+    # and serve stale results if backend is unavailable or broken
+    caching          => upstream,
   }
 }

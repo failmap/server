@@ -86,6 +86,26 @@ echo "$response" | grep 403 || failed "$response"
 response=$(curl -sSIk "https://admin.$domain")
 echo "$response" | grep 200 || failed "$response"
 
+# caching should be disabled
+response=$(curl -sSIk "https://admin.$domain")
+echo "$response" | grep 'Cache-Control: no-cache' || failed "$response"
+
+## Demo
+
+# should be alive
+response=$(curl -sSIk "https://demo.$domain")
+echo "$response" | grep 200 || failed "$response"
+
+# cache should be enabled
+# app does not set cache for the index, webserver default should be used
+response=$(curl -sSIk "https://demo.$domain")
+echo "$response" | grep 'Cache-Control: max-age=600' || failed "$response"
+
+# static file cache is determined by webserver
+# stats have a 1 day cache which is different from the webserver 10 minute default
+response=$(curl -sSIk "https://demo.$domain/data/stats/0")
+echo "$response" | grep 'Cache-Control: max-age=86400' || failed "$response"
+
 # success
 set +v
 echo
