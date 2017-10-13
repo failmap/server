@@ -50,7 +50,7 @@ class apps::failmap::admin (
     ],
     env     => [
       # database settings
-      'DB_ENGINE=mysql',
+      'DJANGO_DATABASE=production',
       'DB_HOST=/var/run/mysqld/mysqld.sock',
       "DB_NAME=${db_name}",
       "DB_USER=${db_user}",
