@@ -20,7 +20,6 @@ class apps::failmap::frontend (
     privileges => ['SELECT'],
   }
 
-  Class['docker'] ->
   file { "/srv/${appname}/":
     ensure => directory,
   } ->
@@ -28,6 +27,10 @@ class apps::failmap::frontend (
     command => "/usr/bin/docker volume create --name ${appname}-static --opt type=none --opt device=/srv/${appname}/ --opt o=bind",
     unless  => "/usr/bin/docker volume inspect ${appname}-static",
   } -> Docker::Run[$appname]
+  # if docker provisioned by puppet, ensure it is running before creating volume
+  if defined ('docker') {
+    Class['docker'] -> Exec["docker-volume-${appname}-static"]
+  }
 
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
   Docker::Image['registry.gitlab.com/failmap/admin'] ~>
