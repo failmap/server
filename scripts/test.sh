@@ -19,6 +19,12 @@ function failed {
 exec 2>&1
 set -ve -o pipefail
 
+# give docker apps a little room to come online after an initial provision
+for app in admin.$domain demo.$domain; do
+  # try every second for 10 second to get a good response from app
+  timeout 10 /bin/sh -c "while ! curl -sSIk https://\"$app\" | grep 200;do sleep 1;done"
+done
+
 ### TESTS
 
 # ok scenario

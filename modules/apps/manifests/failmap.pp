@@ -7,7 +7,8 @@ class apps::failmap (
     image_tag => latest,
   }
 
+  # create application group network before starting containers
   docker_network { $pod:
     ensure => present,
-  }
+  } -> Docker::Run <| |>
 }
