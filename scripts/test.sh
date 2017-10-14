@@ -115,6 +115,7 @@ echo "$response" | grep 'Cache-Control: max-age=86400' || failed "$response"
 
 # webserver should serve stale responses if backend is down
 # indirectly this tests server caching as well
+curl -sSIk "https://demo.$domain"
 systemctl stop docker-failmap-frontend.service
 response=$(curl -sSIk "https://demo.$domain")
 echo "$response" | grep 200 || failed "$response"
