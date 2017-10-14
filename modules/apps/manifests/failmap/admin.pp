@@ -1,6 +1,7 @@
 # Configure the Admin frontend as well as the basic service requirements (database, queue broker)
 class apps::failmap::admin (
   $pod = $apps::failmap::pod,
+  $image = $apps::failmap::image,
   $client_ca=undef,
 ){
   $broker = 'amqp://guest:guest@broker:5672//'
@@ -10,8 +11,6 @@ class apps::failmap::admin (
 
   $db_name = 'failmap'
   $db_user = $db_name
-
-  $image = 'registry.gitlab.com/failmap/admin:latest'
 
   # database
   $random_seed = file('/var/lib/puppet/.random_seed')
@@ -40,7 +39,24 @@ class apps::failmap::admin (
   }
 
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
-  Docker::Image['registry.gitlab.com/failmap/admin'] ~>
+  $docker_environment = [
+    # database settings
+    'DJANGO_DATABASE=production',
+    'DB_HOST=/var/run/mysqld/mysqld.sock',
+    "DB_NAME=${db_name}",
+    "DB_USER=${db_user}",
+    "DB_PASSWORD=${db_password}",
+    # django generic settings
+    "SECRET_KEY=${secret_key}",
+    "ALLOWED_HOSTS=${hostname}",
+    'DEBUG=',
+    # message broker settings
+    "CELERY_BROKER_URL=${broker}",
+    # name by which service is known to service discovery (consul)
+    "SERVICE_NAME=${appname}",
+  ]
+
+  Docker::Image[$image] ~>
   docker::run { $appname:
     image   => $image,
     command => 'runuwsgi',
@@ -51,22 +67,7 @@ class apps::failmap::admin (
       # /srv/failmap-admin is a hardcoded path in admin app settings
       "${appname}-static:/srv/failmap-admin/",
     ],
-    env     => [
-      # database settings
-      'DJANGO_DATABASE=production',
-      'DB_HOST=/var/run/mysqld/mysqld.sock',
-      "DB_NAME=${db_name}",
-      "DB_USER=${db_user}",
-      "DB_PASSWORD=${db_password}",
-      # django generic settings
-      "SECRET_KEY=${secret_key}",
-      "ALLOWED_HOSTS=${hostname}",
-      'DEBUG=',
-      # message broker settings
-      "CELERY_BROKER_URL=${broker}",
-      # name by which service is known to service discovery (consul)
-      "SERVICE_NAME=${appname}",
-    ],
+    env     => $docker_environment,
     net     => $pod,
   }
   # ensure containers are up before restarting nginx
@@ -87,13 +88,23 @@ class apps::failmap::admin (
   }
 
   # add convenience command to run admin actions via container
+  $docker_environment_args = join(prefix($docker_environment, '-e'), ' ')
   file { '/usr/local/bin/failmap-admin':
-    content => "#!/bin/bash\n/usr/bin/docker exec -ti ${appname} $(basename \"\$0\") \$*",
-    mode    => '0755',
+    content => "#!/bin/bash\n/usr/bin/docker run -ti ${docker_environment_args} \
+                -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock ${image} \$*",
+    mode    => '0700',
   }
   file { '/usr/local/bin/failmap-admin-shell':
     content => "#!/bin/bash\n/usr/bin/docker exec -ti ${appname} /bin/bash",
     mode    => '0755',
   }
 
+  # run migration in a separate container
+  Docker::Image[$image] ~>
+  exec {"${appname}-migrate":
+    command     => "/usr/bin/docker run ${docker_environment_args} \
+                    -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
+                    ${image} migrate --noinput",
+    refreshonly => true,
+  }
 }

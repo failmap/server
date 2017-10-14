@@ -1,9 +1,11 @@
 # resources shared by frontend, admin and workers
 class apps::failmap (
   $pod='failmap',
+  $image='registry.gitlab.com/failmap/admin:latest',
 ){
-  docker::image { 'registry.gitlab.com/failmap/admin':
+  docker::image { $image:
     ensure    => latest,
+    image     => 'registry.gitlab.com/failmap/admin',
     image_tag => latest,
   }
 

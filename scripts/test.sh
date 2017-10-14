@@ -109,6 +109,7 @@ echo "$response" | grep 'Cache-Control: max-age=600' || failed "$response"
 
 # static file cache is determined by webserver
 # stats have a 1 day cache which is different from the webserver 10 minute default
+# implicitly tests database migrations as it will return 500 if they are not applied
 response=$(curl -sSIk "https://demo.$domain/data/stats/0")
 echo "$response" | grep 'Cache-Control: max-age=86400' || failed "$response"
 

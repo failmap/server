@@ -2,6 +2,7 @@
 class apps::failmap::frontend (
   $hostname = 'faalkaart.nl',
   $pod = $apps::failmap::pod,
+  $image = $apps::failmap::image,
 ){
   $appname = 'failmap-frontend'
 
@@ -33,9 +34,9 @@ class apps::failmap::frontend (
   }
 
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
-  Docker::Image['registry.gitlab.com/failmap/admin'] ~>
+  Docker::Image[$image] ~>
   docker::run { $appname:
-    image   => 'registry.gitlab.com/failmap/admin:latest',
+    image   => $image,
     command => 'runuwsgi',
     volumes => [
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',

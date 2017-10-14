@@ -2,14 +2,15 @@
 class apps::failmap::worker (
   $hostname = 'faalkaart.nl',
   $pod = $apps::failmap::pod,
+  $image = $apps::failmap::image,
 ){
   $appname = 'failmap-worker'
 
   $broker = 'amqp://guest:guest@broker:5672//'
 
-  Docker::Image['registry.gitlab.com/failmap/admin'] ~>
+  Docker::Image[$image] ~>
   docker::run { $appname:
-    image   => 'registry.gitlab.com/failmap/admin:latest',
+    image   => $image,
     command => 'celery worker',
     env     => [
       "SERVICE_NAME=${appname}",
