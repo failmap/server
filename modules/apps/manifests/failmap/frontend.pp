@@ -21,18 +21,6 @@ class apps::failmap::frontend (
     privileges => ['SELECT'],
   }
 
-  file { "/srv/${appname}/":
-    ensure => directory,
-  } ->
-  exec { "docker-volume-${appname}-static":
-    command => "/usr/bin/docker volume create --name ${appname}-static --opt type=none --opt device=/srv/${appname}/ --opt o=bind",
-    unless  => "/usr/bin/docker volume inspect ${appname}-static",
-  } -> Docker::Run[$appname]
-  # if docker provisioned by puppet, ensure it is running before creating volume
-  if defined ('docker') {
-    Class['docker'] -> Exec["docker-volume-${appname}-static"]
-  }
-
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
   Docker::Image[$image] ~>
   docker::run { $appname:
@@ -66,7 +54,6 @@ class apps::failmap::frontend (
 
   sites::vhosts::proxy { $hostname:
     proxy            => "${appname}.service.${base::consul::dc}.consul:8000",
-    webroot          => "/srv/${appname}/",
     nowww_compliance => class_c,
     # use consul as proxy resolver
     resolver         => ['127.0.0.1:8600'],
