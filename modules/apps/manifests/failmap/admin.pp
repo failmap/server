@@ -62,7 +62,6 @@ class apps::failmap::admin (
   # https://gitlab.com/failmap/server/issues/8
   Docker::Run[$appname] -> Service['nginx']
 
-
   sites::vhosts::proxy { $hostname:
     proxy            => "${appname}.service.${base::consul::dc}.consul:8000",
     nowww_compliance => class_c,
