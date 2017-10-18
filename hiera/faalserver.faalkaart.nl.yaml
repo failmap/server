@@ -27,10 +27,10 @@ network::interfaces_hash:
 
 gitlab::cirunner::concurrent: 4
 gitlab_ci_runners:
-  test_runner1: {}
-  test_runner2: {}
-  test_runner3: {}
-  test_runner4: {}
+  faalrunner1: {}
+  faalrunner2: {}
+  faalrunner3: {}
+  faalrunner4: {}
 
 gitlab_ci_runners_defaults:
   url: "https://gitlab.com"
