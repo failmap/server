@@ -4,7 +4,6 @@
 classes:
   # required for interface hash
   - network
-  - base::gitlab_cirunner
 
 
 # letsencrypt account settings

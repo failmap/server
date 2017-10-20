@@ -51,9 +51,6 @@ class apps::failmap::admin (
     volumes => [
       # make mysql accesible from within container
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
-      # expose static files to host for direct serving by webserver
-      # /srv/failmap-admin is a hardcoded path in admin app settings
-      "${appname}-static:/srv/failmap-admin/",
     ],
     env     => $docker_environment,
     net     => $pod,
