@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "debian/jessie64"
+  config.vm.box = ENV['VAGRANT_BOX'] || "debian/jessie64"
 
   config.vm.provider "virtualbox" do |v|
     v.memory = 4000
@@ -13,9 +13,11 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", ip: "fde4:8dba:82e1::c4"
 
   # enable development hostname resolving
-  config.landrush.enabled = true
-  config.landrush.tld = "faalkaart.test"
-  config.vm.hostname = "faalserver.faalkaart.test"
+  if Vagrant.has_plugin?("vagrant-some-plugin")
+    config.landrush.enabled = true
+    config.landrush.tld = "faalkaart.test"
+    config.vm.hostname = "faalserver.faalkaart.test"
+  end
 
   # ensure virtualbox shared folders are used
   # debian box does not have vbguest extensions by default (install vagrant-vbguest plugin)

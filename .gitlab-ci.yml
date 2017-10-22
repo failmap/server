@@ -1,19 +1,3 @@
-variables:
-  FACTER_env: gitlab-ci
-  FACTER_fqdn: faalserver.faalkaart.test
-  FACTER_ipaddress6: ::1
-
-before_script:
-  # install provision and test dependencies
-  - apt-get update -yqq
-  - apt-get install -yqq make ruby git netcat wget
-  - gem install librarian-puppet
-  # build and install sslscan
-  - scripts/install_sslscan.sh
-  # bootstrap provisioning
-  - scripts/bootstrap.sh
-  - make vendor/modules
-
 stages:
   - check
   - test
@@ -27,30 +11,31 @@ check:
   script:
     - make check
 
-.provision_template: &provision_template
-  stage: test
-  script:
-    # provision with puppet
-    - scripts/apply.sh
-    # test
-    - scripts/test.sh
-    # save content for artifact
-    - curl -sSk https://localhost -H host:faalkaart.nl > index.html
-    - curl -sSkI https://localhost -H host:faalkaart.nl > response.txt
-  artifacts:
-    paths:
-      - index.html
-      - response.txt
-
 # Debian Jessie is currently leading OS
-provision:debian:
-  <<: *provision_template
-  image: debian:jessie
+provision:debian: &provision_template
+  stage: test
+  tags: ['vagrant']
+  before_script:
+    - apt-get update -q
+    - apt-get install vagrant virtualbox
+
+  script:
+    # provision an instance using vagrant/virtualbox
+    # this will run a testsuite at the end to validate
+    - vagrant up
+
+  # make used OS explicit (currently this defaults in Vagrantfile)
+  variables:
+    VAGRANT_BOX: debian/jessie64
 
 # Ubuntu Xenial is first candidate to also be supported
 provision:ubuntu:
   <<: *provision_template
-  image: ubuntu:xenial
+
+  variables:
+    VAGRANT_BOX: ubuntu/xenial64
+
+  # until all issues are addressed don't fail on this build
   allow_failure: true
 
 
