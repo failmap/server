@@ -13,4 +13,9 @@ class apps::failmap (
   docker_network { $pod:
     ensure => present,
   } -> Docker::Run <| |>
+
+  # temporary solution for storing screenshots for live release
+  file { '/srv/failmap-admin/images/screenshots/':
+    ensure => directory
+  }
 }

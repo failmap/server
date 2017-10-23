@@ -51,6 +51,8 @@ class apps::failmap::admin (
     volumes => [
       # make mysql accesible from within container
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
+      # temporary solution to allow screenshots to be hosted for live release
+      '/srv/failmap-admin/images/screenshots/:/srv/failmap-admin/static/images/screenshots/',
     ],
     env     => $docker_environment,
     net     => $pod,

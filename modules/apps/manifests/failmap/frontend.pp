@@ -28,6 +28,8 @@ class apps::failmap::frontend (
     command => 'runuwsgi',
     volumes => [
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
+      # temporary solution to allow screenshots to be hosted for live release
+      '/srv/failmap-admin/images/screenshots/:/srv/failmap-admin/static/images/screenshots/',
     ],
     env     => [
       # database settings
