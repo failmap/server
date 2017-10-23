@@ -2,6 +2,8 @@
 
 # setup test environment and run crude integration tests
 
+curl_http2='docker run -ti getourneau/alpine-curl-http2 curl'
+
 domain=${1:-faalkaart.nl}
 
 if ping6 -c1 "$domain" >/dev/null; then
@@ -115,6 +117,10 @@ echo "$response" | grep 'Content-Encoding: gzip' || failed "$response"
 # proxied static files
 response=$(curl --compressed -sSIk "https://$domain/static/images/internet_cleanup_foundation_logo.png")
 echo "$response" | grep 'Content-Encoding: gzip' || failed "$response"
+
+# http/2 support
+response=$($curl_http2 --http2 -sSIk "https://demo.$domain/")
+echo "$response" | grep 'HTTP/2 200' || failed "$response"
 
 # webserver should serve stale responses if backend is down
 # indirectly this tests server caching as well
