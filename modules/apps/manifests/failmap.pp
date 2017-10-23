@@ -15,7 +15,12 @@ class apps::failmap (
   } -> Docker::Run <| |>
 
   # temporary solution for storing screenshots for live release
-  file { '/srv/failmap-admin/images/screenshots/':
-    ensure => directory
+  file {
+    '/srv/failmap-admin/':
+      ensure => directory;
+    '/srv/failmap-admin/images/':
+      ensure => directory;
+    '/srv/failmap-admin/images/screenshots/':
+      ensure => directory;
   }
 }

@@ -4,7 +4,7 @@
 
 domain=${1:-faalkaart.nl}
 
-if ping6 -c1 "$domain"; then
+if ping6 -c1 "$domain" >/dev/null; then
   v6=true
 else
   echo "Notice: Skipping IPv6 tests due to IPv6 unavailability!"
@@ -103,15 +103,27 @@ response=$(curl -sSIk "https://demo.$domain")
 echo "$response" | grep 200 || failed "$response"
 
 # cache should be enabled
-# app does not set cache for the index, webserver default should be used
-response=$(curl -sSIk "https://demo.$domain")
-echo "$response" | grep 'Cache-Control: max-age=600' || failed "$response"
 
-# static file cache is determined by webserver
-# stats have a 1 day cache which is different from the webserver 10 minute default
+# skip, currently no endpoint which does not specify cache explicitly
+# # app does not set cache for the index, webserver default should be used
+# response=$(curl -sSIk "https://demo.$domain")
+# echo "$response" | grep 'Cache-Control: max-age=600' || failed "$response"
+
+# stats have explicit cache which is different from the webserver 10 minute default
 # implicitly tests database migrations as it will return 500 if they are not applied
-response=$(curl -sSIk "https://demo.$domain/data/stats/0")
+response=$(curl -sSIk "https://demo.$domain/data/terrible_urls/0")
 echo "$response" | grep 'Cache-Control: max-age=86400' || failed "$response"
+
+# all responses should be compressed
+# proxied html
+response=$(curl --compressed -sSIk "https://demo.$domain/")
+echo "$response" | grep 'Content-Encoding: gzip' || failed "$response"
+# proxied JSON
+response=$(curl --compressed -sSIk "https://demo.$domain/data/stats/0")
+echo "$response" | grep 'Content-Encoding: gzip' || failed "$response"
+# proxied static files
+response=$(curl --compressed -sSIk "https://demo.$domain/static/images/internet_cleanup_foundation_logo.png")
+echo "$response" | grep 'Content-Encoding: gzip' || failed "$response"
 
 # webserver should serve stale responses if backend is down
 # indirectly this tests server caching as well
