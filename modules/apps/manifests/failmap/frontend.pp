@@ -52,7 +52,7 @@ class apps::failmap::frontend (
   Docker::Run[$appname] -> Service['nginx']
 
   sites::vhosts::proxy { $hostname:
-    proxy            => "${appname}.service.${base::consul::dc}.consul:8000",
+    proxy            => "${appname}.service.dc1.consul:8000",
     nowww_compliance => class_c,
     # use consul as proxy resolver
     resolver         => ['127.0.0.1:8600'],

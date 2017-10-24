@@ -19,13 +19,14 @@ mod 'example42-network'
 mod 'garethr-docker'
 mod 'KyleAnderson/consul', '>=3.0.0'
 mod 'vshn/gitlab'
+mod 'puppet/collectd'
 
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',
   :ref => 'master'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
-  :ref => '0555760ec7f5e3cc1993ee41a2510e61a88e0d35'
+  :ref => 'ed1a61f16dbbd60d8a6c7b0395b7f8ef56638b60'
   # :path => '../../puppet-sites'
 
 # indirect dependencies to pin version

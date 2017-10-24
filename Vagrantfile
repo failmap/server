@@ -27,18 +27,17 @@ Vagrant.configure("2") do |config|
   # provision using puppet
   config.vm.provision "shell", inline: <<-SHELL
     set -e
-    /vagrant/scripts/bootstrap.sh
-    # pull in puppet modules if required
+    echo "export FACTER_env=vagrant" > /etc/profile.d/facter-env.sh
     # use tmp directory outside of vagrant root for performance and host conflict prevention
-    LIBRARIAN_PUPPET_TMP=/tmp make -C /vagrant Puppetfile.lock
-    FACTER_env=vagrant /vagrant/scripts/apply.sh
-  SHELL
+    echo "export LIBRARIAN_PUPPET_TMP=/tmp" > /etc/profile.d/use-fast-tmpdir.sh
 
-  # testsuite
-  config.vm.provision "shell", inline: <<-SHELL
-    set -e
-    /vagrant/scripts/install_sslscan.sh
-    /vagrant/scripts/test.sh
-  SHELL
+    # install dependencies for Puppet, don't use Vagrant Puppet, we want to test bootstrapping
+    /vagrant/scripts/bootstrap.sh
 
+    # pull in puppet modules if required
+    make -C /vagrant Puppetfile.lock
+
+    # apply latests configuration
+    /vagrant/scripts/apply.sh
+  SHELL
 end

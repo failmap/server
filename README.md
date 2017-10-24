@@ -18,8 +18,9 @@ The following tools are required to run the virtual machine:
 Run the following command and wait for the provisioning to have completed.
 
     vagrant up
+    vagrant ssh -- /vagrant/scripts/test.sh
 
-The provisioning should complete with the words `All good!` which indicated the post-provision test suite has verified the installation is correct.
+The test should complete with the words `All good!` which indicated the post-provision test suite has verified the installation is correct.
 
 After this the virtual machine is accessible by running:
 

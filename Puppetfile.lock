@@ -21,6 +21,11 @@ FORGE
       puppetlabs-stdlib (< 5.0.0, >= 4.7.0)
     puppet-archive (1.3.0)
       puppetlabs-stdlib (< 5.0.0, >= 4.6.0)
+    puppet-collectd (6.0.0)
+      puppetlabs-apt (< 5.0.0, >= 2.2.0)
+      puppetlabs-concat (< 5.0.0, >= 1.2.5)
+      puppetlabs-stdlib (< 5.0.0, >= 4.6.0)
+      stahnma-epel (< 2.0.0, >= 1.2.2)
     puppet-nginx (0.6.0)
       puppetlabs-apt (< 3.0.0, >= 2.1.0)
       puppetlabs-concat (< 3.0.0, >= 1.2.5)
@@ -62,8 +67,8 @@ GIT
 
 GIT
   remote: https://github.com/aequitas/puppet-sites.git
-  ref: 0555760ec7f5e3cc1993ee41a2510e61a88e0d35
-  sha: 0555760ec7f5e3cc1993ee41a2510e61a88e0d35
+  ref: ed1a61f16dbbd60d8a6c7b0395b7f8ef56638b60
+  sha: ed1a61f16dbbd60d8a6c7b0395b7f8ef56638b60
   specs:
     aequitas-sites (0.1.0)
       puppet-nginx (>= 0.6.0)
@@ -77,6 +82,7 @@ DEPENDENCIES
   example42-network (>= 0)
   garethr-docker (>= 0)
   petems-swap_file (>= 0)
+  puppet-collectd (>= 0)
   puppet-nginx (= 0.6.0)
   puppet-unattended_upgrades (<= 2.2.0)
   puppetlabs-apt (< 3.0.0)

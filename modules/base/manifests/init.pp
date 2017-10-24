@@ -2,7 +2,9 @@
 class base (
   $localhost_redirects=[],
 ){
-  include cron
+  class { '::cron': }
+
+  class { '::apt::backports': }
 
   # utility packages
   package { ['sl', 'atop', 'htop', 'unzip']:
@@ -21,4 +23,10 @@ class base (
       host_aliases => $localhost_redirects,
       ip           => '::1',
   }
+
+  # make DNS better managable
+  package { 'resolvconf': ensure => latest} ~>
+  service { 'resolvconf': ensure => running, enable => true}
+  package { 'dnsmasq': ensure => latest} ~>
+  service { 'dnsmasq': ensure => running, enable => true}
 }
