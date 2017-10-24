@@ -1,0 +1,9 @@
+# Override configuration during local development.
+# Rename this file to dev.yaml
+# This file has highest preference and allows to override default configuration. During development this is useful as it allows testing settings without modifying and accidentally commiting unwanted configuration changes.
+
+# Example: to enable monitoring uncomment:
+# classes:
+#   - base::monitoring
+#   - base::monitoring::server
+#
