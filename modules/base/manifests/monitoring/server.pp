@@ -2,6 +2,7 @@
 class base::monitoring::server (
   $client_ca=undef,
 ){
+  Class['docker'] ->
   docker::run { 'influxdb':
     image   => influxdb,
     volumes => [
