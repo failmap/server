@@ -6,7 +6,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |v|
     v.memory = 4000
-    v.cpus = 3
+    v.cpus = 2
   end
 
   # enable ipv6
