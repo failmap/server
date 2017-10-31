@@ -46,6 +46,7 @@ class apps::failmap::frontend (
       "SERVICE_NAME=${appname}",
     ],
     net     => $pod,
+    tty     => true,
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8

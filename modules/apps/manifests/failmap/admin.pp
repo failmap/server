@@ -56,6 +56,7 @@ class apps::failmap::admin (
     env      => $docker_environment,
     net      => $pod,
     username => 'nobody:nogroup',
+    tty      => true,
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8

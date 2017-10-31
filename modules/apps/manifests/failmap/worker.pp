@@ -37,12 +37,13 @@ class apps::failmap::worker (
     net      => $pod,
     # since we use pickle with celery avoid startup error when runing as root
     username => 'nobody:nogroup',
+    tty      => true,
   }
 
   Docker::Image[$image] ~>
   docker::run { 'failmap-scheduler':
     image    => $image,
-    command  => 'celery beat -linfo',
+    command  => 'celery beat -linfo --pidfile=/var/tmp/celerybeat.pid',
     volumes  => [
       # make mysql accesible from within container
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
@@ -50,5 +51,6 @@ class apps::failmap::worker (
     env      => $docker_environment,
     net      => $pod,
     username => 'nobody:nogroup',
+    tty      => true,
   }
 }
