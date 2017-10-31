@@ -2,6 +2,7 @@
 class apps::failmap (
   $pod='failmap',
   $image='registry.gitlab.com/failmap/admin:latest',
+  $broker='redis://broker.failmap:6379/0',
 ){
   docker::image { $image:
     ensure    => latest,

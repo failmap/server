@@ -1,11 +1,10 @@
 # Configure the Admin frontend as well as the basic service requirements (database, queue broker)
 class apps::failmap::admin (
-  $pod = $apps::failmap::pod,
-  $image = $apps::failmap::image,
-  $client_ca=undef,
+  $pod       = $apps::failmap::pod,
+  $image     = $apps::failmap::image,
+  $client_ca = undef,
+  $broker    = $apps::failmap::broker,
 ){
-  $broker = 'amqp://guest:guest@broker:5672//'
-
   $hostname = 'admin.faalkaart.nl'
   $appname = 'failmap-admin'
 
@@ -39,23 +38,24 @@ class apps::failmap::admin (
     "ALLOWED_HOSTS=${hostname}",
     'DEBUG=',
     # message broker settings
-    "CELERY_BROKER_URL=${broker}",
+    "BROKER=${broker}",
     # name by which service is known to service discovery (consul)
     "SERVICE_NAME=${appname}",
   ]
 
   Docker::Image[$image] ~>
   docker::run { $appname:
-    image   => $image,
-    command => 'runuwsgi',
-    volumes => [
+    image    => $image,
+    command  => 'runuwsgi',
+    volumes  => [
       # make mysql accesible from within container
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       # temporary solution to allow screenshots to be hosted for live release
       '/srv/failmap-admin/images/screenshots/:/srv/failmap-admin/static/images/screenshots/',
     ],
-    env     => $docker_environment,
-    net     => $pod,
+    env      => $docker_environment,
+    net      => $pod,
+    username => 'nobody:nogroup',
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8
@@ -75,7 +75,7 @@ class apps::failmap::admin (
   # add convenience command to run admin actions via container
   $docker_environment_args = join(prefix($docker_environment, '-e'), ' ')
   file { '/usr/local/bin/failmap-admin':
-    content => "#!/bin/bash\n/usr/bin/docker run -ti ${docker_environment_args} \
+    content => "#!/bin/bash\n/usr/bin/docker run --network ${pod} -ti ${docker_environment_args} \
                 -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock ${image} \$*",
     mode    => '0700',
   }

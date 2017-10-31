@@ -1,12 +1,11 @@
 # Configure the failmap worker
 class apps::failmap::worker (
   $hostname = 'faalkaart.nl',
-  $pod = $apps::failmap::pod,
-  $image = $apps::failmap::image,
+  $pod      = $apps::failmap::pod,
+  $image    = $apps::failmap::image,
+  $broker   = $apps::failmap::broker,
 ){
   $appname = 'failmap-worker'
-
-  $broker = 'amqp://guest:guest@broker:5672//'
 
   $db_name = 'failmap'
   $db_user = $db_name
@@ -17,7 +16,7 @@ class apps::failmap::worker (
 
   $docker_environment = [
     "SERVICE_NAME=${appname}",
-    "CELERY_BROKER_URL=${broker}",
+    "BROKER=${broker}",
     # worker required db access for non-scanner tasks (eg: rating rebuild)
     'DJANGO_DATABASE=production',
     'DB_HOST=/var/run/mysqld/mysqld.sock',
@@ -42,15 +41,14 @@ class apps::failmap::worker (
 
   Docker::Image[$image] ~>
   docker::run { 'failmap-scheduler':
-    image   => $image,
-    command => 'celery beat -linfo',
-    volumes => [
+    image    => $image,
+    command  => 'celery beat -linfo',
+    volumes  => [
       # make mysql accesible from within container
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
     ],
-    env     => $docker_environment,
-    net     => $pod,
-    # since we use pickle with celery avoid startup error when runing as root
-    # username => 'nobody:nogroup',
+    env      => $docker_environment,
+    net      => $pod,
+    username => 'nobody:nogroup',
   }
 }
