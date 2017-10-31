@@ -45,7 +45,7 @@ class base::monitoring {
 
   # add statsd listeren for local processes
   class { 'collectd::plugin::statsd':
-    host => '127.0.0.1',
+    host => '0.0.0.0',
     port => 8125,
   }
 
