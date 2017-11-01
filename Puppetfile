@@ -20,6 +20,7 @@ mod 'garethr-docker'
 mod 'KyleAnderson/consul', '>=3.0.0'
 mod 'vshn/gitlab'
 mod 'puppet/collectd'
+mod 'datacentred/telegraf'
 
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',

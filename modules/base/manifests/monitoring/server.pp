@@ -2,6 +2,7 @@
 class base::monitoring::server (
   $client_ca=undef,
 ){
+  # Influx Time-series database
   Class['docker'] ->
   docker::run { 'influxdb':
     image   => influxdb,
@@ -31,7 +32,7 @@ class base::monitoring::server (
     match   => templates,
   } ~> Docker::Run['influxdb']
 
-
+  # Grafana Graphing frontend
   $appname = grafana
   $hostname = "${appname}.faalkaart.nl"
 

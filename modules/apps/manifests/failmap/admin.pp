@@ -41,6 +41,8 @@ class apps::failmap::admin (
     "BROKER=${broker}",
     # name by which service is known to service discovery (consul)
     "SERVICE_NAME=${appname}",
+    'SERVICE_8000_CHECK_TCP=/',
+    'STATSD_HOST=172.20.0.1',
   ]
 
   Docker::Image[$image] ~>

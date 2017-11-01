@@ -43,12 +43,19 @@ class base::monitoring {
   class { '::collectd::plugin::swap': }
   class { '::collectd::plugin::users': }
 
-  # add statsd listeren for local processes
-  class { 'collectd::plugin::statsd':
-    host => '0.0.0.0',
-    port => 8125,
-  }
-
   # realise virtual resources
   Collectd::Plugin::Tail::File <| |>
+
+  class { '::telegraf':
+    hostname => $::hostname,
+    outputs  => {
+      'influxdb' => {
+        'urls'     => [ 'http://influxdb.service.dc1.consul:8086' ],
+        'database' => 'telegraf',
+      }
+    },
+    inputs   => {
+      'statsd' => {},
+    }
+  }
 }
