@@ -80,6 +80,13 @@ class apps::failmap::admin (
   file { '/usr/local/bin/failmap-admin':
     content => "#!/bin/bash\n/usr/bin/docker run --network ${pod} -ti ${docker_environment_args} \
                 -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock ${image} \$*",
+    # this file contains secrets, don't expose to non-root
+    mode    => '0700',
+  }
+  file { '/usr/local/bin/failmap-admin-background':
+    content => "#!/bin/bash\n/usr/bin/docker run -d --network ${pod} -ti ${docker_environment_args} \
+                -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock ${image} \$*",
+    # this file contains secrets, don't expose to non-root
     mode    => '0700',
   }
   file { '/usr/local/bin/failmap-admin-shell':

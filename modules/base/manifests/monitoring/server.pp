@@ -17,7 +17,6 @@ class base::monitoring::server (
 
   $templates = join(prefix(suffix([
     'server.measurement*',
-    '*.statsd server.transport.measurement*'
   ], '"'), '"'), ',')
   file { '/srv/influxdb/': ensure => directory } ->
   exec {'generate initial influxdb config':

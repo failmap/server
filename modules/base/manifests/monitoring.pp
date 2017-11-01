@@ -49,13 +49,17 @@ class base::monitoring {
   class { '::telegraf':
     hostname => $::hostname,
     outputs  => {
-      'influxdb' => {
-        'urls'     => [ 'http://influxdb.service.dc1.consul:8086' ],
-        'database' => 'telegraf',
+      influxdb => {
+        urls     => [ 'http://influxdb.service.dc1.consul:8086' ],
+        database => telegraf,
       }
     },
     inputs   => {
-      'statsd' => {},
+      statsd => {
+        templates => [
+          'measurement.project.app.module.task.field*'
+        ]
+      },
     }
   }
 }
