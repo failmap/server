@@ -57,7 +57,7 @@ class base::monitoring {
     inputs   => {
       statsd => {
         templates => [
-          'measurement.project.app.module.task.field*'
+          'measurement.project.app.module.task.measurement*'
         ]
       },
     }
