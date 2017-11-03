@@ -55,7 +55,7 @@ class base::monitoring {
       }
     },
     inputs   => {
-      statsd => {
+      statsd        => {
         templates => [
           # failmap.celery.failmap_admin.scanners.scanner_security_headers.get_headers.sent
           '*.celery.* prefix.measurement.project.app.module.task.measurement*',
@@ -71,6 +71,17 @@ class base::monitoring {
           '*.view.*.*.* prefix.measurement.app.module.measurement',
         ]
       },
-    }
+      docker        => {},
+      consul        => {},
+      system        => {},
+      net           => {},
+      netstat       => {},
+      mem           => {},
+      disk          => {},
+      diskio        => {},
+      processes     => {},
+      kernel        => {},
+      kernel_vmstat => {},
+    },
   }
 }
