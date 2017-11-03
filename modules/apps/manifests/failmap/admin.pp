@@ -78,19 +78,21 @@ class apps::failmap::admin (
   # add convenience command to run admin actions via container
   $docker_environment_args = join(prefix($docker_environment, '-e'), ' ')
   file { '/usr/local/bin/failmap-admin':
-    content => "#!/bin/bash\n/usr/bin/docker run --network ${pod} -ti ${docker_environment_args} \
-                -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock ${image} \$*",
+    content => "#!/bin/bash\n/usr/bin/docker run --network ${pod} -i ${docker_environment_args} \
+                -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
+                -e TERM=\$TERM --rm --user nobody ${image} \$*",
     # this file contains secrets, don't expose to non-root
     mode    => '0700',
   }
   file { '/usr/local/bin/failmap-admin-background':
-    content => "#!/bin/bash\n/usr/bin/docker run -d --network ${pod} -ti ${docker_environment_args} \
-                -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock ${image} \$*",
+    content => "#!/bin/bash\n/usr/bin/docker run -d --network ${pod} -i ${docker_environment_args} \
+                -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
+                -e TERM=\$TERM --rm --user nobody ${image} \$*",
     # this file contains secrets, don't expose to non-root
     mode    => '0700',
   }
   file { '/usr/local/bin/failmap-admin-shell':
-    content => "#!/bin/bash\n/usr/bin/docker exec -ti ${appname} /bin/bash",
+    content => "#!/bin/bash\n/usr/bin/docker exec -i -e TERM=\$TERM ${appname} /bin/bash",
     mode    => '0755',
   }
 
@@ -101,5 +103,17 @@ class apps::failmap::admin (
                     -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
                     ${image} migrate --noinput",
     refreshonly => true,
+  }
+
+  # create a compressed rotating dataset backup every day/week
+  cron { "${appname} daily dataset backup":
+    command => '/usr/local/bin/failmap-admin create-dataset -o - | gzip > /var/backups/failmap_dataset_day_$(date +%u).json.gz',
+    hour    => 6,
+  }
+
+  cron { "${appname} weekly dataset backup":
+    command => '/usr/local/bin/failmap-admin create-dataset -o - | gzip > /var/backups/failmap_dataset_week_$(date +%U).json.gz',
+    hour    => 5,
+    weekday => 1
   }
 }
