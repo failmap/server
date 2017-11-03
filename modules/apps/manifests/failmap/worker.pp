@@ -28,17 +28,19 @@ class apps::failmap::worker (
 
   Docker::Image[$image] ~>
   docker::run { $appname:
-    image    => $image,
-    command  => 'celery worker -linfo',
-    volumes  => [
+    image          => $image,
+    command        => 'celery worker -linfo',
+    volumes        => [
       # make mysql accesible from within container
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
     ],
-    env      => $docker_environment,
-    net      => $pod,
+    env            => $docker_environment,
+    net            => $pod,
     # since we use pickle with celery avoid startup error when runing as root
-    username => 'nobody:nogroup',
-    tty      => true,
+    username       => 'nobody:nogroup',
+    tty            => true,
+    # give tasks 5 minutes to finish cleanly
+    stop_wait_time => 300,
   }
 
   Docker::Image[$image] ~>

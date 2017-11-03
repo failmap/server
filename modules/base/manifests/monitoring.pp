@@ -57,7 +57,18 @@ class base::monitoring {
     inputs   => {
       statsd => {
         templates => [
-          'measurement.project.app.module.task.measurement*'
+          # failmap.celery.failmap_admin.scanners.scanner_security_headers.get_headers.sent
+          '*.celery.* prefix.measurement.project.app.module.task.measurement*',
+          # failmap.db.mysql.default_execute_insert
+          '*.db.* prefix.measurement.engine.database.measurement*',
+          # failmap.response_auth.200
+          '*.response.* prefix.measurement.*',
+          # failmap.view.failmap_admin.map.views.topwin.GET
+          '*.view.*.*.*.*.* prefix.measurement.project.app.module.view.measurement',
+          # failmap.view.proxy.views.proxy_view.GET
+          '*.view.*.*.*.* prefix.measurement.app.module.view.measurement',
+          # failmap.view.proxy.views.GET
+          '*.view.*.*.* prefix.measurement.app.module.measurement',
         ]
       },
     }
