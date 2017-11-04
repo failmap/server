@@ -53,12 +53,11 @@ class apps::failmap::frontend (
   Docker::Run[$appname] -> Service['nginx']
 
   sites::vhosts::proxy { $hostname:
-    proxy            => "${appname}.service.dc1.consul:8000",
-    nowww_compliance => class_c,
+    proxy    => "${appname}.service.dc1.consul:8000",
     # use consul as proxy resolver
-    resolver         => ['127.0.0.1:8600'],
+    resolver => ['127.0.0.1:8600'],
     # allow upstream to set caching headers, cache upstream responses
     # and serve stale results if backend is unavailable or broken
-    caching          => upstream,
+    caching  => upstream,
   }
 }

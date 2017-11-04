@@ -11,6 +11,7 @@ classes:
 
 # site config
 sites::default_vhost_content: faal
+sites::disable_default: true
 
 # letsencrypt account settings
 letsencrypt::email: postmaster@example.com
