@@ -16,24 +16,25 @@ sites::disable_default: true
 # letsencrypt account settings
 letsencrypt::email: postmaster@example.com
 
-sites::apps_static_php:
-  oud.faalkaart.nl:
-    git_source: https://github.com/failmap/website.git
-    git_revision: stable
-    config_filename: configuration.php
-    config_template: |
-      <?php
-            ini_set('display_errors', 0);
-            ini_set('display_startup_errors', 0);
-            DB::$error_handler = false;
-            DB::$throw_exception_on_error = true;
-
-            DB::$user = "<%= @mysql_db_user %>";
-            DB::$password = "<%= @mysql_db_password %>";
-            DB::$dbName = "<%= @mysql_db_name %>";
-            $addKey = "";
-      ?>
-    mysql_db_name: faalkaart
-    mysql_db_user: faalkaart
-    mysql_db_password: kaartfaal
-    mysql_db_init_filename: sql/init.sql
+# sites::apps_static_php:
+#   oud.faalkaart.nl:
+#     ensure: absent
+#     git_source: https://github.com/failmap/website.git
+#     git_revision: stable
+#     config_filename: configuration.php
+#     config_template: |
+#       <?php
+#             ini_set('display_errors', 0);
+#             ini_set('display_startup_errors', 0);
+#             DB::$error_handler = false;
+#             DB::$throw_exception_on_error = true;
+#
+#             DB::$user = "<%= @mysql_db_user %>";
+#             DB::$password = "<%= @mysql_db_password %>";
+#             DB::$dbName = "<%= @mysql_db_name %>";
+#             $addKey = "";
+#       ?>
+#     mysql_db_name: faalkaart
+#     mysql_db_user: faalkaart
+#     mysql_db_password: kaartfaal
+#     mysql_db_init_filename: sql/init.sql
