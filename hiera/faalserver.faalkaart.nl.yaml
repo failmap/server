@@ -26,20 +26,6 @@ network::interfaces_hash:
     netmask: 48
     gateway: 2a01:7c8:aac0::1
 
-gitlab::cirunner::concurrent: 4
-gitlab_ci_runners:
-  faalrunner1: {}
-  faalrunner2: {}
-  faalrunner3: {}
-  faalrunner4: {}
-
-gitlab_ci_runners_defaults:
-  url: "https://gitlab.com"
-  executor: "docker"
-  docker-image: "ubuntu:trusty"
-  docker-volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
-  tag-list: unprivileged
-
 apps::failmap::admin::client_ca: &failmap_ca |
   -----BEGIN CERTIFICATE-----
   MIIEQDCCAyigAwIBAgIQEmLWz+QdooUgvAF2olReXTANBgkqhkiG9w0BAQsFADCB
