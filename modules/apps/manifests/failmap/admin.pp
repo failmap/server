@@ -80,20 +80,20 @@ class apps::failmap::admin (
   file { '/usr/local/bin/failmap-admin':
     content => "#!/bin/bash\n/usr/bin/docker run --network ${pod} -i ${docker_environment_args} \
                 -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
-                -e TERM=\$TERM --rm --user nobody ${image} \$*",
+                -e TERM=\$TERM --rm --user nobody ${image} \"\$@\"",
     # this file contains secrets, don't expose to non-root
     mode    => '0700',
   }
   file { '/usr/local/bin/failmap-admin-background':
     content => "#!/bin/bash\n/usr/bin/docker run -d --network ${pod} -i ${docker_environment_args} \
-                -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
-                -e TERM=\$TERM --rm --user nobody ${image} \$*",
+                -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
+                -e TERM=\$TERM --rm --user nobody ${image} \"\$@\"",
     # this file contains secrets, don't expose to non-root
     mode    => '0700',
   }
   file { '/usr/local/bin/failmap-admin-shell':
     content => "#!/bin/bash\n/usr/bin/docker exec -i -e TERM=\$TERM ${appname} /bin/bash",
-    mode    => '0755',
+    mode    => '0744',
   }
 
   # run migration in a separate container

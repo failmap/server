@@ -71,7 +71,6 @@ class base::monitoring {
           '*.view.*.*.* prefix.measurement.app.module.measurement',
         ]
       },
-      docker        => {},
       consul        => {},
       system        => {},
       net           => {},
