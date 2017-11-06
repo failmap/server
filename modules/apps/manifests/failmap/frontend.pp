@@ -60,4 +60,9 @@ class apps::failmap::frontend (
     # and serve stale results if backend is unavailable or broken
     caching  => upstream,
   }
+
+  file { '/usr/local/bin/failmap-frontend-clear-cache':
+    content => template('apps/failmap-frontend-clear-cache.erb'),
+    mode    => '0744',
+  }
 }
