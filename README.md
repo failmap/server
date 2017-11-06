@@ -1,8 +1,8 @@
-This repository contains server provisioning for the Faalkaart project.
+This repository contains server provisioning for the Failmap project. This Readme focusses on local development and testing of the Failmap project. For information about running Failmap in production refer to: `HOSTED.md`.
 
 # Quickstart/local testing/development
 
-For local testing/development a Vagrant setup is provided with this repsitory. This allows to run a local instance of the entire Faalkaart environment in a virtual machine.
+For local testing/development a Vagrant setup is provided with this repsitory. This allows to run a local instance of the entire Failmap environment in a virtual machine.
 
 ## Requirements
 

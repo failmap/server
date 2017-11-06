@@ -1,6 +1,6 @@
 .PHONY: deploy
 
-host = faalserver.faalkaart.nl
+host =? faalserver.faalkaart.nl
 
 all: vendor/modules
 
