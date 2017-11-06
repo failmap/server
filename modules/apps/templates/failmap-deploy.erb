@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -xe
+
+image="<%= @image %>"
+
+# save current image as rollback
+/usr/bin/docker tag "${image}" "${image/latest/rollback}"
+
+# update current image
+/usr/bin/docker pull "${image}"
+
+# restart all related services
+systemctl restart docker-failmap-*.service

@@ -92,9 +92,19 @@ class apps::failmap::admin (
     mode    => '0700',
   }
   file { '/usr/local/bin/failmap-admin-shell':
-    content => "#!/bin/bash\n/usr/bin/docker exec -i -e TERM=\$TERM ${appname} /bin/bash",
+    content => "#!/bin/bash\n/usr/bin/docker exec -ti -e TERM=\$TERM ${appname} /bin/bash",
     mode    => '0744',
   }
+
+  file { '/usr/local/bin/failmap-deploy':
+    content => template('apps/failmap-deploy.erb'),
+    mode    => '0744',
+  }
+  file { '/usr/local/bin/failmap-rollback':
+    content => template('apps/failmap-rollback.erb'),
+    mode    => '0744',
+  }
+
 
   # run migration in a separate container
   Docker::Image[$image] ~>

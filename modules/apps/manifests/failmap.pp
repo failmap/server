@@ -5,7 +5,7 @@ class apps::failmap (
   $broker='redis://broker.failmap:6379/0',
 ){
   docker::image { $image:
-    ensure    => latest,
+    ensure    => present,
     image     => 'registry.gitlab.com/failmap/admin',
     image_tag => latest,
   }
