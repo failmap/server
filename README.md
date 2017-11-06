@@ -1,4 +1,4 @@
-This repository contains server provisioning for the Failmap project. This Readme focusses on local development and testing of the Failmap project. For information about running Failmap in production refer to: `HOSTED.md`.
+This repository contains server provisioning for the Failmap project (https://faalkaart.nl). This Readme focusses on local development and testing of the Failmap project. For information about running Failmap in production refer to: `HOSTED.md`.
 
 # Quickstart/local testing/development
 
