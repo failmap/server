@@ -15,10 +15,17 @@ class apps::failmap (
     ensure => present,
   } -> Docker::Run <| |>
 
+  # stateful configuration (credentials for external parties, eg: Sentry)
+  file {
+    "/srv/${pod}":
+      ensure => directory,
+      mode => '0700';
+    "/srv/${pod}/env.file":
+      ensure => present;
+  } -> Docker::Run <| |>
+
   # temporary solution for storing screenshots for live release
   file {
-    '/srv/failmap-admin/':
-      ensure => directory;
     '/srv/failmap-admin/images/':
       ensure => directory;
     '/srv/failmap-admin/images/screenshots/':

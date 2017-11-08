@@ -26,6 +26,15 @@ class apps::failmap::worker (
     'STATSD_HOST=172.20.0.1',
   ]
 
+  # stateful configuration (credentials for external parties, eg: Sentry)
+  file {
+    "/srv/${appname}/":
+      ensure => directory,
+      mode => '0700';
+    "/srv/${appname}/env.file":
+      ensure => present;
+  } -> Docker::Run[$appname]
+
   Docker::Image[$image] ~>
   docker::run { $appname:
     image          => $image,
@@ -35,6 +44,7 @@ class apps::failmap::worker (
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
     ],
     env            => $docker_environment,
+    env_file       => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net            => $pod,
     # since we use pickle with celery avoid startup error when runing as root
     username       => 'nobody:nogroup',
@@ -52,6 +62,7 @@ class apps::failmap::worker (
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
     ],
     env      => $docker_environment,
+    env_file => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net      => $pod,
     username => 'nobody:nogroup',
     tty      => true,

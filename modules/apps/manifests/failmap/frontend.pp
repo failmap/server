@@ -21,17 +21,26 @@ class apps::failmap::frontend (
     privileges => ['SELECT'],
   }
 
+  # stateful configuration (credentials for external parties, eg: Sentry)
+  file {
+    "/srv/${appname}/":
+      ensure => directory,
+      mode => '0700';
+    "/srv/${appname}/env.file":
+      ensure => present;
+  } -> Docker::Run[$appname]
+
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
   Docker::Image[$image] ~>
   docker::run { $appname:
-    image   => $image,
-    command => 'runuwsgi',
-    volumes => [
+    image    => $image,
+    command  => 'runuwsgi',
+    volumes  => [
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       # temporary solution to allow screenshots to be hosted for live release
       '/srv/failmap-admin/images/screenshots/:/srv/failmap-admin/static/images/screenshots/',
     ],
-    env     => [
+    env      => [
       # database settings
       'DJANGO_DATABASE=production',
       'DB_HOST=/var/run/mysqld/mysqld.sock',
@@ -45,8 +54,9 @@ class apps::failmap::frontend (
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
     ],
-    net     => $pod,
-    tty     => true,
+    env_file => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
+    net      => $pod,
+    tty      => true,
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8
