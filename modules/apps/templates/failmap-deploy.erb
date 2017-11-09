@@ -10,5 +10,8 @@ image="<%= @image %>"
 # update current image
 /usr/bin/docker pull "${image}"
 
+# migrate database
+/usr/local/bin/failmap-admin migrate
+
 # restart all related services
 systemctl restart docker-failmap-*.service
