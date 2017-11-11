@@ -11,31 +11,35 @@ check:
   script:
     - make check
 
-# Debian Jessie is currently leading OS
-provision:debian: &provision_template
-  stage: test
-  tags: ['vagrant']
-  before_script:
-    - apt-get update -q
-    - apt-get install vagrant virtualbox
+# testing provisioning inside a docker container proves to be more senseless than initially anticipated.
+# even if all 'issues' where to be solved this would leave us with a non-representitive test result
+# we have to look in how to properly test server provisioning (vagrant?, packer?, at least some kind of real virtualization)
 
-  script:
-    # provision an instance using vagrant/virtualbox
-    # this will run a testsuite at the end to validate
-    - vagrant up
-
-  # make used OS explicit (currently this defaults in Vagrantfile)
-  variables:
-    VAGRANT_BOX: debian/jessie64
-
-# Ubuntu Xenial is first candidate to also be supported
-provision:ubuntu:
-  <<: *provision_template
-
-  variables:
-    VAGRANT_BOX: ubuntu/xenial64
-
-  # until all issues are addressed don't fail on this build
-  allow_failure: true
-
-
+# # Debian Jessie is currently leading OS
+# provision:debian: &provision_template
+#   stage: test
+#   tags: ['vagrant']
+#   before_script:
+#     - apt-get update -q
+#     - apt-get install vagrant virtualbox
+#
+#   script:
+#     # provision an instance using vagrant/virtualbox
+#     # this will run a testsuite at the end to validate
+#     - vagrant up
+#
+#   # make used OS explicit (currently this defaults in Vagrantfile)
+#   variables:
+#     VAGRANT_BOX: debian/jessie64
+#
+# # Ubuntu Xenial is first candidate to also be supported
+# provision:ubuntu:
+#   <<: *provision_template
+#
+#   variables:
+#     VAGRANT_BOX: ubuntu/xenial64
+#
+#   # until all issues are addressed don't fail on this build
+#   allow_failure: true
+#
+#
