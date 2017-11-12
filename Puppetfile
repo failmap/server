@@ -26,7 +26,7 @@ mod 'aequitas/letsencrypt',
   :ref => 'master'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
-  :ref => '7025b892bdc5fa6e5a9eb4ed7378f6d5ab906f5b'
+  :ref => 'cdc869c8bfabafd74cde7a9d8041ac16b8827b69'
   # :path => '../../puppet-sites'
 
 # indirect dependencies to pin version
