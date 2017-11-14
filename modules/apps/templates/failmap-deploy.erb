@@ -9,6 +9,12 @@ image="<%= @image %>"
 function rollback {
   /usr/bin/docker tag "${image/latest/rollback}" "${image}"
   systemctl restart docker-failmap-admin.service
+
+  # wait for admin backend to be available
+  timeout 30 /bin/sh -c 'while ! curl failmap-admin:8000 -H host:admin.faalkaart.nl >/dev/null ;do sleep 1; done'
+  echo
+  echo "Rollback complete!"
+  echo
   exit 1
 }
 trap "rollback" SIGINT
@@ -34,13 +40,14 @@ curl -s -XPOST influxdb:8086/write?db=events --data-binary "deploy,user=$user ve
 # restart admin
 systemctl restart docker-failmap-admin.service
 
+# wait for admin backend to be available
+timeout 30 /bin/sh -c 'while ! curl failmap-admin:8000 -H host:admin.faalkaart.nl >/dev/null ;do sleep 1; done'
+
 set +x
 echo
 echo "Admin restarted, please verify and press [enter] to continue deploy or [ctrl-c] to rollback."
 echo
 echo "https://admin.faalkaart.nl/"
-echo
-echo "Please not it might take a few seconds for backend to be available and 502 error to disappear."
 echo
 set -x
 # wait for user input
@@ -48,3 +55,10 @@ read -r
 
 # restart all services
 systemctl restart docker-failmap-*.service
+
+# wait for admin backend to be available
+timeout 30 /bin/sh -c 'while ! curl failmap-admin:8000 -H host:admin.faalkaart.nl >/dev/null ;do sleep 1; done'
+
+echo
+echo "Deploy complete!"
+echo
