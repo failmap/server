@@ -41,6 +41,7 @@ class base::monitoring::server (
     volumes => ['/srv/grafana/:/var/lib/grafana/'],
     env     => [
       "GF_SERVER_ROOT_URL=https://${hostname}",
+      'GF_INSTALL_PLUGINS=grafana-piechart-panel',
     ],
   }
 
