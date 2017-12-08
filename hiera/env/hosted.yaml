@@ -2,8 +2,6 @@
 
 classes:
   - base::env::hosted
-  # configure and run docker daemon
-  - docker
 
 # use docker friendly firewall purge on hosted environment
 base::env::hosted::docker: true
@@ -62,6 +60,7 @@ firewall:
   999 drop the rest:
     proto: all
     action: drop
+
   # ipv6
   100 v6 allow related, established:
     proto: all
@@ -92,6 +91,30 @@ firewall:
     action: accept
     provider: ip6tables
   999 v6 drop the rest:
+    proto: all
+    action: drop
+    provider: ip6tables
+
+  100 v6 allow related, established forwarding:
+    chain: FORWARD
+    state:
+      - RELATED
+      - ESTABLISHED
+    action: accept
+    provider: ip6tables
+  100 v6 allow icmp forward:
+    chain: FORWARD
+    proto: ipv6-icmp
+    action: accept
+    provider: ip6tables
+  100 v6 traffic out forward:
+    chain: FORWARD
+    proto: all
+    action: accept
+    outiface: eth0
+    provider: ip6tables
+  999 v6 drop the rest forward:
+    chain: FORWARD
     proto: all
     action: drop
     provider: ip6tables

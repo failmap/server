@@ -1,7 +1,4 @@
 # configuration specific to Vagrant dev/test environment
-classes:
-  # configure and run docker daemon
-  - docker
 
 # use docker friendly firewall purge on hosted environment
 base::env::hosted::docker: true

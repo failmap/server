@@ -1,6 +1,7 @@
 # resources shared by frontend, admin and workers
 class apps::failmap (
   $pod='failmap',
+  $ipv6_subnet=undef,
   $image='registry.gitlab.com/failmap/admin:latest',
   $broker='redis://broker.failmap:6379/0',
 ){
@@ -10,9 +11,15 @@ class apps::failmap (
     image_tag => latest,
   }
 
+  if $ipv6_subnet {
+    $network_opts = "--ipv6 --subnet=${ipv6_subnet}"
+  } else { $network_opts = ''}
+
   # create application group network before starting containers
-  docker_network { $pod:
-    ensure => present,
+  Service['docker'] ->
+  exec { "${pod} docker network":
+    command => "/usr/bin/docker network create ${network_opts} ${pod}",
+    unless  => "/usr/bin/docker network inspect ${pod}",
   } -> Docker::Run <| |>
 
   # stateful configuration (credentials for external parties, eg: Sentry)

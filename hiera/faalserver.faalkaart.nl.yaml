@@ -26,6 +26,10 @@ network::interfaces_hash:
     netmask: 48
     gateway: 2a01:7c8:aac0::1
 
+base::docker::ipv6_ndpproxy: 2a01:7c8:aac0:56b::0/64
+base::docker::ipv6_subnet: 2a01:7c8:aac0:56b:0::0/80
+apps::failmap::ipv6_subnet: 2a01:7c8:aac0:56b:1::0/80
+
 apps::failmap::admin::client_ca: &failmap_ca |
   -----BEGIN CERTIFICATE-----
   MIIEQDCCAyigAwIBAgIQEmLWz+QdooUgvAF2olReXTANBgkqhkiG9w0BAQsFADCB
