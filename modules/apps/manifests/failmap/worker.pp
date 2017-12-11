@@ -14,6 +14,12 @@ class apps::failmap::worker (
   $random_seed = file('/var/lib/puppet/.random_seed')
   $db_password = fqdn_rand_string(32, '', "${random_seed}${db_user}")
 
+  if $apps::failmap::ipv6_subnet {
+    $ipv6_support = 1
+  } else {
+    $ipv6_support = 0
+  }
+
   $docker_environment = [
     "SERVICE_NAME=${appname}",
     "BROKER=${broker}",
@@ -24,6 +30,8 @@ class apps::failmap::worker (
     "DB_USER=${db_user}",
     "DB_PASSWORD=${db_password}",
     'STATSD_HOST=172.20.0.1',
+    # indicate if this host is capable of running ipv6 tasks.
+    "NETWORK_SUPPORTS_IPV6=${ipv6_support}",
   ]
 
   # stateful configuration (credentials for external parties, eg: Sentry)
