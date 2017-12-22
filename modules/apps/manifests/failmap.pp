@@ -2,12 +2,12 @@
 class apps::failmap (
   $pod='failmap',
   $ipv6_subnet=undef,
-  $image='registry.gitlab.com/failmap/admin:latest',
+  $image='registry.gitlab.com/failmap/failmap:latest',
   $broker='redis://broker.failmap:6379/0',
 ){
   docker::image { $image:
     ensure    => present,
-    image     => 'registry.gitlab.com/failmap/admin',
+    image     => 'registry.gitlab.com/failmap/failmap',
     image_tag => latest,
   }
 
@@ -33,9 +33,9 @@ class apps::failmap (
 
   # temporary solution for storing screenshots for live release
   file {
-    '/srv/failmap-admin/images/':
+    '/srv/failmap/images/':
       ensure => directory;
-    '/srv/failmap-admin/images/screenshots/':
+    '/srv/failmap/images/screenshots/':
       ensure => directory;
   }
 }

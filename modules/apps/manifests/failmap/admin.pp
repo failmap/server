@@ -6,7 +6,7 @@ class apps::failmap::admin (
   $broker    = $apps::failmap::broker,
 ){
   $hostname = 'admin.faalkaart.nl'
-  $appname = 'failmap-admin'
+  $appname = "${pod}-admin"
 
   $db_name = 'failmap'
   $db_user = $db_name
@@ -62,7 +62,7 @@ class apps::failmap::admin (
       # make mysql accesible from within container
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       # temporary solution to allow screenshots to be hosted for live release
-      '/srv/failmap-admin/images/screenshots/:/srv/failmap-admin/static/images/screenshots/',
+      '/srv/failmap/images/screenshots/:/srv/failmap/static/images/screenshots/',
     ],
     env      => $docker_environment,
     env_file => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
@@ -87,21 +87,21 @@ class apps::failmap::admin (
 
   # add convenience command to run admin actions via container
   $docker_environment_args = join(prefix($docker_environment, '-e'), ' ')
-  file { '/usr/local/bin/failmap-admin':
+  file { '/usr/local/bin/failmap':
     content => "#!/bin/bash\n/usr/bin/docker run --network ${pod} -i ${docker_environment_args} \
                 -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
                 -e TERM=\$TERM --rm --user nobody ${image} \"\$@\"",
     # this file contains secrets, don't expose to non-root
     mode    => '0700',
   }
-  file { '/usr/local/bin/failmap-admin-background':
+  file { '/usr/local/bin/failmap-background':
     content => "#!/bin/bash\n/usr/bin/docker run -d --network ${pod} -i ${docker_environment_args} \
                 -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
                 -e TERM=\$TERM --rm --user nobody ${image} \"\$@\"",
     # this file contains secrets, don't expose to non-root
     mode    => '0700',
   }
-  file { '/usr/local/bin/failmap-admin-shell':
+  file { '/usr/local/bin/failmap-shell':
     content => "#!/bin/bash\n/usr/bin/docker exec -ti -e TERM=\$TERM ${appname} /bin/bash",
     mode    => '0744',
   }
@@ -127,12 +127,12 @@ class apps::failmap::admin (
 
   # create a compressed rotating dataset backup every day/week
   cron { "${appname} daily dataset backup":
-    command => '/usr/local/bin/failmap-admin create-dataset -o - | gzip > /var/backups/failmap_dataset_day_$(date +%u).json.gz',
+    command => '/usr/local/bin/failmap create-dataset -o - | gzip > /var/backups/failmap_dataset_day_$(date +%u).json.gz',
     hour    => 6,
   }
 
   cron { "${appname} weekly dataset backup":
-    command => '/usr/local/bin/failmap-admin create-dataset -o - | gzip > /var/backups/failmap_dataset_week_$(date +%U).json.gz',
+    command => '/usr/local/bin/failmap create-dataset -o - | gzip > /var/backups/failmap_dataset_week_$(date +%U).json.gz',
     hour    => 5,
     weekday => 1
   }

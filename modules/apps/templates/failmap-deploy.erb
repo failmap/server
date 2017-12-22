@@ -29,13 +29,13 @@ set -x
 /usr/bin/docker pull "${image}"
 
 # use this until it's added as attribute to the docker container image
-version=$(/usr/local/bin/failmap-admin shell -c 'import failmap_admin; print(failmap_admin.__version__)')
+version=$(/usr/local/bin/failmap shell -c 'import failmap; print(failmap.__version__)')
 
 # push the event to monitoring
 curl -s -XPOST influxdb:8086/write?db=events --data-binary "deploy,user=$user version=\"$version\"" || true
 
 # migrate database
-/usr/local/bin/failmap-admin migrate
+/usr/local/bin/failmap migrate
 
 # restart admin
 systemctl restart docker-failmap-admin.service

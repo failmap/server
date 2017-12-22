@@ -5,7 +5,7 @@ class apps::failmap::worker (
   $image    = $apps::failmap::image,
   $broker   = $apps::failmap::broker,
 ){
-  $appname = 'failmap-worker'
+  $appname = "${pod}-worker"
 
   $db_name = 'failmap'
   $db_user = $db_name

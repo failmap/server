@@ -4,7 +4,7 @@ class apps::failmap::frontend (
   $pod = $apps::failmap::pod,
   $image = $apps::failmap::image,
 ){
-  $appname = 'failmap-frontend'
+  $appname = "${pod}-frontend"
 
   $db_name = 'failmap'
   $db_user = "${db_name}ro"
@@ -38,7 +38,7 @@ class apps::failmap::frontend (
     volumes  => [
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       # temporary solution to allow screenshots to be hosted for live release
-      '/srv/failmap-admin/images/screenshots/:/srv/failmap-admin/static/images/screenshots/',
+      '/srv/failmap/images/screenshots/:/srv/failmap/static/images/screenshots/',
     ],
     env      => [
       # database settings
