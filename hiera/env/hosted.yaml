@@ -113,6 +113,13 @@ firewall:
     action: accept
     outiface: eth0
     provider: ip6tables
+  100 v6 failmap docker intercontainer:
+    chain: FORWARD
+    proto: all
+    action: accept
+    source: 2a01:7c8:aac0:56b:0::0/64
+    destination: 2a01:7c8:aac0:56b:0::0/64
+    provider: ip6tables
   999 v6 drop the rest forward:
     chain: FORWARD
     proto: all
