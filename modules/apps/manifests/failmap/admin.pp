@@ -90,6 +90,7 @@ class apps::failmap::admin (
   file { '/usr/local/bin/failmap':
     content => "#!/bin/bash\n/usr/bin/docker run --network ${pod} -i ${docker_environment_args} \
                 -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
+                --name ${pod}-\$(logname)-\$1-\$(date +%s) \
                 -e TERM=\$TERM --rm --user nobody ${image} \"\$@\"",
     # this file contains secrets, don't expose to non-root
     mode    => '0700',
@@ -97,6 +98,7 @@ class apps::failmap::admin (
   file { '/usr/local/bin/failmap-background':
     content => "#!/bin/bash\n/usr/bin/docker run -d --network ${pod} -i ${docker_environment_args} \
                 -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
+                --name ${pod}-\$(logname)-\$1-\$(date +%s) \
                 -e TERM=\$TERM --rm --user nobody ${image} \"\$@\"",
     # this file contains secrets, don't expose to non-root
     mode    => '0700',
