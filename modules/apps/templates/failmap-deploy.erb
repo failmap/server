@@ -49,9 +49,9 @@ echo "Admin restarted, please verify and press [enter] to continue deploy or [ct
 echo
 echo "https://admin.faalkaart.nl/"
 echo
-set -x
 # wait for user input
 read -r
+set -x
 
 # restart all services
 systemctl restart docker-failmap-*.service
