@@ -4,6 +4,7 @@ class base (
 ){
   class { '::cron': }
 
+  class { '::apt': }
   class { '::apt::backports': }
 
   # utility packages

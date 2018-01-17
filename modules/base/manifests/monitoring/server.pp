@@ -19,6 +19,7 @@ class base::monitoring::server (
     'server.measurement*',
   ], '"'), '"'), ',')
   file { '/srv/influxdb/': ensure => directory } ->
+  Package['docker'] -> Exec['generate initial influxdb config']
   exec {'generate initial influxdb config':
     command => '/usr/bin/docker run --rm influxdb influxd config > /srv/influxdb/config.toml',
     creates => '/srv/influxdb/config.toml',

@@ -5,7 +5,6 @@ class base::env::hosted (
 ){
 
   # enable apt unattended security upgrades
-  class { '::apt': }
   class { '::unattended_upgrades': }
 
   # setup firewall
