@@ -59,16 +59,16 @@ FORGE
 
 GIT
   remote: https://github.com/aequitas/puppet-letsencrypt.git
-  ref: master
-  sha: da0abd4d2b7acb68a13353a9b696f3481ddff09a
+  ref: db45a8ca205f39ff6e0d63c9b74caabda1f24bb6
+  sha: db45a8ca205f39ff6e0d63c9b74caabda1f24bb6
   specs:
-    aequitas-letsencrypt (0.1.1)
+    aequitas-letsencrypt (0.2.0)
       puppetlabs-stdlib (>= 1.0.0)
 
 GIT
   remote: https://github.com/aequitas/puppet-sites.git
-  ref: 5c97ba01db774ce360348839c73d3ae7e5a06d71
-  sha: 5c97ba01db774ce360348839c73d3ae7e5a06d71
+  ref: 2cc0ac12d0387f271d49c5bee1e54b699975ef31
+  sha: 2cc0ac12d0387f271d49c5bee1e54b699975ef31
   specs:
     aequitas-sites (0.1.0)
       puppet-nginx (>= 0.6.0)

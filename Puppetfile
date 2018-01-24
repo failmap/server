@@ -23,11 +23,10 @@ mod 'datacentred/telegraf'
 
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',
-  :ref => 'master'
+  :ref => 'db45a8ca205f39ff6e0d63c9b74caabda1f24bb6'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
-  :ref => '5c97ba01db774ce360348839c73d3ae7e5a06d71'
-  # :path => '../../puppet-sites'
+  :ref => '2cc0ac12d0387f271d49c5bee1e54b699975ef31'
 
 # indirect dependencies to pin version
 # pin to latest puppet 3.x supported version
