@@ -11,9 +11,6 @@ classes:
 # letsencrypt account settings
 letsencrypt::email: info@faalkaart.nl
 
-# include settings for generic hosted/production instance
-env: hosted
-
 # ensure default ipv4 config and enable static ipv6
 network::interfaces_hash:
   eth0:
