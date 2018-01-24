@@ -1,20 +1,12 @@
 ---
-:backends:
-  - eyaml
-  - yaml
-
-:yaml:
-  :datadir: hiera
-
-:eyaml:
-  :datadir: hiera
-  :pkcs7_private_key: keys/private_key.pkcs7.pem
-  :pkcs7_public_key:  keys/public_key.pkcs7.pem
-
-:hierarchy:
-  - dev
-  - "%{::fqdn}"
-  - "env/%{::env}"
-  - common
-
-:merge_behavior: deeper
+version: 5
+defaults:
+  datadir: hiera
+  data_hash: yaml_data
+hierarchy:
+  - name: "Default"
+    paths:
+      - "dev.yaml"
+      - "%{::fqdn}.yaml"
+      - "env/%{::env}.yaml"
+      - "common.yaml"
