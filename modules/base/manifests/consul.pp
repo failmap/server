@@ -5,12 +5,12 @@ class base::consul (
   class { '::consul':
     version       => '0.9.3',
     config_hash   => {
-      bootstrap_expect => 1,
       data_dir         => '/opt/consul',
       log_level        => 'INFO',
       node_name        => $::fqdn,
       server           => true,
       # just run locally, don't assume cluster
+      bootstrap_expect => 1,
     },
     extra_options => '--advertise 127.0.0.1',
   }
@@ -26,7 +26,7 @@ class base::consul (
   } ~> Service['dnsmasq']
 
   Package['resolvconf'] ->
-  file_line { 'consul search domain ':
+  file_line { 'consul search domain':
     line => 'search service.dc1.consul',
     path => '/etc/resolvconf/resolv.conf.d/base',
   } -> Service['resolvconf']

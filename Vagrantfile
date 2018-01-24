@@ -12,11 +12,12 @@ Vagrant.configure("2") do |config|
   # enable ipv6
   config.vm.network "private_network", ip: "fde4:8dba:82e1::c4"
 
+  config.vm.hostname = "faalserver.faalkaart.test"
+
   # enable development hostname resolving
   if Vagrant.has_plugin?("vagrant-some-plugin")
     config.landrush.enabled = true
     config.landrush.tld = "faalkaart.test"
-    config.vm.hostname = "faalserver.faalkaart.test"
   end
 
   # ensure virtualbox shared folders are used

@@ -67,8 +67,8 @@ GIT
 
 GIT
   remote: https://github.com/aequitas/puppet-sites.git
-  ref: 2cc0ac12d0387f271d49c5bee1e54b699975ef31
-  sha: 2cc0ac12d0387f271d49c5bee1e54b699975ef31
+  ref: 564f8ed7d13873fb128d9b42deac38e703c8de24
+  sha: 564f8ed7d13873fb128d9b42deac38e703c8de24
   specs:
     aequitas-sites (0.1.0)
       puppet-nginx (>= 0.6.0)

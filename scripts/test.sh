@@ -17,13 +17,17 @@ function failed {
 }
 
 exec 2>&1
-set -ve -o pipefail
 
 # give docker apps a little room to come online after an initial provision
 for app in admin.$domain demo.$domain; do
   # try every second for 10 second to get a good response from app
-  timeout 10 /bin/sh -c "while ! curl -sSIk https://\"$app\" | grep 200;do sleep 1;done"
+  timeout 10 /bin/sh -c "while ! curl -sSIk https://\"$app\" &>/dev/null | grep 200;do sleep 1;done" || true
 done
+
+set -ve -o pipefail
+
+# install dependencies
+sudo /vagrant/scripts/install_sslscan.sh
 
 ### TESTS
 
@@ -38,10 +42,7 @@ if $v6;then
   echo "$response" | grep 200 || failed "$response"
 fi
 
-response=$(curl -sSIk "https://$domain/index.html")
-echo "$response" | grep 200 || failed "$response"
-
-response=$(curl -sSIk "https://$domain/favicon.ico")
+response=$(curl -sSIk "https://$domain/static/favicon.ico")
 echo "$response" | grep 200 || failed "$response"
 
 # content renders to the end
@@ -82,56 +83,46 @@ response=$(curl -sSIk https://www.faalkaart.nl)
 echo "$response" | grep 301 || failed "$response"
 echo "$response" | grep "Location: https://$domain" || failed "$response"
 
-## access denied
-response=$(curl -sSk "https://$domain/index.php")
-echo "$response" | grep 403 || failed "$response"
-
-## Admin frontend
-
-# should be alive
-response=$(curl -sSIk "https://admin.$domain")
-echo "$response" | grep 200 || failed "$response"
-
-# caching should be disabled
-response=$(curl -sSIk "https://admin.$domain")
-echo "$response" | grep 'Cache-Control: no-cache' || failed "$response"
-
-## Demo
-
-# should be alive
-response=$(curl -sSIk "https://demo.$domain")
-echo "$response" | grep 200 || failed "$response"
+# ## Admin frontend
+#
+# # should be alive
+# response=$(curl -sSIk "https://admin.$domain")
+# echo "$response" | grep 200 || failed "$response"
+#
+# # caching should be disabled
+# response=$(curl -sSIk "https://admin.$domain")
+# echo "$response" | grep 'Cache-Control: no-cache' || failed "$response"
 
 # cache should be enabled
 
 # skip, currently no endpoint which does not specify cache explicitly
 # # app does not set cache for the index, webserver default should be used
-# response=$(curl -sSIk "https://demo.$domain")
+# response=$(curl -sSIk "https://$domain")
 # echo "$response" | grep 'Cache-Control: max-age=600' || failed "$response"
 
 # stats have explicit cache which is different from the webserver 10 minute default
 # implicitly tests database migrations as it will return 500 if they are not applied
-response=$(curl -sSIk "https://demo.$domain/data/terrible_urls/0")
+response=$(curl -sSIk "https://$domain/data/terrible_urls/0")
 echo "$response" | grep 'Cache-Control: max-age=86400' || failed "$response"
 
 # all responses should be compressed
 # proxied html
-response=$(curl --compressed -sSIk "https://demo.$domain/")
+response=$(curl --compressed -sSIk "https://$domain/")
 echo "$response" | grep 'Content-Encoding: gzip' || failed "$response"
 # proxied JSON
-response=$(curl --compressed -sSIk "https://demo.$domain/data/stats/0")
+response=$(curl --compressed -sSIk "https://$domain/data/stats/0")
 echo "$response" | grep 'Content-Encoding: gzip' || failed "$response"
 # proxied static files
-response=$(curl --compressed -sSIk "https://demo.$domain/static/images/internet_cleanup_foundation_logo.png")
+response=$(curl --compressed -sSIk "https://$domain/static/images/internet_cleanup_foundation_logo.png")
 echo "$response" | grep 'Content-Encoding: gzip' || failed "$response"
 
 # webserver should serve stale responses if backend is down
 # indirectly this tests server caching as well
-curl -sSIk "https://demo.$domain"
-systemctl stop docker-failmap-frontend.service
-response=$(curl -sSIk "https://demo.$domain")
+curl -sSIk "https://$domain"
+sudo systemctl stop docker-failmap-frontend.service
+response=$(curl -sSIk "https://$domain")
 echo "$response" | grep 200 || failed "$response"
-systemctl start docker-failmap-frontend.service
+sudo systemctl start docker-failmap-frontend.service
 
 # success
 set +v

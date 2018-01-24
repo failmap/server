@@ -14,7 +14,7 @@ class base::docker (
   }
 
   # use consul to provide service discovery and host->container DNS
-  include consul
+  include base::consul
 
   # register docker container with consul for service discovery
   docker::run {'register':
