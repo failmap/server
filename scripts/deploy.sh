@@ -16,4 +16,4 @@ rsync -v -a --delete --no-motd \
   "${sync[@]}" "$host:provision/"
 
 # shellcheck disable=SC2029
-ssh "$host" sudo provision/scripts/apply.sh "$@"
+ssh "$host" sudo -i "\${PWD}/provision/scripts/apply.sh" "$@"

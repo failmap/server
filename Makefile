@@ -5,7 +5,7 @@ host ?= faalserver.faalkaart.nl
 all: vendor/modules
 
 vendor/modules Puppetfile.lock: Puppetfile .librarian/puppet/config
-	librarian-puppet install --verbose
+	librarian-puppet install
 	touch vendor/modules Puppetfile.lock
 
 apply deploy: vendor/modules
@@ -26,7 +26,7 @@ check:
 
 bootstrap:
 	scp scripts/bootstrap.sh ${host}:
-	ssh ${host} /bin/bash bootstrap.sh
+	ssh ${host} sudo /bin/bash bootstrap.sh
 
 mrproper clean:
 	rm -rf vendor

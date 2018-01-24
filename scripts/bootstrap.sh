@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# install puppet and dependencies
+# install/update all dependencies for provisioning
 
 if ! test "$(whoami)" == "root";then
   echo "Must run as root!"
