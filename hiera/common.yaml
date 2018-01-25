@@ -1,6 +1,5 @@
 # application configuration independent of location or environment
 classes:
-  - base
   - sites
   - base::docker
   - apps::failmap
