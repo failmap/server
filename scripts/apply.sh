@@ -8,7 +8,7 @@ seedfile=/var/lib/puppet/.random_seed
 test -f "$seedfile" || \
   head /dev/urandom | tr -dc A-Za-z0-9 | head -c 64 > "$seedfile"
 
-if test "$IGNORE_WARNINGS" -eq 1;then
+if ! test -z "$IGNORE_WARNINGS";then
   # errors/warnings to suppress as they often lead to red herrings.
   ignore='Warning:.*collect exported resources.*nginx/manifests/resource/upstream.pp|Info: Loading facts|Warning:.*(Skipping unparsable iptables rule.*br-|is deprecated)|file & line not available|/provision/vendor/modules/|validate_legacy.*provision/vendor'
   echo "Ignoring Puppet catalog compiler warnings (deprecations, etc)!"
