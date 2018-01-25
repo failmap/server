@@ -45,7 +45,7 @@ class base::env::hosted (
     }
   }
 
-  create_resources('firewall', hiera_hash('firewall', {}))
+  create_resources('firewall', lookup('firewall', Hash, unique, {}))
 
   # enable ntp
   class { '::ntp':

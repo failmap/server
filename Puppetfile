@@ -20,9 +20,14 @@ mod 'thias-php'
 mod 'puppetlabs-mysql'
 mod 'example42-network'
 mod 'puppetlabs-docker'
+# pin for puppet4+ compat
 mod 'KyleAnderson/consul', '>=3.0.0'
 mod 'puppet/collectd'
-mod 'datacentred/telegraf'
+# pin for puppet4+ compat
+mod 'datacentred/telegraf', '>=2.0.0',
+  # until 2.0.0 is available from puppet forge.
+  :git => 'https://github.com/yankcrime/puppet-telegraf.git',
+  :ref => '2.0.0'
 
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',

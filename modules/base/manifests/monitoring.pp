@@ -49,13 +49,15 @@ class base::monitoring {
   class { '::telegraf':
     hostname => $::hostname,
     outputs  => {
-      influxdb => {
-        urls     => [ 'http://influxdb.service.dc1.consul:8086' ],
-        database => telegraf,
-      }
+      influxdb => [
+        {
+          urls     => [ 'http://influxdb.service.dc1.consul:8086' ],
+          database => telegraf,
+        }
+      ]
     },
     inputs   => {
-      statsd        => {
+      statsd        => [{
         templates => [
           # failmap.celery.failmap.scanners.scanner_security_headers.get_headers.sent
           '*.celery.* prefix.measurement.project.app.module.task.measurement*',
@@ -70,17 +72,17 @@ class base::monitoring {
           # failmap.view.proxy.views.GET
           '*.view.*.*.* prefix.measurement.app.module.measurement',
         ]
-      },
-      consul        => {},
-      system        => {},
-      net           => {},
-      netstat       => {},
-      mem           => {},
-      disk          => {},
-      diskio        => {},
-      processes     => {},
-      kernel        => {},
-      kernel_vmstat => {},
+      }],
+      consul        => [{}],
+      system        => [{}],
+      net           => [{}],
+      netstat       => [{}],
+      mem           => [{}],
+      disk          => [{}],
+      diskio        => [{}],
+      processes     => [{}],
+      kernel        => [{}],
+      kernel_vmstat => [{}],
     },
   }
 }

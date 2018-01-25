@@ -13,7 +13,7 @@ class base (
   }
 
   # add some resource creations for modules not supporting them natively
-  create_resources('host', hiera_hash('hosts', {}))
+  create_resources('host', lookup('hosts', Hash, unique, {}))
 
   # redirects to localhost (mostly used for test suites)
   host { 'localhost-redirects-4':
@@ -29,5 +29,5 @@ class base (
   package { 'resolvconf': ensure => latest} ~>
   service { 'resolvconf': ensure => running, enable => true}
   package { 'dnsmasq': ensure => latest} ~>
-  service { 'dnsmasq': ensure => running, enable => true} -> Service['resolvconf']
+  service { 'dnsmasq': ensure => running, enable => true} -> Package['resolvconf']
 }

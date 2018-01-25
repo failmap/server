@@ -5,7 +5,10 @@ host ?= faalserver.faalkaart.nl
 all: vendor/modules
 
 vendor/modules Puppetfile.lock: Puppetfile .librarian/puppet/config
-	librarian-puppet install --verbose
+	# currently broken
+	# https://github.com/voxpupuli/librarian-puppet/issues/52
+	# librarian-puppet install --verbose
+	librarian-puppet install
 	touch vendor/modules Puppetfile.lock
 
 apply deploy: vendor/modules

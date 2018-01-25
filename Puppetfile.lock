@@ -7,9 +7,6 @@ FORGE
       puppetlabs-stdlib (< 5.0.0, >= 4.13.1)
     camptocamp-systemd (1.1.1)
       puppetlabs-stdlib (< 5.0.0, >= 4.13.1)
-    datacentred-telegraf (1.5.0)
-      puppetlabs-apt (< 5.0.0, >= 2.0.0)
-      puppetlabs-stdlib (< 5.0.0, >= 4.10.0)
     example42-network (3.3.10)
       puppetlabs-concat (< 6.0.0, >= 1.0.0)
       puppetlabs-stdlib (< 6.0.0, >= 2.0.1)
@@ -88,11 +85,20 @@ GIT
       puppetlabs-concat (< 5.0.0, >= 1.2.5)
       puppetlabs-stdlib (< 5.0.0, >= 4.6.0)
 
+GIT
+  remote: https://github.com/yankcrime/puppet-telegraf.git
+  ref: 2.0.0
+  sha: 3957d82dacf8d6093e2ae48579c4abc46fc16f93
+  specs:
+    datacentred-telegraf (2.0.0)
+      puppetlabs-apt (< 5.0.0, >= 2.0.0)
+      puppetlabs-stdlib (< 5.0.0, >= 4.10.0)
+
 DEPENDENCIES
   KyleAnderson-consul (>= 3.0.0)
   aequitas-letsencrypt (>= 0)
   aequitas-sites (>= 0)
-  datacentred-telegraf (>= 0)
+  datacentred-telegraf (>= 2.0.0)
   example42-network (>= 0)
   petems-swap_file (>= 0)
   puppet-collectd (>= 0)
