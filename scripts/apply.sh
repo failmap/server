@@ -12,8 +12,10 @@ if ! test -z "$IGNORE_WARNINGS";then
   # errors/warnings to suppress as they often lead to red herrings.
   ignore='Warning:.*collect exported resources.*nginx/manifests/resource/upstream.pp|Info: Loading facts|Warning:.*(Skipping unparsable iptables rule.*br-|is deprecated)|file & line not available|/provision/vendor/modules/|validate_legacy.*provision/vendor'
   echo "Ignoring Puppet catalog compiler warnings (deprecations, etc)!"
+  ignore_filter="egrep --line-buffered -v '$ignore'"
 else
-  ignore=
+  echo "Showing Puppet catalog compiler warnings (deprecations, etc)."
+  ignore_filter=cat
 fi
 
 puppet apply \
@@ -21,8 +23,8 @@ puppet apply \
   --modulepath=modules:vendor/modules \
   --hiera_config=hiera.yaml \
   manifests/site.pp "$@" \
-    > >(egrep --line-buffered -v "$ignore") \
-    2> >(egrep --line-buffered -v "$ignore")
+    > >(eval $ignore_filter) \
+    2> >(eval $ignore_filter)
 # detailed exit code 0 and 2 are considered success.
 # https://docs.puppet.com/puppet/4.4/reference/man/apply.html#OPTIONS
 e=$?; test $e -eq 2 && exit 0
