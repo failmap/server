@@ -46,16 +46,16 @@ class base::docker (
     }
     file { '/var/lib/puppet/ndppd_0.2.5-1_amd64.deb':
       source => 'puppet:///modules/base/ndppd_0.2.5-1_amd64.deb',
-    } ~>
-    package {'ndppd':
+    }
+    ~> package {'ndppd':
       ensure   => latest,
       provider => dpkg,
       source   => '/var/lib/puppet/ndppd_0.2.5-1_amd64.deb',
-    } ->
-    file { '/etc/ndppd.conf':
+    }
+    -> file { '/etc/ndppd.conf':
       content => template('base/ndppd.conf.erb'),
-    } ~>
-    service {'ndppd': }
+    }
+    ~> service {'ndppd': }
   }
 }
 

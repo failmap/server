@@ -14,8 +14,8 @@ class apps::failmap::frontend (
   $db_password = fqdn_rand_string(32, '', "${random_seed}${db_user}")
   mysql_user { "${db_user}@localhost":
     password_hash => mysql_password($db_password),
-  } ->
-  mysql_grant { "${db_user}@localhost/${db_name}.*":
+  }
+  -> mysql_grant { "${db_user}@localhost/${db_name}.*":
     user       => "${db_user}@localhost",
     table      => "${db_name}.*",
     privileges => ['SELECT'],
@@ -25,14 +25,14 @@ class apps::failmap::frontend (
   file {
     "/srv/${appname}/":
       ensure => directory,
-      mode => '0700';
+      mode   => '0700';
     "/srv/${appname}/env.file":
       ensure => present;
   } -> Docker::Run[$appname]
 
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
-  Docker::Image[$image] ~>
-  docker::run { $appname:
+  Docker::Image[$image]
+  ~> docker::run { $appname:
     image    => $image,
     command  => 'runuwsgi',
     volumes  => [

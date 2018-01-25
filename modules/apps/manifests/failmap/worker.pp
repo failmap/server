@@ -38,13 +38,13 @@ class apps::failmap::worker (
   file {
     "/srv/${appname}/":
       ensure => directory,
-      mode => '0700';
+      mode   => '0700';
     "/srv/${appname}/env.file":
       ensure => present;
   } -> Docker::Run[$appname]
 
-  Docker::Image[$image] ~>
-  docker::run { $appname:
+  Docker::Image[$image]
+  ~> docker::run { $appname:
     image          => $image,
     command        => 'celery worker -linfo',
     volumes        => [
@@ -61,8 +61,8 @@ class apps::failmap::worker (
     stop_wait_time => 300,
   }
 
-  Docker::Image[$image] ~>
-  docker::run { 'failmap-scheduler':
+  Docker::Image[$image]
+  ~> docker::run { 'failmap-scheduler':
     image    => $image,
     command  => 'celery beat -linfo --pidfile=/var/tmp/celerybeat.pid',
     volumes  => [

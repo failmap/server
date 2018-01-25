@@ -49,13 +49,13 @@ class apps::failmap::admin (
   file {
     "/srv/${appname}/":
       ensure => directory,
-      mode => '0700';
+      mode   => '0700';
     "/srv/${appname}/env.file":
       ensure => present;
   } -> Docker::Run[$appname]
 
-  Docker::Image[$image] ~>
-  docker::run { $appname:
+  Docker::Image[$image]
+  ~> docker::run { $appname:
     image    => $image,
     command  => 'runuwsgi',
     volumes  => [
@@ -119,8 +119,8 @@ class apps::failmap::admin (
 
 
   # run migration in a separate container
-  Docker::Image[$image] ~>
-  exec {"${appname}-migrate":
+  Docker::Image[$image]
+  ~> exec {"${appname}-migrate":
     command     => "/usr/bin/docker run ${docker_environment_args} \
                     -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
                     ${image} migrate --noinput",

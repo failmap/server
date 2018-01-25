@@ -26,8 +26,8 @@ class base (
   }
 
   # make DNS better managable,
-  package { 'resolvconf': ensure => latest} ~>
-  service { 'resolvconf': ensure => running, enable => true}
-  package { 'dnsmasq': ensure => latest} ~>
-  service { 'dnsmasq': ensure => running, enable => true} -> Package['resolvconf']
+  package { 'resolvconf': ensure => latest}
+  ~> service { 'resolvconf': ensure => running, enable => true}
+  package { 'dnsmasq': ensure => latest}
+  ~> service { 'dnsmasq': ensure => running, enable => true} -> Package['resolvconf']
 }

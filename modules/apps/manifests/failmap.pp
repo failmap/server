@@ -16,8 +16,8 @@ class apps::failmap (
   } else { $network_opts = ''}
 
   # create application group network before starting containers
-  Service['docker'] ->
-  exec { "${pod} docker network":
+  Service['docker']
+  -> exec { "${pod} docker network":
     command => "/usr/bin/docker network create ${network_opts} ${pod}",
     unless  => "/usr/bin/docker network inspect ${pod}",
   } -> Docker::Run <| |>
@@ -26,7 +26,7 @@ class apps::failmap (
   file {
     "/srv/${pod}":
       ensure => directory,
-      mode => '0700';
+      mode   => '0700';
     "/srv/${pod}/env.file":
       ensure => present;
   } -> Docker::Run <| |>
