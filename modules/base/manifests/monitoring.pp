@@ -85,4 +85,7 @@ class base::monitoring {
       kernel_vmstat => [{}],
     },
   }
+
+  # collect and instantiate telegraf inputs defined elsewhere with @telegraf::input
+  Telegraf::Input <| |>
 }

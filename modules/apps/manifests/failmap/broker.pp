@@ -7,4 +7,11 @@ class apps::failmap::broker (
     tag   => latest,
     net   => $pod,
   }
+
+  @telegraf::input { 'broker-redis':
+    plugin_type => redis,
+    options     => [
+      {servers => ['tcp://redis:6379']},
+    ],
+  }
 }
