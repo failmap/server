@@ -12,6 +12,13 @@ class base (
     ensure => latest,
   }
 
+  file_line {'sudo prompt':
+    path     => '/etc/bash.bashrc',
+    line     => "PS1='\${debian_chroot:+(\$debian_chroot)}super_\$(logname)@\\h:\\w\\$ '",
+    match    => 'PS1=',
+    multiple => false,
+  }
+
   # add some resource creations for modules not supporting them natively
   create_resources('host', lookup('hosts', Hash, unique, {}))
 
