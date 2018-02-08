@@ -44,6 +44,9 @@ FORGE
       stahnma-epel (>= 0.0.6)
     puppetlabs-firewall (1.12.0)
       puppetlabs-stdlib (< 5.0.0, >= 4.0.0)
+    puppetlabs-haproxy (2.1.0)
+      puppetlabs-concat (< 5.0.0, >= 1.2.3)
+      puppetlabs-stdlib (< 5.0.0, >= 4.13.1)
     puppetlabs-mysql (5.2.0)
       puppet-staging (< 4.0.0, >= 1.0.1)
       puppetlabs-stdlib (< 5.0.0, >= 3.2.0)
@@ -59,8 +62,8 @@ FORGE
 
 GIT
   remote: https://github.com/aequitas/puppet-letsencrypt.git
-  ref: db45a8ca205f39ff6e0d63c9b74caabda1f24bb6
-  sha: db45a8ca205f39ff6e0d63c9b74caabda1f24bb6
+  ref: 2efa3b54ca8c1216a577b4015e1239da3e2cb493
+  sha: 2efa3b54ca8c1216a577b4015e1239da3e2cb493
   specs:
     aequitas-letsencrypt (0.2.0)
       puppetlabs-stdlib (>= 1.0.0)
@@ -105,6 +108,7 @@ DEPENDENCIES
   puppet-unattended_upgrades (>= 0)
   puppetlabs-docker (>= 0)
   puppetlabs-firewall (>= 0)
+  puppetlabs-haproxy (>= 0)
   puppetlabs-mysql (>= 0)
   puppetlabs-ntp (>= 0)
   puppetlabs-stdlib (>= 0)

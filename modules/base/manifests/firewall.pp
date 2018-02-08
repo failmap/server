@@ -41,4 +41,7 @@ class base::firewall (
     }
   }
   create_resources(firewall, $rules)
+
+  # collect all firewall rules declared in other modules (@firewall {...)
+  Firewall <| |>
 }

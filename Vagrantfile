@@ -12,17 +12,20 @@ Vagrant.configure("2") do |config|
   # enable ipv6
   config.vm.network "private_network", ip: "fde4:8dba:82e1::c4"
 
+  # set hostname which is used to select development settings (hiera/*.yaml)
   config.vm.hostname = "faalserver.faalkaart.test"
 
   # enable development hostname resolving
-  if Vagrant.has_plugin?("vagrant-some-plugin")
+  if Vagrant.has_plugin?("landrush")
     config.landrush.enabled = true
     config.landrush.tld = "faalkaart.test"
   end
 
   # ensure virtualbox shared folders are used
-  # debian box does not have vbguest extensions by default (install vagrant-vbguest plugin)
+  # debian box does not have vbguest extensions by default
   # and will default to rsync instead, which is broken and a less seamless experience
+  # error: "mount: unknown filesystem type 'vboxsf'"
+  # fix: `vagrant plugin install vagrant-vbguest`
   config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
 
   # provision using puppet

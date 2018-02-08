@@ -27,6 +27,7 @@ base::docker::ipv6_ndpproxy: 2a01:7c8:aac0:56b::0/64
 base::docker::ipv6_subnet: 2a01:7c8:aac0:56b:0::0/80
 apps::failmap::ipv6_subnet: 2a01:7c8:aac0:56b:1::0/80
 
+# CA for validating access to administrative instance of Failmap application
 apps::failmap::admin::client_ca: &failmap_ca |
   -----BEGIN CERTIFICATE-----
   MIIEQDCCAyigAwIBAgIQEmLWz+QdooUgvAF2olReXTANBgkqhkiG9w0BAQsFADCB
@@ -54,4 +55,8 @@ apps::failmap::admin::client_ca: &failmap_ca |
   vzu4wrBBWT2CeLQYqDCNbsMCX4dgRdfRKWzrxS9t9+OA59uJ
   -----END CERTIFICATE-----
 
+# CA for validating access to monitoring frontends (Grafana)
 base::monitoring::server::client_ca: *failmap_ca
+
+# CA for validating external Workers connecting with the broker
+apps::failmap::broker::client_ca: *failmap_ca

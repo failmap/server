@@ -28,10 +28,11 @@ mod 'datacentred/telegraf', '>=2.0.0',
   # until 2.0.0 is available from puppet forge.
   :git => 'https://github.com/yankcrime/puppet-telegraf.git',
   :ref => '2.0.0'
+mod 'puppetlabs-haproxy'
 
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',
-  :ref => 'db45a8ca205f39ff6e0d63c9b74caabda1f24bb6'
+  :ref => '2efa3b54ca8c1216a577b4015e1239da3e2cb493'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
   :ref => '1cedfd544b1a66cf24ff7bc3f2ec980276774e01'

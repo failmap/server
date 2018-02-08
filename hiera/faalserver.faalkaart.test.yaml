@@ -10,3 +10,37 @@ base::localhost_redirects:
   - faalkaart.nl
   - www.faalkaart.nl
   - admin.faalkaart.nl
+
+# CA for validating access to administrative instance of Failmap application
+apps::failmap::admin::client_ca: &failmap_ca |
+  -----BEGIN CERTIFICATE-----
+  MIIEQDCCAyigAwIBAgIQEmLWz+QdooUgvAF2olReXTANBgkqhkiG9w0BAQsFADCB
+  uTELMAkGA1UEBhMCTkwxDDAKBgNVBAgTA04vQTEMMAoGA1UEBxMDTi9BMQwwCgYD
+  VQQJEwNOL0ExDDAKBgNVBBETA04vQTEuMCwGA1UEChMlU3RpY2h0aW5nIEludGVy
+  bmV0IENsZWFudXAgRm91bmRhdGlvbjESMBAGA1UECxMJRmFhbGthYXJ0MS4wLAYD
+  VQQDEyVTdGljaHRpbmcgSW50ZXJuZXQgQ2xlYW51cCBGb3VuZGF0aW9uMB4XDTE3
+  MTAxMzE2MjYyM1oXDTIyMTAxMjE2MjYyM1owgbkxCzAJBgNVBAYTAk5MMQwwCgYD
+  VQQIEwNOL0ExDDAKBgNVBAcTA04vQTEMMAoGA1UECRMDTi9BMQwwCgYDVQQREwNO
+  L0ExLjAsBgNVBAoTJVN0aWNodGluZyBJbnRlcm5ldCBDbGVhbnVwIEZvdW5kYXRp
+  b24xEjAQBgNVBAsTCUZhYWxrYWFydDEuMCwGA1UEAxMlU3RpY2h0aW5nIEludGVy
+  bmV0IENsZWFudXAgRm91bmRhdGlvbjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+  AQoCggEBALxzJzYm9qSTV7x2E7+B6vpwvZB1IJPL/fDwnHKeGBZZVb1C54/VtotU
+  3z5trE+1EV0xmPJjWtnGBcoae5UPBM04JJtBG6hRi8hWUhCurliz7D7/EQEkFVv+
+  v3G3ibx97aMcXc52i5JBmOUimt5MY9RzGfagF4TYa6sPEbJXALLQ6ucOfeckUhQq
+  F8ENhIzwjG0rfiw4T6zsiMpLtGC//h2konfThDMN9YN2ckpEOgToxZ3U7LfCANoF
+  PdjD/wt6MnbQcf33P5toad2h475luYrgIL7CzCkcg+eOsPTPE+DnGZVDoznMNk/A
+  peIENezaFaHWyO3c5l+iKSSkRK+zbgECAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgIE
+  MA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFA1HLgBwzRyE9eIoJHxTwDrmYV3p
+  MA0GCSqGSIb3DQEBCwUAA4IBAQCIJiocty0rFwxMCuNSMnWEXOISrW4nSwpsPISE
+  rVmMqOXj/8dz+zMUFLthHUd7Kotr39G4Q2nGTy+zdScHsQHuhvfBX7s8w3Ma8GR6
+  oJWWadigttZPUFxaHwJNQZMfk1seDS+kiK8/AVQCCdlfyTVa4X+cXCtE/E766Ta2
+  jLiF40ZGRd3i3LNYCxLs/QViB1Qt/dFhmLUrlD7pw6xgcSthyxMj/CSHf0rFFBpV
+  tlac7qVwg8uwtijb9I/kPeGz7cYrB3R/tQLJ4cxgq8I2y910KhFkS2LFIKGQ7hm7
+  vzu4wrBBWT2CeLQYqDCNbsMCX4dgRdfRKWzrxS9t9+OA59uJ
+  -----END CERTIFICATE-----
+
+# CA for validating access to monitoring frontends (Grafana)
+base::monitoring::server::client_ca: *failmap_ca
+
+# CA for validating external Workers connecting with the broker
+apps::failmap::broker::client_ca: *failmap_ca
