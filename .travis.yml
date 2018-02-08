@@ -1,0 +1,16 @@
+sudo: required
+dist: trusty
+
+language: ruby
+rvm:
+  - 2.0.0
+
+install:
+  - scripts/bootstrap.sh
+  - gem install serverspec
+
+before_script:
+  - scripts/apply.sh
+
+scripts:
+  - rake spec

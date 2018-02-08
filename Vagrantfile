@@ -55,6 +55,6 @@ Vagrant.configure("2") do |config|
   # run serverspec as a provisioner to test the previously provisioned machine
   config.vm.provision :serverspec do |spec|
     # pattern for specfiles to search
-    spec.pattern = 'serverspec/*.rb'
+    spec.pattern = 'spec/localhost/*.rb'
   end
 end
