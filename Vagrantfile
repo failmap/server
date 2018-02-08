@@ -38,10 +38,23 @@ Vagrant.configure("2") do |config|
     # install dependencies for Puppet, don't use Vagrant Puppet, we want to test bootstrapping
     /vagrant/scripts/bootstrap.sh
 
+    # reload profile after installing puppet to pick up PATH change
+    source /etc/profile
+
     # pull in puppet modules if required
     make -C /vagrant Puppetfile.lock
 
     # apply latests configuration
     /vagrant/scripts/apply.sh
   SHELL
+
+  unless Vagrant.has_plugin?("vagrant-serverspec")
+    raise 'vagrant-serverspec is not installed, see REAMDE.md'
+  end
+
+  # run serverspec as a provisioner to test the previously provisioned machine
+  config.vm.provision :serverspec do |spec|
+    # pattern for specfiles to search
+    spec.pattern = 'serverspec/*.rb'
+  end
 end

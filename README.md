@@ -12,15 +12,15 @@ The following tools are required to run the virtual machine:
 - [Vagrant](https://www.vagrantup.com/downloads.html)
 - vagrant-vbguest (`vagrant plugin install vagrant-vbguest`)
 - vagrant-landrush (`vagrant plugin install landrush`)
+- vagrant-serverspec(`vagrant plugin install vagrant-serverspec`)
 
 ## Instructions
 
-Run the following command and wait for the provisioning to have completed.
+Run the following command and wait for the provisioning to complete.
 
     vagrant up
-    vagrant ssh -- /vagrant/scripts/test.sh
 
-The test should complete with the words `All good!` which indicated the post-provision test suite has verified the installation is correct.
+At the end of provisioning a test suite is ran to ensure the machine is in a desired state. See `serverspec/` for more information regarding testing.
 
 After this the virtual machine is accessible by running:
 
