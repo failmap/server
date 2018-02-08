@@ -47,8 +47,11 @@ class apps::failmap::broker (
     ports             => $internal_port,
     server_names      => "${appname}.service.dc1.consul",
     ipaddresses       => "${appname}.service.dc1.consul",
-    options           => 'check resolvers default resolve-prefer ipv4',
+    options           => 'check resolvers default resolve-prefer ipv4 init-addr last,libc,none',
   }
+
+  # make sure borrowed letsencrypt certificate exists before using it
+  Letsencrypt::Domain['faalkaart.nl'] -> Haproxy::Listen[broker]
 
   # firewall rule to allow incoming connections
   @firewall { '300 broker incoming external workers (redis,haproxy)':

@@ -120,7 +120,6 @@ class apps::failmap::admin (
     content => 'systemctl stop nginx; rm -r /var/cache/nginx/faalkaart.nl/;systemctl start nginx'
   }
 
-
   # run migration in a separate container
   Docker::Image[$image]
   ~> exec {"${appname}-migrate":
