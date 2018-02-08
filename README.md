@@ -44,7 +44,7 @@ Requirements:
 
 Use the following command to run a remote worker for a Failmap instance:
 
-    docker run --rm -ti --name failmap-worker \
+    docker run --rm -ti --name failmap-worker -u nobody:nogroup \
       -e WORKER_ROLE=scanner_ipv4_only \
       -e BROKER=redis://faalkaart.nl:1337/0 \
       -v <PATH_TO_CLIENT_PKCS12>:/client.p12 \

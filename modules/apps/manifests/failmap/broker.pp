@@ -18,7 +18,9 @@ class apps::failmap::broker (
   @telegraf::input { 'broker-redis':
     plugin_type => redis,
     options     => [
-      {servers => ['tcp://redis:6379']},
+      {
+        servers => ['tcp://redis:6379']
+      },
     ],
   }
 

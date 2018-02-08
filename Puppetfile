@@ -32,7 +32,7 @@ mod 'puppetlabs-haproxy'
 
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',
-  :ref => '2efa3b54ca8c1216a577b4015e1239da3e2cb493'
+  :ref => '88587dfc4dfaad58b90dce26ad1957f0ae6f77ca'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
   :ref => '1cedfd544b1a66cf24ff7bc3f2ec980276774e01'
