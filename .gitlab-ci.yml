@@ -7,7 +7,8 @@ check:
   before_script:
     # install check requirements
     - apt-get update -yqq
-    - apt-get install -yqq make puppet-lint shellcheck
+    - apt-get install -yqq make shellcheck
+    - gem install puppet-lint
   script:
     - make check
 
