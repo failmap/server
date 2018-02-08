@@ -1,0 +1,14 @@
+sudo: required
+dist: trusty
+
+language: ruby
+
+install:
+  - sudo scripts/bootstrap.sh
+  - sudo gem install serverspec
+
+before_script:
+  - sudo scripts/apply.sh
+
+scripts:
+  - rake spec
