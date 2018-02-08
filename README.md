@@ -48,7 +48,7 @@ Use the following command to run a remote worker for a Failmap instance:
       -e WORKER_ROLE=scanner_ipv4_only \
       -e BROKER=redis://faalkaart.nl:1337/0 \
       -v <PATH_TO_CLIENT_PKCS12>:/client.p12 \
-      registry.gitlab.com/failmap/failmap \
+      registry.gitlab.com/failmap/failmap:latest \
       celery worker --loglevel info --concurrency=10
 
 `WORKER_ROLE` determines the kind of tasks this worker will pick up, for reference: https://gitlab.com/failmap/failmap/blob/master/failmap/celery/worker.py
