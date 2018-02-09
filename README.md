@@ -45,7 +45,7 @@ Remote workers should always run in trusted environments. As workers can be conf
 
 Requirements:
 
-- Running Docker daemon (eg: Docker for Mac)
+- Running Docker daemon (see: https://docs.docker.com/install/)
 - PKCS12 client certificate (a .p12 file that is also used for Admin authentication)
 
 Use the following command to run a remote worker for a Failmap instance:
