@@ -58,5 +58,8 @@ apps::failmap::admin::client_ca: &failmap_ca |
 # CA for validating access to monitoring frontends (Grafana)
 base::monitoring::server::client_ca: *failmap_ca
 
-# CA for validating external Workers connecting with the broker
+# allow external connections to broker for remote workers (scanners)
+apps::failmap::broker::enable_remote: true
+
+# CA for validating remote workers connecting with the broker
 apps::failmap::broker::client_ca: *failmap_ca

@@ -128,6 +128,8 @@ class apps::failmap::admin (
                     ${image} migrate --noinput",
     refreshonly => true,
   }
+  # make sure we only start migrating once mysql server is running
+  Service['mysql'] ~> Exec["${appname}-migrate"]
 
   # create a compressed rotating dataset backup every day/week
   cron { "${appname} daily dataset backup":

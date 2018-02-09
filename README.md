@@ -35,12 +35,18 @@ To access the website point your browser to:
 
     http://faalserver.faalkaart.test
 
-## Remote workers
+## Remote workers (scanners)
+
+It is possible to enable connections from remote workers (scanners) to allow scan tasks to be distributed to these workers for higher throughput and concurrency. To enable this set the configuration paramater `apps::failmap::broker::enable_remote` to true.
+
+Remote worker connections are secured by TLS and require a valid client certificate for authentication. Currently the (letsencrypt) server certificate from the frontend (faalkaart.nl) is reused for TLS and the same CA is used for validating remote workers as for Admin and Monitoring.
+
+Remote workers should always run in trusted environments. As workers can be configured to receive any task even the ones they are not qualified for.
 
 Requirements:
 
-- Running Docker daemon
-- PKCS12 client certificate
+- Running Docker daemon (eg: Docker for Mac)
+- PKCS12 client certificate (a .p12 file that is also used for Admin authentication)
 
 Use the following command to run a remote worker for a Failmap instance:
 

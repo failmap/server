@@ -5,6 +5,7 @@ class apps::failmap::broker (
   $external_port='1337',
   $internal_port='6379',
   String $tls_combined_path=undef,
+  Bool $enable_remote=false,
 ){
   $appname = 'broker'
 
@@ -53,16 +54,22 @@ class apps::failmap::broker (
   # make sure borrowed letsencrypt certificate exists before using it
   Letsencrypt::Domain['faalkaart.nl'] -> Haproxy::Listen[broker]
 
+  if $enable_remote {
+    $action = accept
+  } else {
+    $action = reject
+  }
+
   # firewall rule to allow incoming connections
   @firewall { '300 broker incoming external workers (redis,haproxy)':
     proto  => tcp,
     port   => $external_port,
-    action => accept,
+    action => $action,
   }
   @firewall { '300 v6 broker incoming external workers (redis,haproxy)':
     proto    => tcp,
     port     => $external_port,
-    action   => accept,
+    action   => $action,
     provider => ip6tables,
   }
 }
