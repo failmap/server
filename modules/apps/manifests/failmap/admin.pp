@@ -119,6 +119,9 @@ class apps::failmap::admin (
   file { '/usr/local/bin/failmap-frontend-cache-flush':
     content => 'systemctl stop nginx; rm -r /var/cache/nginx/faalkaart.nl/;systemctl start nginx'
   }
+  file { '/usr/local/bin/failmap-task-queue-flush-all':
+    content => '/usr/bin/docker exec broker redis-cli flushall'
+  }
 
   # run migration in a separate container
   Docker::Image[$image]

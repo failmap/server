@@ -41,84 +41,34 @@ class apps::failmap::worker (
       mode   => '0700';
     "/srv/${appname}/env.file":
       ensure => present;
-  } -> Docker::Run[$appname]
+  }
 
   # three worker instances are created, one for generic administrative tasks (storage),
   # one for 'normal' scanners and one for rate limited qualys scanners
-
-  Docker::Image[$image]
-  ~> docker::run { $appname:
-    image          => $image,
-    command        => 'celery worker -linfo',
-    volumes        => [
-      # make mysql accesible from within container
-      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
-      # what tasks this worker should execute
-      'WORKER_ROLE=storage',
-    ],
-    env            => $docker_environment,
-    env_file       => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
-    net            => $pod,
-    # since we use pickle with celery avoid startup error when runing as root
-    username       => 'nobody:nogroup',
-    tty            => true,
-    # give tasks 5 minutes to finish cleanly
-    stop_wait_time => 300,
-  }
-
-  Docker::Image[$image]
-  ~> docker::run { $appname:
-    image          => $image,
-    command        => 'celery worker -linfo',
-    volumes        => [
-      # make mysql accesible from within container
-      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
-      # what tasks this worker should execute
-      'WORKER_ROLE=scanner',
-    ],
-    env            => $docker_environment,
-    env_file       => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
-    net            => $pod,
-    # since we use pickle with celery avoid startup error when runing as root
-    username       => 'nobody:nogroup',
-    tty            => true,
-    # give tasks 5 minutes to finish cleanly
-    stop_wait_time => 300,
-  }
-
-  Docker::Image[$image]
-  ~> docker::run { $appname:
-    image          => $image,
-    command        => 'celery worker -linfo',
-    volumes        => [
-      # make mysql accesible from within container
-      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
-      # what tasks this worker should execute
-      'WORKER_ROLE=scanner_qualys',
-    ],
-    env            => $docker_environment,
-    env_file       => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
-    net            => $pod,
-    # since we use pickle with celery avoid startup error when runing as root
-    username       => 'nobody:nogroup',
-    tty            => true,
-    # give tasks 5 minutes to finish cleanly
-    stop_wait_time => 300,
-  }
-
-
-  Docker::Image[$image]
-  ~> docker::run { 'failmap-scheduler':
-    image    => $image,
-    command  => 'celery beat -linfo --pidfile=/var/tmp/celerybeat.pid',
-    volumes  => [
-      # make mysql accesible from within container
-      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
-    ],
-    env      => $docker_environment,
-    env_file => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
-    net      => $pod,
-    username => 'nobody:nogroup',
-    tty      => true,
+  $worker_roles = ['storage', 'scanner', 'scanner_qualys']
+  $worker_roles.each | $role | {
+    Docker::Image[$image]
+    ~> docker::run { "${appname}-${role}":
+      image          => $image,
+      # be informative and run memory efficient worker pool
+      command        => 'celery worker --loglevel=info --pool=eventlet',
+      volumes        => [
+        # make mysql accesible from within container
+        '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
+      ],
+      env            => $docker_environment + [
+        # what tasks this worker should execute
+        "WORKER_ROLE=${role}",
+        "HOST_HOSTNAME=${::fqdn}",
+      ],
+      env_file       => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
+      net            => $pod,
+      # since we use pickle with celery avoid startup error when runing as root
+      username       => 'nobody:nogroup',
+      tty            => true,
+      # give tasks 5 minutes to finish cleanly
+      stop_wait_time => 300,
+    }
+    File["/srv/${appname}/"] -> Docker::Run["${appname}-${role}"]
   }
 }

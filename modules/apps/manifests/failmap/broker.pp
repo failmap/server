@@ -5,7 +5,7 @@ class apps::failmap::broker (
   $external_port='1337',
   $internal_port='6379',
   String $tls_combined_path=undef,
-  Bool $enable_remote=false,
+  Boolean $enable_remote=false,
 ){
   $appname = 'broker'
 
