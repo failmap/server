@@ -41,7 +41,8 @@ class apps::failmap::admin (
     "BROKER=${broker}",
     # name by which service is known to service discovery (consul)
     "SERVICE_NAME=${appname}",
-    'SERVICE_8000_CHECK_TCP=/',
+    # HTTP check won't do because of Django ALLOWED_HOSTS
+    "SERVICE_CHECK_SCRIPT=curl\\ -si\\ http://\$SERVICE_IP/admin/login/\\ -Hhost:${appname}|grep\\ 200\\ OK",
     'STATSD_HOST=172.20.0.1',
   ]
 

@@ -12,7 +12,7 @@ class base::consul (
       # just run locally, don't assume cluster
       bootstrap_expect => 1,
     },
-    extra_options => '--advertise 127.0.0.1',
+    extra_options => '--advertise 127.0.0.1 -enable-script-checks',
   }
 
   # make consul DNS entries resolvable on host system

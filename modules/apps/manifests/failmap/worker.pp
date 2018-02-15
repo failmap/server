@@ -21,7 +21,6 @@ class apps::failmap::worker (
   }
 
   $docker_environment = [
-    "SERVICE_NAME=${appname}",
     "BROKER=${broker}",
     # worker required db access for non-scanner tasks (eg: rating rebuild)
     'DJANGO_DATABASE=production',
@@ -70,5 +69,20 @@ class apps::failmap::worker (
       stop_wait_time => 300,
     }
     File["/srv/${appname}/"] -> Docker::Run["${appname}-${role}"]
+  }
+
+  Docker::Image[$image]
+  ~> docker::run { 'failmap-scheduler':
+    image    => $image,
+    command  => 'celery beat -linfo --pidfile=/var/tmp/celerybeat.pid',
+    volumes  => [
+      # make mysql accesible from within container
+      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
+    ],
+    env      => $docker_environment,
+    env_file => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
+    net      => $pod,
+    username => 'nobody:nogroup',
+    tty      => true,
   }
 }
