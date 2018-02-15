@@ -13,6 +13,15 @@ define accounts::user (
       $groups = []
   }
 
+  case $shell {
+    '/usr/bin/fish':{
+      package{ 'fish':
+        ensure => latest,
+      } -> User[$name]
+    }
+    default: {}
+  }
+
   user { $name:
       ensure     => $ensure,
       managehome => true,
