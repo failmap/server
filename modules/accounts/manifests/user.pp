@@ -15,9 +15,8 @@ define accounts::user (
 
   case $shell {
     '/usr/bin/fish':{
-      package{ 'fish':
-        ensure => latest,
-      } -> User[$name]
+      ensure_packages(['fish'], {ensure => latest})
+      Package[fish] -> User[$name]
     }
     default: {}
   }
