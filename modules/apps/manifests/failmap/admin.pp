@@ -26,6 +26,8 @@ class apps::failmap::admin (
   }
 
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
+
+  # common options for all docker invocations (ie: cli helpers/service)
   $docker_environment = [
     # database settings
     'DJANGO_DATABASE=production',
@@ -39,10 +41,6 @@ class apps::failmap::admin (
     'DEBUG=',
     # message broker settings
     "BROKER=${broker}",
-    # name by which service is known to service discovery (consul)
-    "SERVICE_NAME=${appname}",
-    # HTTP check won't do because of Django ALLOWED_HOSTS
-    "SERVICE_CHECK_SCRIPT=curl\\ -si\\ http://\$SERVICE_IP/admin/login/\\ -Hhost:${appname}|grep\\ 200\\ OK",
     'STATSD_HOST=172.20.0.1',
   ]
 
@@ -65,7 +63,13 @@ class apps::failmap::admin (
       # temporary solution to allow screenshots to be hosted for live release
       '/srv/failmap/images/screenshots/:/srv/failmap/static/images/screenshots/',
     ],
-    env      => $docker_environment,
+    # combine specific and generic docker environment options
+    env      => concat($docker_environment,[
+      # name by which service is known to service discovery (consul)
+      "SERVICE_NAME=${appname}",
+      # HTTP check won't do because of Django ALLOWED_HOSTS
+      "SERVICE_CHECK_SCRIPT=curl\\ -si\\ http://\$SERVICE_IP/admin/login/\\ -Hhost:${appname}\\|grep\\ 200\\ OK",
+    ]),
     env_file => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net      => $pod,
     username => 'nobody:nogroup',
