@@ -10,7 +10,7 @@ class mgmt {
     mode   => '0644',
   }
   ~> service {'mgmt':
-    ensure => running,
-    enable => true,
+    ensure => stopped,
+    enable => false,
   }
 }
