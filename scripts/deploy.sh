@@ -18,5 +18,10 @@ rsync -v -a --delete --no-motd \
   --exclude 'vendor/*/*/*' \
   "${sync[@]}" "$host:provision/"
 
-# shellcheck disable=SC2029
-ssh "$host" sudo -i "FACTER_env=hosted IGNORE_WARNINGS=1 \$PWD/provision/scripts/apply.sh" "$@"
+if test -z "$DEBUG";then
+  # shellcheck disable=SC2029
+  ssh "$host" sudo -i "FACTER_env=hosted IGNORE_WARNINGS=1 \$PWD/provision/scripts/apply.sh" "$@"
+else
+  # shellcheck disable=SC2029
+  ssh "$host" sudo -i "FACTER_env=hosted \$PWD/provision/scripts/apply.sh" "$@"
+fi

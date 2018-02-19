@@ -10,8 +10,8 @@ test -f "$seedfile" || \
 
 if ! test -z "$IGNORE_WARNINGS";then
   # errors/warnings to suppress as they often lead to red herrings.
-  ignore='Warning:.*collect exported resources.*nginx/manifests/resource/upstream.pp|Info: Loading facts|Warning:.*(Skipping unparsable iptables rule.*br-|is deprecated)|file & line not available|/provision/vendor/modules/|validate_legacy.*provision/vendor'
-  echo "Ignoring Puppet catalog compiler warnings (deprecations, etc)!"
+  ignore='Warning:.*collect exported resources.*nginx/manifests/resource/upstream.pp|Info: Loading facts|Warning:.*(Skipping unparsable iptables rule.*br-|is deprecated)|file & line not available|/provision/vendor/modules/.*(deprecation|collect_exported)|validate_legacy.*provision/vendor'
+  echo "Ignoring Puppet catalog compiler warnings (deprecations, etc)! Disable this with: env DEBUG=1 make deploy"
   ignore_filter="egrep --line-buffered -v '$ignore'"
 else
   echo "Showing Puppet catalog compiler warnings (deprecations, etc)."
