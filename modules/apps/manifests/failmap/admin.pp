@@ -122,10 +122,16 @@ class apps::failmap::admin (
     mode    => '0744',
   }
   file { '/usr/local/bin/failmap-frontend-cache-flush':
-    content => 'systemctl stop nginx; rm -r /var/cache/nginx/faalkaart.nl/;systemctl start nginx'
+    content => 'systemctl stop nginx; rm -r /var/cache/nginx/faalkaart.nl/;systemctl start nginx',
+    mode    => '0744',
   }
   file { '/usr/local/bin/failmap-task-queue-flush-all':
-    content => '/usr/bin/docker exec broker redis-cli flushall'
+    content => '/usr/bin/docker exec broker redis-cli flushall',
+    mode    => '0744',
+  }
+  file { '/usr/local/bin/failmap-logtail':
+    content => '/bin/journalctl -f -u docker-failmap-*',
+    mode    => '0744',
   }
 
   # run migration in a separate container
