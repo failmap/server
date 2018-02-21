@@ -60,3 +60,13 @@ end
 describe command('curl --compressed -sSvk "https://faalkaart.nl/static/images/internet_cleanup_foundation_logo.png"') do
   its(:stderr) {should contain('Content-Encoding: gzip')}
 end
+
+# HTTP2 request to frontend
+describe command('sudo docker run getourneau/alpine-curl-http2 curl -sSvk https://faalkaart.nl') do
+  # should return successful
+  its(:stderr) {should contain('HTTP/2 200')}
+  # render complete page
+  its(:stdout) {should contain('MSPAINT')}
+  # HSTS security should be enabled
+  its(:stderr) {should contain('strict-transport-security: max-age=31536000; includeSubdomains')}
+end
