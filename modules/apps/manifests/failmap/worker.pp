@@ -44,7 +44,7 @@ class apps::failmap::worker (
 
   # three worker instances are created, one for generic administrative tasks (storage),
   # one for 'normal' scanners and one for rate limited qualys scanners
-  $worker_roles = ['storage', 'scanner', 'scanner_qualys']
+  $worker_roles = ['storage', 'scanner', 'scanner_qualys', 'scanner_endpoint_discovery']
   $worker_roles.each | $role | {
     Docker::Image[$image]
     ~> docker::run { "${appname}-${role}":
