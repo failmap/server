@@ -109,7 +109,7 @@ class apps::failmap::admin (
     mode    => '0700',
   }
   file { '/usr/local/bin/failmap-shell':
-    content => "#!/bin/bash\n/usr/bin/docker exec -ti -e TERM=\$TERM ${appname} /bin/bash",
+    content => "#!/bin/bash\n/usr/bin/docker exec -ti -e TERM=\$TERM ${appname} /bin/sh",
     mode    => '0744',
   }
 
