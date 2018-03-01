@@ -72,4 +72,33 @@ class apps::failmap::broker (
     action   => $action,
     provider => ip6tables,
   }
+
+  ensure_packages(['python3-redis','python3-statsd'], {ensure => latest})
+  file {'/usr/local/bin/redis-queues.py':
+    content => template('apps/redis-queues.py.erb')
+  }
+  file { '/etc/systemd/system/redis-queue-monitor.service':
+    content => @("END")
+    [Unit]
+    Description=Monitor celery redis queue size
+    After=systemd-networkd.service
+    Requires=systemd-networkd.service
+
+    [Service]
+    ExecStart=/usr/bin/python3 /usr/local/bin/redis-queues.py
+    Environment=BROKER=${appname}
+    RestartSec=5s
+    Restart=always
+
+    [Install]
+    WantedBy=multi-user.target
+    |END
+    ,
+    mode    => '0644',
+  }
+  ~> service {'redis-queue-monitor':
+    ensure => running,
+    enable => true,
+  }
+
 }
