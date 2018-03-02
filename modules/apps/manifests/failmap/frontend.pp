@@ -1,3 +1,4 @@
+
 # Configure the failmap frontend
 class apps::failmap::frontend (
   $hostname = 'faalkaart.nl',
@@ -33,14 +34,14 @@ class apps::failmap::frontend (
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
   Docker::Image[$image]
   ~> docker::run { $appname:
-    image    => $image,
-    command  => 'runuwsgi',
-    volumes  => [
+    image           => $image,
+    command         => 'runuwsgi',
+    volumes         => [
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       # temporary solution to allow screenshots to be hosted for live release
       '/srv/failmap/images/screenshots/:/srv/failmap/static/images/screenshots/',
     ],
-    env      => [
+    env             => [
       # database settings
       'DJANGO_DATABASE=production',
       'DB_HOST=/var/run/mysqld/mysqld.sock',
@@ -56,9 +57,10 @@ class apps::failmap::frontend (
       # HTTP check won't do because of Django ALLOWED_HOSTS
       "SERVICE_CHECK_SCRIPT=curl\\ -si\\ http://\$SERVICE_IP/\\ -Hhost:${appname}\\|grep\\ 200\\ OK",
     ],
-    env_file => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
-    net      => $pod,
-    tty      => true,
+    env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
+    net             => $pod,
+    tty             => true,
+    systemd_restart => always,
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8

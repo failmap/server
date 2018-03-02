@@ -54,6 +54,9 @@ echo
 read -r
 set -x
 
+# kill all remote (and local) workers
+/usr/local/bin/failmap celery control shutdown
+
 # restart all services
 systemctl restart docker-failmap-*.service
 

@@ -48,41 +48,43 @@ class apps::failmap::worker (
   $worker_roles.each | $role | {
     Docker::Image[$image]
     ~> docker::run { "${appname}-${role}":
-      image          => $image,
+      image           => $image,
       # be informative and run memory efficient worker pool
-      command        => 'celery worker --loglevel=info --pool=eventlet',
-      volumes        => [
+      command         => 'celery worker --loglevel=info --pool=eventlet',
+      volumes         => [
         # make mysql accesible from within container
         '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       ],
-      env            => $docker_environment + [
+      env             => $docker_environment + [
         # what tasks this worker should execute
         "WORKER_ROLE=${role}",
         "HOST_HOSTNAME=${::fqdn}",
       ],
-      env_file       => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
-      net            => $pod,
+      env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
+      net             => $pod,
       # since we use pickle with celery avoid startup error when runing as root
-      username       => 'nobody:nogroup',
-      tty            => true,
+      username        => 'nobody:nogroup',
+      tty             => true,
       # give tasks 5 minutes to finish cleanly
-      stop_wait_time => 300,
+      stop_wait_time  => 300,
+      systemd_restart => always,
     }
     File["/srv/${appname}/"] -> Docker::Run["${appname}-${role}"]
   }
 
   Docker::Image[$image]
   ~> docker::run { 'failmap-scheduler':
-    image    => $image,
-    command  => 'celery beat -linfo --pidfile=/var/tmp/celerybeat.pid',
-    volumes  => [
+    image           => $image,
+    command         => 'celery beat -linfo --pidfile=/var/tmp/celerybeat.pid',
+    volumes         => [
       # make mysql accesible from within container
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
     ],
-    env      => $docker_environment,
-    env_file => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
-    net      => $pod,
-    username => 'nobody:nogroup',
-    tty      => true,
+    env             => $docker_environment,
+    env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
+    net             => $pod,
+    username        => 'nobody:nogroup',
+    tty             => true,
+    systemd_restart => always,
   }
 }
