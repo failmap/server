@@ -34,6 +34,7 @@ class apps::failmap::broker (
 
   haproxy::listen { 'broker':
     collect_exported => false,
+    mode             => tcp,
     bind             => {
       "0.0.0.0:${external_port}" => [
         # use TLS for connection
@@ -46,7 +47,7 @@ class apps::failmap::broker (
   haproxy::balancermember { 'broker':
     listening_service => 'broker',
     ports             => $internal_port,
-    server_names      => "${appname}.service.dc1.consul",
+    server_names      => $appname,
     ipaddresses       => "${appname}.service.dc1.consul",
     options           => 'check resolvers default resolve-prefer ipv4 init-addr last,libc,none',
   }

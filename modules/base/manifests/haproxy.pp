@@ -15,6 +15,8 @@ class base::haproxy {
   ~> Exec['apt_update']
   -> Package['haproxy']
 
+  package {'hatop': }
+
   # configure haproxy to use dnsmasq resolver which allow querying consul service records
   haproxy::resolver { 'default':
     nameservers     => {
