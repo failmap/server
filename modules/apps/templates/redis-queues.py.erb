@@ -14,12 +14,15 @@ r = redis.StrictRedis(host=BROKER, port=6379, db=0)
 s = statsd.StatsClient(STATSD, 8125)
 
 while True:
+    keys = 0
     for key in r.scan_iter("*"):
+        keys += 1
         name = key.replace(b'\x06\x16', b'__').decode()
         if key.startswith(b'_') or key.startswith(b'celery-'):
             continue
         if r.type(key) != b'list':
             continue
-        print(name, r.llen(key))
+        # print(name, r.llen(key))
         s.gauge("celery_queue_stats,queue=%s" % name, r.llen(key))
+        s.gauge("redis_keys", keys)
     time.sleep(INTERVAL)

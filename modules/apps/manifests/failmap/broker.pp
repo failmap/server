@@ -78,6 +78,8 @@ class apps::failmap::broker (
   file {'/usr/local/bin/redis-queues.py':
     content => template('apps/redis-queues.py.erb')
   }
+  ~> Service ['redis-queue-monitor']
+
   file { '/etc/systemd/system/redis-queue-monitor.service':
     content => @("END")
     [Unit]

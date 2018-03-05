@@ -67,7 +67,7 @@ class apps::failmap::worker (
       tty             => true,
       # give tasks 5 minutes to finish cleanly
       stop_wait_time  => 300,
-      systemd_restart => always,
+      systemd_restart => 'always',
     }
     File["/srv/${appname}/"] -> Docker::Run["${appname}-${role}"]
   }
@@ -85,6 +85,6 @@ class apps::failmap::worker (
     net             => $pod,
     username        => 'nobody:nogroup',
     tty             => true,
-    systemd_restart => always,
+    systemd_restart => 'always',
   }
 }

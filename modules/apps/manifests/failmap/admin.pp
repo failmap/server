@@ -74,7 +74,7 @@ class apps::failmap::admin (
     net             => $pod,
     username        => 'nobody:nogroup',
     tty             => true,
-    systemd_restart => always,
+    systemd_restart => 'always',
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/failmap/server/issues/8
