@@ -35,6 +35,12 @@ class apps::failmap::broker (
   haproxy::listen { 'broker':
     collect_exported => false,
     mode             => tcp,
+    options          => {
+      timeout => [
+        'client 60m',
+        'server 60m',
+      ],
+    },
     bind             => {
       "0.0.0.0:${external_port}" => [
         # use TLS for connection
@@ -78,7 +84,7 @@ class apps::failmap::broker (
   file {'/usr/local/bin/redis-queues.py':
     content => template('apps/redis-queues.py.erb')
   }
-  ~> Service ['redis-queue-monitor']
+  ~> Service['redis-queue-monitor']
 
   file { '/etc/systemd/system/redis-queue-monitor.service':
     content => @("END")
