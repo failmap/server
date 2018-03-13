@@ -1,0 +1,15 @@
+# this file defined in what order configuration files are evaluated
+# more info: https://puppet.com/docs/puppet/5.4/hiera_intro.html
+---
+version: 5
+defaults:
+  datadir: "../../configuration"
+  data_hash: yaml_data
+hierarchy:
+  - name: "Default"
+    paths:
+      - "overrides/dev.yaml"
+      - "settings.yaml"
+      - "per-hostname/%{::fqdn}.yaml"
+      - "per-environment/%{::env}.yaml"
+      - "defaults.yaml"

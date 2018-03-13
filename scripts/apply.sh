@@ -10,7 +10,7 @@ test -f "$seedfile" || \
 
 if ! test -z "$IGNORE_WARNINGS";then
   # errors/warnings to suppress as they often lead to red herrings.
-  ignore='Warning:.*collect exported resources.*nginx/manifests/resource/upstream.pp|Info: Loading facts|Warning:.*(Skipping unparsable iptables rule.*br-|is deprecated)|file & line not available|/provision/vendor/modules/.*(deprecation|collect_exported)|validate_legacy.*provision/vendor'
+  ignore='Warning:.*collect exported resources.*nginx/manifests/resource/upstream.pp|Info: Loading facts|Warning:.*(Skipping unparsable iptables rule.*br-|is deprecated)|file & line not available|/vendor/modules/.*(deprecation|collect_exported)|validate_legacy.*/vendor'
   echo "Ignoring Puppet catalog compiler warnings (deprecations, etc)! Disable this with: env DEBUG=1 make deploy"
   ignore_filter="egrep --line-buffered -v '$ignore'"
 else
@@ -20,9 +20,9 @@ fi
 
 puppet apply \
   --detailed-exitcodes \
-  --modulepath=modules:vendor/modules \
-  --hiera_config=hiera.yaml \
-  manifests/site.pp "$@" \
+  --modulepath=code/puppet/modules:code/puppet/vendor/modules \
+  --hiera_config=code/puppet/hiera.yaml \
+  code/puppet/manifests/site.pp "$@" \
     > >(eval $ignore_filter) \
     2> >(eval $ignore_filter)
 # detailed exit code 0 and 2 are considered success.

@@ -5,18 +5,22 @@ set -e
 host=$1
 shift
 
-sync=(hiera manifests modules scripts keys hiera.yaml vendor)
+ssh "$host" mkdir -p provision/
 
 rsync -v -a --delete --no-motd \
-  --include 'vendor/modules/*/hiera.yaml' \
-  --include 'vendor/modules/*/data/' \
-  --include 'vendor/modules/*/files/' \
-  --include 'vendor/modules/*/lib/' \
-  --include 'vendor/modules/*/types/' \
-  --include 'vendor/modules/*/manifests/' \
-  --include 'vendor/modules/*/templates/' \
-  --exclude 'vendor/*/*/*' \
-  "${sync[@]}" "$host:provision/"
+  'scripts' \
+  'configuration' \
+  'code' \
+  --exclude '.*' \
+  --include 'code/puppet/vendor/modules/*/hiera.yaml' \
+  --include 'code/puppet/vendor/modules/*/data/' \
+  --include 'code/puppet/vendor/modules/*/files/' \
+  --include 'code/puppet/vendor/modules/*/lib/' \
+  --include 'code/puppet/vendor/modules/*/types/' \
+  --include 'code/puppet/vendor/modules/*/manifests/' \
+  --include 'code/puppet/vendor/modules/*/templates/' \
+  --exclude 'code/puppet/vendor/*/*/*' \
+  "$host:provision/"
 
 if test -z "$DEBUG";then
   # shellcheck disable=SC2029

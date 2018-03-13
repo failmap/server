@@ -2,42 +2,32 @@
 
 host ?= faalserver.faalkaart.nl
 
-all: vendor/modules
+all: code/puppet/vendor/modules
 
 # install all required puppet modules from Puppetfile.lock
-vendor/modules Puppetfile.lock: Puppetfile .librarian/puppet/config
-	# currently broken
-	# https://github.com/voxpupuli/librarian-puppet/issues/52
-	# librarian-puppet install --verbose
-	librarian-puppet install
-	touch vendor/modules Puppetfile.lock
+code/puppet/%:
+	$(MAKE) -C code/puppet/ $*
 
-# search and resolve updates for all puppet modules in Puppetfile into Puppetfile.lock
-modules_update:
-	librarian-puppet update
-
-apply deploy: vendor/modules
+apply deploy: code/puppet/vendor/modules
 	scripts/deploy.sh ${host} ${args}
 
 plan: args=--test
-plan: Puppetfile.lock
+plan: code/puppet/vendor/modules
 	scripts/deploy.sh ${host} --noop ${args}
 
 fix:
-	puppet-lint --fix manifests
-	puppet-lint --fix modules
+	$(MAKE) -C code/puppet/ $@
 
 check:
 	shellcheck scripts/*.sh
-	puppet-lint manifests
-	puppet-lint modules
+	$(MAKE) -C code/puppet/ $@
 
 bootstrap:
 	scp scripts/bootstrap.sh ${host}:
 	ssh ${host} sudo /bin/bash bootstrap.sh
 
 mrproper clean:
-	rm -rf vendor
+	$(MAKE) -C code/puppet/ $@
 
 # Docker stuff
 

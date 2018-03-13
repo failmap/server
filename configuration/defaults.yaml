@@ -1,3 +1,5 @@
+# default configuration values, not specific to environment or host, please do not edit, create/edit `settings.yaml` instead.
+
 # application configuration independent of location or environment
 classes:
   - sites
@@ -7,7 +9,6 @@ classes:
   - apps::failmap::admin
   - apps::failmap::frontend
   - apps::failmap::worker
-  - mgmt
 
 # site config
 sites::disable_default: true

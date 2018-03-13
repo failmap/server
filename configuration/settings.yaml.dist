@@ -1,0 +1,35 @@
+# This is a template file, copy as `settings.yaml` to make it effective.
+# This file allows to set configuration values which are used during deployments.
+# Defaults can be found in `defaults.yaml` and per-host or per-environment settings can be
+# made by creating/editing the respective file(s) in `per-host` or `per-environment`.
+# If you only have one host/environment putting everything in here is fine as well.
+
+# # set email address for letsencrypt (required)
+# letsencrypt::email: admin@example.com
+
+# # set ipv4/ipv6 specific network settings
+# network::interfaces_hash:
+#   eth0:
+#     enable_dhcp: true
+#   eth0_v6:
+#     interface: eth0
+#     family: inet6
+#     ipaddress: 2001:db8::0/48
+#     netmask: 48
+#     gateway: 2001:db8::1
+
+# # CA for validating access to administrative instance of Failmap application
+# apps::failmap::admin::client_ca: &failmap_ca |
+#   -----BEGIN CERTIFICATE-----
+# 	...
+#   -----END CERTIFICATE-----
+#
+
+# # CA for validating access to monitoring frontends (eg: Grafana)
+# base::monitoring::server::client_ca: *failmap_ca
+#
+# # allow external connections to broker for remote workers (scanners)
+# apps::failmap::broker::enable_remote: true
+#
+# # CA for validating remote workers connecting with the broker
+# apps::failmap::broker::client_ca: *failmap_ca

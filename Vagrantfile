@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
     source /etc/profile
 
     # pull in puppet modules if required
-    make -C /vagrant Puppetfile.lock
+    make -C /vagrant code/puppet/Puppetfile.lock
 
     # apply latests configuration
     /vagrant/scripts/apply.sh
@@ -55,6 +55,6 @@ Vagrant.configure("2") do |config|
   # run serverspec as a provisioner to test the previously provisioned machine
   config.vm.provision :serverspec do |spec|
     # pattern for specfiles to search
-    spec.pattern = 'serverspec/*.rb'
+    spec.pattern = 'tests/serverspec/*.rb'
   end
 end

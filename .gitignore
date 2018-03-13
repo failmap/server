@@ -1,4 +1,4 @@
 .tmp/
-vendor/modules/
+code/puppet/vendor/modules/
 .vagrant/
-hiera/dev.yaml
+configuration/overrides/dev.yaml
