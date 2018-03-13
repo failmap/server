@@ -22,7 +22,7 @@ puppet apply \
   --detailed-exitcodes \
   --modulepath=code/puppet/modules:code/puppet/vendor/modules \
   --hiera_config=code/puppet/hiera.yaml \
-  code/puppet/manifests/site.pp "$@" \
+  --execute "include base" "$@" \
     > >(eval $ignore_filter) \
     2> >(eval $ignore_filter)
 # detailed exit code 0 and 2 are considered success.

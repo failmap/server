@@ -1,7 +1,7 @@
 # provide application independent OS layer base settings
-class base (
-  $localhost_redirects=[],
-){
+class base {
+  notice("fqdn=${::fqdn}, env=${::env}")
+
   class { '::cron': }
 
   class { '::apt': }
@@ -19,22 +19,9 @@ class base (
     multiple => false,
   }
 
-  # add some resource creations for modules not supporting them natively
-  create_resources('host', lookup('hosts', Hash, unique, {}))
+  class {'base::dns': }
 
-  # redirects to localhost (mostly used for test suites)
-  host { 'localhost-redirects-4':
-      host_aliases => $localhost_redirects,
-      ip           => '127.0.0.1',
-  }
-  host { 'localhost-redirects-6':
-      host_aliases => $localhost_redirects,
-      ip           => '::1',
-  }
-
-  # make DNS better managable,
-  package { 'resolvconf': ensure => latest}
-  ~> service { 'resolvconf': ensure => running, enable => true}
-  package { 'dnsmasq': ensure => latest}
-  ~> service { 'dnsmasq': ensure => running, enable => true} -> Package['resolvconf']
+  # use hiera configuration (hiera.yaml) to get a list of classes to include
+  # https://puppet.com/docs/puppet/5.2/hiera_use_function.html#examples
+  lookup('classes', {merge => unique}).include
 }

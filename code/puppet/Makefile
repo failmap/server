@@ -13,11 +13,9 @@ modules_update:
 	librarian-puppet update
 
 fix:
-	puppet-lint --fix manifests
 	puppet-lint --fix modules
 
 check:
-	puppet-lint manifests
 	puppet-lint modules
 
 mrproper clean:

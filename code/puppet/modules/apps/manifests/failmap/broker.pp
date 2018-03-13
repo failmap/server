@@ -59,7 +59,7 @@ class apps::failmap::broker (
   }
 
   # make sure borrowed letsencrypt certificate exists before using it
-  Letsencrypt::Domain['faalkaart.nl'] -> Haproxy::Listen[broker]
+  Class['Apps::Failmap::Admin'] -> Class['::Haproxy']
 
   if $enable_remote {
     $action = accept
@@ -81,6 +81,7 @@ class apps::failmap::broker (
   }
 
   ensure_packages(['python3-redis','python3-statsd'], {ensure => latest})
+  Exec['apt_update'] -> Package['python3-statsd'] # prevent race condition on vanilla run
   file {'/usr/local/bin/redis-queues.py':
     content => template('apps/redis-queues.py.erb')
   }
