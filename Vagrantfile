@@ -57,4 +57,6 @@ Vagrant.configure("2") do |config|
     # pattern for specfiles to search
     spec.pattern = 'tests/serverspec/*.rb'
   end
+
+  config.vm.post_up_message = "Tell people to visit http://faalkaart.faalserver.test"
 end
