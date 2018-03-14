@@ -1,70 +1,82 @@
-This repository contains server provisioning for the Failmap project (https://faalkaart.nl). This Readme focusses on local development and testing of the Failmap project. For information about running Failmap in production refer to: `HOSTED.md`.
+# Failmap server provisioning
 
-# Quickstart/local testing/development
+This repository contains server provisioning for the Failmap project (https://faalkaart.nl).
 
-For local testing/development a Vagrant setup is provided with this repsitory. This allows to run a local instance of the entire Failmap environment in a virtual machine.
+The setup is flexible and configureable to allow easy deployment and management of multiple different instances for different organisations.
 
-## Requirements
+Features include:
 
-The following tools are required to run the virtual machine:
+- Basic system configuration
+  - Firewall/Security/Updates
+  - User accounts
+  - Monitoring/Statistics
+- High performance and secure public web frontend and backend for Failmap app
+  - Automated TLS certificates
+  - Caching
+- Local asynchronous task processing and secure remote worker endpoint
+- Failmap app administrative tooling
 
-- [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-- [Vagrant](https://www.vagrantup.com/downloads.html)
-- vagrant-vbguest (`vagrant plugin install vagrant-vbguest`)
-- vagrant-landrush (`vagrant plugin install landrush`)
-- vagrant-serverspec(`vagrant plugin install vagrant-serverspec`)
+This configuration is intended to create a production quality, public facing, secure server running the Failmap application stack.
 
-## Instructions
+## Development
 
-Run the following command and wait for the provisioning to complete.
+If you just like to try out Failmap without the intent to have it publicly accessible, or you just want to develop features for the app please have a look at the [Failmap](https://gitlab.com/failmap/failmap) repository instead.
 
-    vagrant up
+For development or local testing of the provisioning please refer to [Development](documentation/development.md) documentation.
 
-At the end of provisioning a test suite is ran to ensure the machine is in a desired state. See `serverspec/` for more information regarding testing.
+## Deployment/operations
 
-After this the virtual machine is accessible by running:
+Deployment and administrator documentation can be found at [Hosting](documentation/hosting.md) and [Operations](documentation/operations.md).
 
-    vagrant ssh
 
-And can be stopped/removed using these commands:
+![screenshot](documentation/screenshot.png)
 
-    vagrant halt
-    vagrant destroy
+# Architecture
+A Failmap production instance consist of multiple isolated components working together to form a whole.
 
-To access the website point your browser to:
+## Main application components
+Failmap main components:
 
-    http://faalserver.faalkaart.test
+**Frontend**
+The Frontend is the public facing HTTP website of Failmap. It runs as a restricted/read-only instance with caching enabled. It's purpose is to serve as many visitor requests as efficiently as possible.
 
-## Remote workers (scanners)
+It is implemented as a restricted instance of the Failmap Django App. uWSGI instance running in a Docker container with read-only Database access. In front of which the Webserver provides TLS termination and caching.
 
-It is possible to enable connections from remote workers (scanners) to allow scan tasks to be distributed to these workers for higher throughput and concurrency. To enable this set the configuration paramater `apps::failmap::broker::enable_remote` to true.
+**Admin**
+The Admin is a HTTP website with restricted access. It runs an read/write instance and no caching. It's purpose is to provide the administrative portal and near real-time view of the data.
 
-Remote worker connections are secured by TLS and require a valid client certificate for authentication. Currently the (letsencrypt) server certificate from the frontend (faalkaart.nl) is reused for TLS and the same CA is used for validating remote workers as for Admin and Monitoring.
+It is implemented as a full instance of the Failmap Django App. uWSGI instance running in a Docker container with full access to all Services (Database, Broker). In front is the Webserver providing TLS termination, client certificate validation and anti-caching.
 
-Remote workers should always run in trusted environments. As workers can be configured to receive any task even the ones they are not qualified for.
+**Worker**
+The Worker is a asynchronous task executor. It picks up tasks for the Broker queue and accesses the Database for information query and result storing. All work (except for rendering HTTP responses) is handled by Workers.
 
-Requirements:
+The default worker is implemented as a Django Celery Worker running in a Docker container with full access to Database and Broker. Additional Workers exist specific for scanning tasks, these have no access to the Database.
 
-- Running Docker daemon (see: https://docs.docker.com/install/)
-- PKCS12 client certificate (a .p12 file that is also used for Admin authentication)
+Multiple instances of the Worker may be running simultaniously.
 
-Use the following command to run a remote worker for a Failmap instance:
+**Remote workers**
+The concept of Remote workers exists where scanner tasks can be performed by multiple external hosts for scaling or resource (eg: unique ip addresses) purposes. The provisioning configuration allows the host to open up to external connections from Remote workers, for remote worker configuration refer to (Remote workers)[documentation/remote_workers.md].
 
-    docker run --rm -ti --name failmap-worker -u nobody:nogroup \
-      -e WORKER_ROLE=scanner_ipv4_only \
-      -e BROKER=redis://faalkaart.nl:1337/0 \
-      -v <PATH_TO_CLIENT_PKCS12>:/client.p12 \
-      registry.gitlab.com/failmap/failmap:latest \
-      celery worker --loglevel info --concurrency=10
+**Scheduler**
+The Scheduler ensures periodic tasks are scheduled at configured times. These tasks are then picked up by the Worker instance(s).
 
-`WORKER_ROLE` determines the kind of tasks this worker will pick up, for reference: https://gitlab.com/failmap/failmap/blob/master/failmap/celery/worker.py
+It is implemented as a Django Celery Beat running in a Docker container with full access to Database and Broker.
 
-`BROKER` is the URL to the Redis message broker to connect to.
 
-`-v <PATH_TO_CLIENT_PKCS12>:/client_key.p12` replace `<PATH_TO_CLIENT_KEY>` with the actual path to the required client certificat to allow the worker to connect to the broker. You will be prompted for a passphrase if required.
+## Supporting components/services:
 
-Only one worker should be run per host (ie: IP address) due to concurrency limits by external parties (eg: Qualys). Per worker instance this will be accounted for with rate limiting. To increase concurrency for other tasks increate the concurrency value
+**Webserver**
+The Webserver provides the HTTP interface to the World-Wide-Web™.
 
-Loglevel can be increased (debug) or decreased (warning, error, critical, fatal).
+It sports Nginx providing TLS termination, client certificate authentication and on-disk (stale) caching.
 
-To run in the background pass the `-d` argument after `run`. This is not yet compatible with PKCS12 passphrase prompt.
+**Database**
+The Database provides persistant storage of all stateful data.
+
+It is implemented as a host level MySQL instance.
+
+**Broker**
+The Broker provides a message bus for asynchronous task execution and distribution.
+
+A redis instance bound to each specific instance (production, staging, etc) running inside a Docker container.
+
