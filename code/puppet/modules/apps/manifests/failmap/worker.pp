@@ -72,28 +72,6 @@ class apps::failmap::worker (
     File["/srv/${appname}/"] -> Docker::Run["${appname}-${role}"]
   }
 
-  # dramatiq worker instance
-  Docker::Image[$image]
-  ~> docker::run { $appname:
-    image           => $image,
-    # be informative and run memory efficient worker pool
-    command         => 'worker --use-gevent --no-reload',
-    volumes         => [
-      # make mysql accesible from within container
-      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
-    ],
-    env             => $docker_environment,
-    env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
-    net             => $pod,
-    # since we use pickle with celery avoid startup error when runing as root
-    username        => 'nobody:nogroup',
-    tty             => true,
-    # give tasks 5 minutes to finish cleanly
-    stop_wait_time  => 300,
-    systemd_restart => 'always',
-  }
-  File["/srv/${appname}/"] -> Docker::Run[$appname]
-
   Docker::Image[$image]
   ~> docker::run { 'failmap-scheduler':
     image           => $image,
