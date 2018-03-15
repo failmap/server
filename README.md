@@ -1,6 +1,8 @@
 This repository contains server provisioning for the Failmap project (https://faalkaart.nl). This Readme focusses on local development and testing of the Failmap project. For information about running Failmap in production refer to: `HOSTED.md`.
 
 # Quickstart/local testing/development
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ffailmap%2Fserver.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ffailmap%2Fserver?ref=badge_shield)
+
 
 For local testing/development a Vagrant setup is provided with this repsitory. This allows to run a local instance of the entire Failmap environment in a virtual machine.
 
@@ -62,3 +64,7 @@ Only one worker should be run per host (ie: IP address) due to concurrency limit
 Loglevel can be increased (debug) or decreased (warning, error, critical, fatal).
 
 To run in the background pass the `-d` argument after `run`. This is not yet compatible with PKCS12 passphrase prompt.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ffailmap%2Fserver.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ffailmap%2Fserver?ref=badge_large)
