@@ -58,7 +58,11 @@ set -x
 /usr/local/bin/failmap celery control shutdown
 
 # restart all services
-systemctl restart docker-failmap-*.service
+docker ps
+systemctl stop docker-failmap-\*.service
+docker ps
+systemctl start docker-failmap-\*.service
+docker ps
 
 # wait for admin backend to be available
 timeout 30 /bin/sh -c 'while ! curl -s failmap-admin:8000 -H host:admin.faalkaart.nl >/dev/null ;do sleep 1; done'
