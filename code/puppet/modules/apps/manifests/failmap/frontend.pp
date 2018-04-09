@@ -132,27 +132,29 @@ class apps::failmap::frontend (
 
 
   nginx::resource::location { "${hostname}-authentication":
-    server              => $hostname,
-    ssl                 => true,
-    ssl_only            => true,
-    www_root            => undef,
-    location            => '/authentication/',
-    proxy               => "\$backend",
-    location_cfg_append => {
-      'set $backend' => "http://${pod}-interactive.service.dc1.consul:8000",
-      'limit_req'    => 'zone=authentication',
-    },
+    server                     => $hostname,
+    ssl                        => true,
+    ssl_only                   => true,
+    www_root                   => undef,
+    location                   => '/authentication/',
+    proxy                      => "\$backend",
+    location_custom_cfg_append => {
+      'set'       => "\$backend http://${pod}-interactive.service.dc1.consul:8000;",
+      'limit_req' => 'zone=authentication;',
+    }
   }
 
   nginx::resource::location { "${hostname}-game":
-    server              => $hostname,
-    ssl                 => true,
-    ssl_only            => true,
-    www_root            => undef,
-    location            => '/game/',
-    proxy               => "\$backend",
-    location_cfg_append => {
-      'set $backend' => "http://${pod}-interactive.service.dc1.consul:8000",
+    server                     => $hostname,
+    ssl                        => true,
+    ssl_only                   => true,
+    www_root                   => undef,
+    location                   => '/game/',
+    proxy                      => "\$backend",
+    location_custom_cfg_append => {
+      'set' => "\$backend http://${pod}-interactive.service.dc1.consul:8000;",
+      # if not authenticated this endpoint is not visible
+      'if'  => "(\$cookie_sessionid = \"\") { return 404; }",
     },
   }
 

@@ -76,14 +76,23 @@ describe command('curl -sSvk https://faalkaart.test/authentication/login/') do
   its(:stderr) {should contain('HTTP/1.1 200 OK')}
 end
 
+# multiple requests in quick succession to login
 describe command('for i in 1..4; do curl -sSvk https://faalkaart.test/authentication/login/ &>/dev/null & done;curl -sSvk https://faalkaart.test/authentication/login/') do
   # should end up being rate limited
   its(:stderr) {should contain('HTTP/1.1 503 Service Temporarily Unavailable')}
 end
 
+# unauthenticated request to game
 describe command('curl -sSvk https://faalkaart.test/game/') do
-  # should return successful
-  its(:stderr) {should contain('HTTP/1.1 200 OK')}
+  # should be disallowed
+  its(:stderr) {should contain('HTTP/1.1 404 Not Found')}
 end
+
+# unauthenticated request to game
+describe command('curl -sSvk --cookie "sessionid=123" https://faalkaart.test/game/') do
+  # should be disallowed
+  its(:stderr) {should contain('HTTP/1.1 404 Not Found')}
+end
+
 
 
