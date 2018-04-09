@@ -4,7 +4,7 @@ describe docker_container('failmap-frontend') do
 end
 
 # HTTP request to frontend
-describe command('curl -sSvk https://faalkaart.nl') do
+describe command('curl -sSvk https://faalkaart.test') do
   # should return successful
   its(:stderr) {should contain('HTTP/1.1 200 OK')}
   # render complete page
@@ -14,7 +14,7 @@ describe command('curl -sSvk https://faalkaart.nl') do
 end
 
 # same for IPv6
-describe command('curl -6 -sSvk https://faalkaart.nl') do
+describe command('curl -6 -sSvk https://faalkaart.test') do
   # should return successful
   its(:stderr) {should contain('HTTP/1.1 200 OK')}
   # render complete page
@@ -24,45 +24,45 @@ describe command('curl -6 -sSvk https://faalkaart.nl') do
 end
 
 # test some API calls
-describe command('curl --compressed -sSvk "https://faalkaart.nl/data/stats/0"') do
+describe command('curl --compressed -sSvk "https://faalkaart.test/data/stats/NL/municipality/0"') do
   its(:stderr) {should contain('HTTP/1.1 200 OK')}
 end
 
-describe command('curl -sSv http://faalkaart.nl') do
+describe command('curl -sSv http://faalkaart.test') do
   # should redirect to https
   its(:stderr) {should contain('HTTP/1.1 301')}
-  its(:stderr) {should contain('Location: https://faalkaart.nl')}
+  its(:stderr) {should contain('Location: https://faalkaart.test')}
 end
 
-describe command('curl -sSvk https://www.faalkaart.nl') do
+describe command('curl -sSvk https://www.faalkaart.test') do
   # should redirect www to no-www
   its(:stderr) {should contain('HTTP/1.1 301')}
-  its(:stderr) {should contain('Location: https://faalkaart.nl')}
+  its(:stderr) {should contain('Location: https://faalkaart.test')}
 end
 
 # stats have explicit cache which is different from the webserver 10 minute default
 # implicitly tests database migrations as it will return 500 if they are not applied
-describe command('curl -sSvk "https://faalkaart.nl/data/terrible_urls/0"') do
+describe command('curl -sSvk "https://faalkaart.test/data/terrible_urls/NL/municipality/0"') do
   # should redirect www to no-www
   its(:stderr) {should contain('Cache-Control: max-age=86400')}
 end
 
 # all responses should be compressed
 # proxied html
-describe command('curl --compressed -sSvk "https://faalkaart.nl/"') do
+describe command('curl --compressed -sSvk "https://faalkaart.test/"') do
   its(:stderr) {should contain('Content-Encoding: gzip')}
 end
 # proxied JSON
-describe command('curl --compressed -sSvk "https://faalkaart.nl/data/stats/0"') do
+describe command('curl --compressed -sSvk "https://faalkaart.test/data/stats/NL/municipality/0"') do
   its(:stderr) {should contain('Content-Encoding: gzip')}
 end
 # proxied static files
-describe command('curl --compressed -sSvk "https://faalkaart.nl/static/images/internet_cleanup_foundation_logo.png"') do
+describe command('curl --compressed -sSvk "https://faalkaart.test/static/images/internet_cleanup_foundation_logo.png"') do
   its(:stderr) {should contain('Content-Encoding: gzip')}
 end
 
 # HTTP2 request to frontend
-describe command('sudo docker run getourneau/alpine-curl-http2 curl -sSvk https://faalkaart.nl') do
+describe command('sudo docker run --network=host getourneau/alpine-curl-http2 curl -sSvk https://faalkaart.test') do
   # should return successful
   its(:stderr) {should contain('HTTP/2 200')}
   # render complete page
@@ -70,3 +70,20 @@ describe command('sudo docker run getourneau/alpine-curl-http2 curl -sSvk https:
   # HSTS security should be enabled
   its(:stderr) {should contain('strict-transport-security: max-age=31536000; includeSubdomains')}
 end
+
+describe command('curl -sSvk https://faalkaart.test/authentication/login/') do
+  # should return successful
+  its(:stderr) {should contain('HTTP/1.1 200 OK')}
+end
+
+describe command('for i in 1..4; do curl -sSvk https://faalkaart.test/authentication/login/ &>/dev/null & done;curl -sSvk https://faalkaart.test/authentication/login/') do
+  # should end up being rate limited
+  its(:stderr) {should contain('HTTP/1.1 503 Service Temporarily Unavailable')}
+end
+
+describe command('curl -sSvk https://faalkaart.test/game/') do
+  # should return successful
+  its(:stderr) {should contain('HTTP/1.1 200 OK')}
+end
+
+

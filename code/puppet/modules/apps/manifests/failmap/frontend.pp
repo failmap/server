@@ -99,14 +99,14 @@ class apps::failmap::frontend (
       'DJANGO_DATABASE=production',
       'DB_HOST=/var/run/mysqld/mysqld.sock',
       "DB_NAME=${db_name}",
-      "DB_USER=${db_user}",
-      "DB_PASSWORD=${db_password}",
+      "DB_USER=${interactive_db_user}",
+      "DB_PASSWORD=${interactive_db_password}",
       # django generic settings
       "SECRET_KEY=${secret_key}",
       "ALLOWED_HOSTS=${hostname}",
       'DEBUG=',
       # name by which service is known to service discovery (consul)
-      "SERVICE_NAME=${appname}",
+      "SERVICE_NAME=${pod}-interactive",
       # HTTP check won't do because of Django ALLOWED_HOSTS
       "SERVICE_CHECK_SCRIPT=curl\\ -si\\ http://\$SERVICE_IP/\\ -Hhost:${appname}\\|grep\\ 200\\ OK",
     ],
@@ -123,6 +123,37 @@ class apps::failmap::frontend (
     # allow upstream to set caching headers, cache upstream responses
     # and serve stale results if backend is unavailable or broken
     caching  => upstream,
+  }
+
+  file { "/etc/nginx/conf.d/${hostname}.rate_limit.conf":
+    ensure  => present,
+    content => "limit_req_zone \$binary_remote_addr zone=authentication:10m rate=3r/s;"
+  } ~> Nginx::Resource::Server[$hostname]
+
+
+  nginx::resource::location { "${hostname}-authentication":
+    server              => $hostname,
+    ssl                 => true,
+    ssl_only            => true,
+    www_root            => undef,
+    location            => '/authentication/',
+    proxy               => "\$backend",
+    location_cfg_append => {
+      'set $backend' => "http://${pod}-interactive.service.dc1.consul:8000",
+      'limit_req'    => 'zone=authentication',
+    },
+  }
+
+  nginx::resource::location { "${hostname}-game":
+    server              => $hostname,
+    ssl                 => true,
+    ssl_only            => true,
+    www_root            => undef,
+    location            => '/game/',
+    proxy               => "\$backend",
+    location_cfg_append => {
+      'set $backend' => "http://${pod}-interactive.service.dc1.consul:8000",
+    },
   }
 
   file { '/usr/local/bin/failmap-frontend-clear-cache':

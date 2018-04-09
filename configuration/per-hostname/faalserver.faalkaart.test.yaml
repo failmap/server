@@ -9,6 +9,8 @@ apps::failmap::frontend::hostname: faalkaart.test
 
 # map public hostnames back to dev hostnames for test convenience
 base::dns::localhost_redirects:
+  - faalkaart.test
+  - www.faalkaart.test
   - faalkaart.nl
   - www.faalkaart.nl
   - admin.faalkaart.nl
@@ -46,3 +48,5 @@ base::monitoring::server::client_ca: *failmap_ca
 
 # CA for validating external Workers connecting with the broker
 apps::failmap::broker::client_ca: *failmap_ca
+
+apps::failmap::broker::tls_combined_path: /etc/letsencrypt.sh/certs/faalkaart.test/combined.pem
