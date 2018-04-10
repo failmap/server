@@ -158,6 +158,18 @@ class apps::failmap::frontend (
     },
   }
 
+  nginx::resource::location { "${hostname}-game-public":
+    server                     => $hostname,
+    ssl                        => true,
+    ssl_only                   => true,
+    www_root                   => undef,
+    location                   => '/game/scores/',
+    proxy                      => "\$backend",
+    location_custom_cfg_append => {
+      'set' => "\$backend http://${pod}-frontend.service.dc1.consul:8000;",
+    },
+  }
+
   file { '/usr/local/bin/failmap-frontend-clear-cache':
     content => template('apps/failmap-frontend-clear-cache.erb'),
     mode    => '0744',
