@@ -130,6 +130,10 @@ class apps::failmap::frontend (
     content => "limit_req_zone \$binary_remote_addr zone=authentication:10m rate=3r/s;"
   } ~> Nginx::Resource::Server[$hostname]
 
+  file { "/etc/nginx/conf.d/${hostname}.game.rate_limit.conf":
+    ensure  => present,
+    content => "limit_req_zone \$binary_remote_addr zone=game:10m rate=10r/s;"
+  } ~> Nginx::Resource::Server[$hostname]
 
   nginx::resource::location { "${hostname}-authentication":
     server                     => $hostname,
@@ -152,9 +156,11 @@ class apps::failmap::frontend (
     location                   => '/game/',
     proxy                      => "\$backend",
     location_custom_cfg_append => {
-      'set' => "\$backend http://${pod}-interactive.service.dc1.consul:8000;",
+      'set'                => "\$backend http://${pod}-interactive.service.dc1.consul:8000;",
       # if not authenticated this endpoint is not visible
-      'if'  => "(\$cookie_sessionid = \"\") { return 404; }",
+      'if'                 => "(\$cookie_sessionid = \"\") { return 404; }",
+      'proxy_no_cache'     => "\$cookie_sessionid;",
+      'proxy_cache_bypass' =>  "\$cookie_sessionid;",
     },
   }
 
@@ -166,7 +172,10 @@ class apps::failmap::frontend (
     location                   => '/game/scores/',
     proxy                      => "\$backend",
     location_custom_cfg_append => {
-      'set' => "\$backend http://${pod}-frontend.service.dc1.consul:8000;",
+      'set'                => "\$backend http://${pod}-frontend.service.dc1.consul:8000;",
+      'limit_req'          => 'zone=game;',
+      'proxy_no_cache'     =>'yes;',
+      'proxy_cache_bypass' =>'yes;',
     },
   }
 
