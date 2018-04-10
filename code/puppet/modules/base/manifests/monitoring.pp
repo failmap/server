@@ -86,6 +86,12 @@ class base::monitoring {
     },
   }
 
+  Package[telegraf]
+  -> exec { 'telegraf docker permissions':
+    unless  => '/usr/bin/id -nG telegraf | grep docker',
+    command => '/usr/sbin/usermod -aG docker telegraf',
+  }
+
   # collect and instantiate telegraf inputs defined elsewhere with @telegraf::input
   Telegraf::Input <| |>
 }

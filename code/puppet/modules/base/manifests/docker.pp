@@ -13,6 +13,13 @@ class base::docker (
     extra_parameters => $ipv6_parameters,
   }
 
+  @telegraf::input { 'docker':
+    plugin_type => docker,
+    options     => [{
+      endpoint => 'unix:///var/run/docker.sock',
+    }],
+  }
+
   # use consul to provide service discovery and host->container DNS
   include base::consul
 

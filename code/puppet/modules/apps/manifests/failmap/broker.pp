@@ -20,7 +20,7 @@ class apps::failmap::broker (
     plugin_type => redis,
     options     => [
       {
-        servers => ['tcp://redis:6379']
+        servers => ["tcp://${appname}:6379"]
       },
     ],
   }

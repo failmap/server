@@ -25,6 +25,15 @@ class apps::failmap::admin (
     grant    => ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'CREATE', 'INDEX', 'DROP', 'ALTER'],
   }
 
+  @telegraf::input { "mysql-${db_name}":
+    plugin_type => mysql,
+    options     => [
+      {
+        servers => ["${db_user}:${db_password}@unix(/var/run/mysqld/mysqld.sock)/${db_name}"],
+      },
+    ],
+  }
+
   $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
 
   # common options for all docker invocations (ie: cli helpers/service)
