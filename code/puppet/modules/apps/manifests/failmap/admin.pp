@@ -90,6 +90,7 @@ class apps::failmap::admin (
     # admin is accessible for authenticated users only that need to see a live view
     # of changes, do not cache anything
     caching          => disabled,
+    proxy_timeout    => '90s',
   }
 
   # add convenience command to run admin actions via container

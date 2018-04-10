@@ -5,7 +5,7 @@ host ?= faalserver.faalkaart.nl
 all: code/puppet/vendor/modules
 
 # install all required puppet modules from Puppetfile.lock
-code/puppet/%:
+code/puppet/vendor/modules: code/puppet/Puppetfile
 	$(MAKE) -C code/puppet/ $*
 
 apply deploy: code/puppet/vendor/modules
