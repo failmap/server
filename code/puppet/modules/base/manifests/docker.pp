@@ -62,7 +62,19 @@ class base::docker (
     -> file { '/etc/ndppd.conf':
       content => template('base/ndppd.conf.erb'),
     }
-    ~> service {'ndppd': }
+    ~> service {'ndppd':
+      ensure => running,
+      enable => true,
+    }
+
+    # fix where pid directory does not exist after boot
+    file {
+      '/etc/systemd/system/ndppd.service.d/':
+      ensure => directory;
+      '/etc/systemd/system/ndppd.service.d/var-run-ndppd.conf':
+      content => "[Service]\nExecStartPre=-/bin/mkdir -p /var/run/ndppd/\n"
+    }
+    ~> [Service['ndppd'], Class[Systemd::Systemctl::Daemon_reload]]
   }
 }
 
