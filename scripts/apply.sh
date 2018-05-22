@@ -2,6 +2,12 @@
 
 cd "$(dirname "$0")/.." || exit
 
+# perform some sanity checks
+if find code/puppet/vendor/modules -mindepth 1 | read; then
+  echo "No vendor modules found in 'code/puppet/vendor/modules', can't continue!"
+  exit 1
+fi
+
 # ensure secret random seed is present on the host
 mkdir -p /var/lib/puppet/
 seedfile=/var/lib/puppet/.random_seed
