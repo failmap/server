@@ -1,4 +1,5 @@
 .tmp/
 code/puppet/vendor/modules/
+code/puppet/.gem
 .vagrant/
 configuration/overrides/dev.yaml

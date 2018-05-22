@@ -10,12 +10,12 @@ librarian-puppet = ${GEM_HOME}/bin/librarian-puppet
 env = PATH=.gem/bin:$$PATH GEM_HOME=${GEM_HOME}
 
 # install all required puppet modules from Puppetfile.lock
-vendor/modules Puppetfile.lock: Puppetfile .librarian/puppet/config | ${librarian-puppet} ${puppet}
+vendor/modules: Puppetfile .librarian/puppet/config | ${librarian-puppet} ${puppet}
 	@# currently broken
 	@# https://github.com/voxpupuli/librarian-puppet/issues/52
 	@# ${librarian-puppet$} install --verbose
 	${env} ${librarian-puppet} install
-	touch vendor/modules Puppetfile.lock
+	touch vendor/modules
 
 # search and resolve updates for all puppet modules in Puppetfile into Puppetfile.lock
 modules_update: | ${librarian-puppet} ${puppet}
