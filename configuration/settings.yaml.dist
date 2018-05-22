@@ -1,8 +1,14 @@
 # This is a template file, copy as `settings.yaml` to make it effective.
 # This file allows to set configuration values which are used during deployments.
 # Defaults can be found in `defaults.yaml` and per-host or per-environment settings can be
-# made by creating/editing the respective file(s) in `per-host` or `per-environment`.
-# If you only have one host/environment putting everything in here is fine as well.
+# made by creating/editing the respective file(s) in `per-hostname` (see directory for examples).
+
+# If you only have one host putting everything in here is fine as well.
+
+# Configuration files are merged in the following priority (low to high): `defaults` then
+# `settings` then `per-host/fqdn`. Every key (`something::something:`) can be specified in any file.
+# If a key is found in a higher priority file it's value will take precedence to the value in
+# a lower priority file.
 
 # # set email address for letsencrypt (required)
 # letsencrypt::email: admin@example.com

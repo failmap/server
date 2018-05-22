@@ -27,8 +27,10 @@ fix: | ${puppet-lint}
 check: | ${puppet-lint}
 	${env} ${puppet-lint} modules
 
-mrproper clean:
+clean:
 	rm -rf vendor
+
+mrproper: clean
 	rm -rf .gem
 
 ${librarian-puppet} ${puppet-lint} ${puppet}:

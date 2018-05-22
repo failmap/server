@@ -9,7 +9,7 @@ hierarchy:
   - name: "Default"
     paths:
       - "overrides/dev.yaml"
-      - "settings.yaml"
       - "per-hostname/%{::fqdn}.yaml"
       - "per-environment/%{::env}.yaml"
+      - "settings.yaml"
       - "defaults.yaml"
