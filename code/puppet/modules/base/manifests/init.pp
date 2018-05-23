@@ -1,6 +1,7 @@
 # provide application independent OS layer base settings
 class base {
-  notice("fqdn=${::fqdn}, env=${::env}")
+  $osinfo = $::os['distro']['description']
+  notice("fqdn=${::fqdn}, env=${::env}, os=${osinfo}")
 
   class { '::cron': }
 
