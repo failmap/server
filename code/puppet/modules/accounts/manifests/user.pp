@@ -4,6 +4,7 @@ define accounts::user (
   $sudo=false,
   $keys={},
   $shell='/bin/bash',
+  $sudo_key_auth=$accounts::sudo_key_auth,
 ){
   if $sudo {
       $sudo_ensure = present
@@ -34,7 +35,7 @@ define accounts::user (
   }
   create_resources(ssh_authorized_key, $keys, $key_defaults)
 
-  if $sudo {
+  if $sudo and $sudo_key_auth {
     File[$pam_ssh_agent_auth::key_dir] -> Ssh_authorized_key <||>
 
     $sudo_key_defaults = {
@@ -43,5 +44,9 @@ define accounts::user (
       target => "/etc/sudo_ssh_authorized_keys/${name}",
     }
     create_resources(ssh_authorized_key, prefix($keys, 'sudo-'), $sudo_key_defaults)
+  } else {
+    file {"/etc/sudo_ssh_authorized_keys/${name}":
+      ensure => absent,
+    }
   }
 }

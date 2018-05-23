@@ -29,6 +29,7 @@ mod 'datacentred/telegraf', '>=2.0.0',
   :git => 'https://github.com/yankcrime/puppet-telegraf.git',
   :ref => '2.0.0'
 mod 'puppetlabs-haproxy'
+mod 'saz/sudo'
 
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',
