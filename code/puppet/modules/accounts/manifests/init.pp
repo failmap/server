@@ -7,14 +7,15 @@ class accounts (
 
   class { 'sudo': }
   if $sudo_key_auth {
+    class { 'pam_ssh_agent_auth': }
     sudo::conf { 'sudo':
       priority => 10,
-      content  => "%sudo   ALL=(ALL:ALL) ALL",
+      content  => '%sudo   ALL=(ALL:ALL) ALL',
     }
   } else {
     sudo::conf { 'sudo':
       priority => 10,
-      content  => "%sudo   ALL=(ALL) NOPASSWD: ALL",
+      content  => '%sudo   ALL=(ALL) NOPASSWD: ALL',
     }
   }
 }

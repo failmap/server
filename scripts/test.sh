@@ -70,8 +70,8 @@ CAMELLIA256-SHA
 DES-CBC3-SHA"
 
 ciphers=$(sslscan --no-color -p 443 faalkaart.nl)
-regex="\s($(echo -n "$weak_cryptos"|tr '\n' '|'))\s"
-! echo "$ciphers" | egrep --color=always "$regex" || failed "$ciphers"
+regex="\\s($(echo -n "$weak_cryptos"|tr '\n' '|'))\\s"
+! echo "$ciphers" | grep -E --color=always "$regex" || failed "$ciphers"
 
 ## test domains and redirections
 
@@ -133,5 +133,5 @@ sudo systemctl start docker-failmap-frontend.service
 # success
 set +v
 echo
-echo -e "\e[92mAll good!\e[39m"
+echo -e "\\e[92mAll good!\\e[39m"
 echo

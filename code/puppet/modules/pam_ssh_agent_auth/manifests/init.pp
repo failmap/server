@@ -18,10 +18,9 @@ class pam_ssh_agent_auth (
     mode   => '0644',
   }
 
-  file_line { 'sudoers SSH_AUTH_SOCK':
-    line  => 'Defaults    env_keep += "SSH_AUTH_SOCK"',
-    path  => '/etc/sudoers',
-    after => 'Defaults        env_reset',
+  sudo::conf { 'ssh-agent propagation for pam sudo':
+    priority => 10,
+    content  => 'Defaults    env_keep += "SSH_AUTH_SOCK"',
   }
 
   file { $key_dir:

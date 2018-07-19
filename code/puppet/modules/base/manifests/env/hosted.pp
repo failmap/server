@@ -27,13 +27,14 @@ class base::env::hosted (
     }
   }
 
-  # let sudoers know not to change anything outside of puppet
+  # remind superusers of configurationmanagement
   file {
       '/etc/sudoers.lecture':
-            content => "THIS HOST IS MANAGED BY PUPPET. Please only make permanent changes\nthrough puppet and do not expect manual changes to be maintained!\nMore info: https://github.com/failmap/server\n\n";
-
-      '/etc/sudoers.d/lecture':
-            content => "Defaults\tlecture=\"always\"\nDefaults\tlecture_file=\"/etc/sudoers.lecture\"\n";
+            content => "THIS HOST IS MANAGED BY PUPPET. Please only make permanent changes\nthrough puppet and do not expect manual changes to be maintained!\nMore info: https://gitlab.com/failmap/server\n\n";
+  }
+  -> sudo::conf { 'lecture':
+    priority => 10,
+    content  => "Defaults\tlecture=\"always\"\nDefaults\tlecture_file=\"/etc/sudoers.lecture\"\n",
   }
 
   swap_file::files { 'default':
@@ -41,6 +42,5 @@ class base::env::hosted (
   }
 
   # pam sudo ssh agent auth and user accounts
-  class { 'pam_ssh_agent_auth': }
   class { 'accounts': }
 }

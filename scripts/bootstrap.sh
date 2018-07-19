@@ -18,11 +18,15 @@ BASH_XTRACEFD=19
 # propagate command errors, print commands before executing
 set -xe
 
+# don't ask for passwords to sudo anymore
+echo "%sudo   ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/10_sudo
+chmod 0440 /etc/sudoers.d/10_sudo
+
 test -x /usr/bin/lsb_release || (apt-get -q update; apt-get install -yqq lsb-release)
 
 release=$(/usr/bin/lsb_release -sc)
 
-if ! which curl; then
+if ! command -v curl; then
   apt-get -q update
   apt-get install -yqq curl
 fi

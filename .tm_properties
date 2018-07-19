@@ -1,0 +1,3 @@
+# configuration file for Textmate editor
+GEM_HOME = "$TM_PROJECT_DIRECTORY/code/puppet/.gem"
+PATH = "$TM_PROJECT_DIRECTORY/code/puppet/.gem/bin:$PATH"

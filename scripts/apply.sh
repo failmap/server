@@ -21,6 +21,7 @@ if ! test -z "$IGNORE_WARNINGS";then
   ignore_filter="egrep --line-buffered -v '$ignore'"
 else
   echo "Showing Puppet catalog compiler warnings (deprecations, etc)."
+  # shellcheck disable=SC2209
   ignore_filter=cat
 fi
 
