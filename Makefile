@@ -8,11 +8,11 @@ all: code/puppet/vendor/modules
 code/puppet/vendor/modules: code/puppet/Puppetfile
 	$(MAKE) -C code/puppet/ $*
 
-apply deploy: code/puppet/vendor/modules
+apply deploy: check code/puppet/vendor/modules
 	scripts/deploy.sh ${host} ${args}
 
 plan: args=--test
-plan: code/puppet/vendor/modules
+plan: check code/puppet/vendor/modules
 	scripts/deploy.sh ${host} --noop ${args}
 
 fix:

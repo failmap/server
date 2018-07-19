@@ -26,6 +26,7 @@ fix: | ${puppet-lint}
 
 check: | ${puppet-lint}
 	${env} ${puppet-lint} modules
+	${env} ${puppet} parser validate modules
 
 clean:
 	rm -rf vendor

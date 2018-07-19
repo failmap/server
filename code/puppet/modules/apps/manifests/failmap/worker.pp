@@ -1,9 +1,10 @@
 # Configure the failmap worker
 class apps::failmap::worker (
-  $hostname = 'faalkaart.nl',
-  $pod      = $apps::failmap::pod,
-  $image    = $apps::failmap::image,
-  $broker   = $apps::failmap::broker,
+  $hostname              = 'faalkaart.nl',
+  $pod                   = $apps::failmap::pod,
+  $image                 = $apps::failmap::image,
+  $broker                = $apps::failmap::broker,
+  Hash[String, Array[String]] $workers_configuration = {},
 ){
   $appname = "${pod}-worker"
 
@@ -46,11 +47,17 @@ class apps::failmap::worker (
   # one for 'normal' scanners and one for rate limited qualys scanners
   $worker_roles = ['storage', 'scanner', 'scanner_qualys', 'scanner_endpoint_discovery']
   $worker_roles.each | $role | {
+    if $workers_configuration[$role] {
+      $worker_args = join($workers_configuration[$role], ' ')
+    } else {
+      $worker_args = ''
+    }
+
     Docker::Image[$image]
     ~> docker::run { "${appname}-${role}":
       image           => $image,
       # be informative and run memory efficient worker pool
-      command         => 'celery worker --loglevel=info --pool=eventlet',
+      command         => "celery worker --loglevel=info --pool=eventlet ${worker_args}",
       volumes         => [
         # make mysql accesible from within container
         '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
