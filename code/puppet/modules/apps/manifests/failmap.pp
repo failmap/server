@@ -2,12 +2,12 @@
 class apps::failmap (
   $pod='failmap',
   $ipv6_subnet=undef,
-  $image='registry.gitlab.com/failmap/failmap:latest',
+  $image='failmap/failmap:latest',
   $broker='redis://broker:6379/0',
 ){
   docker::image { $image:
     ensure    => present,
-    image     => 'registry.gitlab.com/failmap/failmap',
+    image     => 'failmap/failmap',
     image_tag => latest,
   }
 
