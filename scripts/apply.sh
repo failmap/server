@@ -2,8 +2,11 @@
 
 cd "$(dirname "$0")/.." || exit
 
-if test -z "$(find code/puppet/vendor/modules -mindepth 1)"; then
+if ! test -d code/puppet/vendor/modules; then
+  echo "Installing 3rd party Puppet modules"
+  cd code/puppet || exit
   librarian-puppet install || exit
+  cd - || exit
 fi
 
 # ensure secret random seed is present on the host
@@ -23,7 +26,8 @@ else
   ignore_filter=cat
 fi
 
-puppet apply \
+echo "Starting Puppet provisioning"
+/opt/puppetlabs/bin/puppet apply \
   --detailed-exitcodes \
   --modulepath=code/puppet/modules:code/puppet/vendor/modules \
   --hiera_config=code/puppet/hiera.yaml \

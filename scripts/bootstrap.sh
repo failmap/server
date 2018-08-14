@@ -38,9 +38,9 @@ apt-get -qq update
 # install puppet and some dependencies
 apt-get install -yqq puppet-agent rsync apt-transport-https git ruby
 # used to install puppet modules using Puppetfile
-gem install librarian-puppet
+gem install -q librarian-puppet
 # dependencies for some puppet modules (telegraf, consul), find out why they are not installed automatically
-/opt/puppetlabs/puppet/bin/gem install toml-rb curl
+/opt/puppetlabs/puppet/bin/gem install -q toml-rb curl
 rm -f "puppetlabs-release-pc1-${release}.deb"
 
 # remember bootstrap has run
