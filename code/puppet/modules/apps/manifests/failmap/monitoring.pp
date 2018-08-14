@@ -1,5 +1,7 @@
 # monitoring clients
-class base::monitoring {
+class apps::failmap::monitoring {
+  include ::apps::failmap
+
   class { '::collectd':
     purge           => true,
     recurse         => true,

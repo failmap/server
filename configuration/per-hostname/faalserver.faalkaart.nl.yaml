@@ -4,8 +4,8 @@
 classes:
   # required for interface hash
   - network
-  - base::monitoring
-  - base::monitoring::server
+  - apps::failmap::monitoring
+  - apps::failmap::monitoring::server
 
 
 # letsencrypt account settings
@@ -56,7 +56,7 @@ apps::failmap::admin::client_ca: &failmap_ca |
   -----END CERTIFICATE-----
 
 # CA for validating access to monitoring frontends (Grafana)
-base::monitoring::server::client_ca: *failmap_ca
+apps::failmap::monitoring::server::client_ca: *failmap_ca
 
 # allow external connections to broker for remote workers (scanners)
 apps::failmap::broker::enable_remote: true

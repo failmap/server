@@ -1,7 +1,9 @@
 # monitoring collection and visualization server
-class base::monitoring::server (
+class apps::failmap::monitoring::server (
   $client_ca=undef,
 ){
+  include ::apps::failmap
+
   # Influx Time-series database
   Class['docker']
   -> docker::run { 'influxdb':
@@ -34,7 +36,7 @@ class base::monitoring::server (
 
   # Grafana Graphing frontend
   $appname = grafana
-  $hostname = "${appname}.faalkaart.nl"
+  $hostname = "${appname}.${::apps::failmap::hostname}"
 
   docker::run { $appname:
     image   => 'grafana/grafana',

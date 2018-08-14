@@ -21,7 +21,7 @@ check:
 #   stage: test
 #   tags: ['vagrant']
 #   before_script:
-#     - apt-get update -q
+#     - apt-get update -qq
 #     - apt-get install vagrant virtualbox
 #
 #   script:

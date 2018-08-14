@@ -15,7 +15,7 @@ vendor/modules: Puppetfile .librarian/puppet/config | ${librarian-puppet} ${pupp
 	@# https://github.com/voxpupuli/librarian-puppet/issues/52
 	@# ${librarian-puppet$} install --verbose
 	${env} ${librarian-puppet} install
-	touch vendor/modules
+	touch vendor/modules/
 
 # search and resolve updates for all puppet modules in Puppetfile into Puppetfile.lock
 modules_update: | ${librarian-puppet} ${puppet}

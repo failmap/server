@@ -1,7 +1,7 @@
 
 # Configure the failmap frontend
 class apps::failmap::frontend (
-  $hostname = 'faalkaart.nl',
+  $hostname = $apps::failmap::hostname,
   $pod = $apps::failmap::pod,
   $image = $apps::failmap::image,
 ){

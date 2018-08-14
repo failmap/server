@@ -26,11 +26,11 @@ FORGE
       puppetlabs-concat (< 5.0.0, >= 1.2.5)
       puppetlabs-stdlib (< 5.0.0, >= 4.25.0)
       stahnma-epel (< 2.0.0, >= 1.2.2)
-    puppet-logrotate (3.2.1)
-      puppetlabs-stdlib (< 5.0.0, >= 4.13.1)
-    puppet-nginx (0.11.0)
+    puppet-logrotate (3.3.0)
+      puppetlabs-stdlib (< 5.0.0, >= 4.22.0)
+    puppet-nginx (0.13.0)
       puppetlabs-concat (< 5.0.0, >= 3.0.0)
-      puppetlabs-stdlib (< 5.0.0, >= 4.13.1)
+      puppetlabs-stdlib (< 5.0.0, >= 4.22.0)
     puppet-staging (3.2.0)
     puppet-unattended_upgrades (3.1.0)
       puppetlabs-apt (< 5.0.0, >= 2.2.0)
@@ -74,8 +74,8 @@ GIT
 
 GIT
   remote: https://github.com/aequitas/puppet-sites.git
-  ref: cb680e7e524433c326b688f102399b4ef5476ebc
-  sha: cb680e7e524433c326b688f102399b4ef5476ebc
+  ref: f5cd5107d22b9e519ebe081ab7bb1764abf59c27
+  sha: f5cd5107d22b9e519ebe081ab7bb1764abf59c27
   specs:
     aequitas-sites (0.1.0)
       puppet-logrotate (>= 1.1.1)

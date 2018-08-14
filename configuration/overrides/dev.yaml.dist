@@ -4,6 +4,6 @@
 
 # Example: to enable monitoring uncomment:
 # classes:
-#   - base::monitoring
-#   - base::monitoring::server
+#   - apps::failmap::monitoring
+#   - apps::failmap::monitoring::server
 #

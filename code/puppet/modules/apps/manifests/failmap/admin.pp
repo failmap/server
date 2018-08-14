@@ -1,11 +1,14 @@
 # Configure the Admin frontend as well as the basic service requirements (database, queue broker)
 class apps::failmap::admin (
+  $hostname  = "admin.${apps::failmap::hostname}",
   $pod       = $apps::failmap::pod,
   $image     = $apps::failmap::image,
   $client_ca = undef,
   $broker    = $apps::failmap::broker,
 ){
-  $hostname = 'admin.faalkaart.nl'
+  include ::apps::failmap
+  include ::apps::failmap::frontend
+
   $appname = "${pod}-admin"
 
   $db_name = 'failmap'
@@ -134,7 +137,7 @@ class apps::failmap::admin (
     mode    => '0744',
   }
   file { '/usr/local/bin/failmap-frontend-cache-flush':
-    content => 'systemctl stop nginx; rm -r /var/cache/nginx/faalkaart.nl/;systemctl start nginx',
+    content => "systemctl stop nginx; rm -r /var/cache/nginx/${::apps::failmap::frontend::hostname}/;systemctl start nginx",
     mode    => '0744',
   }
   file { '/usr/local/bin/failmap-task-queue-flush-all':

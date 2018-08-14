@@ -12,7 +12,7 @@ function rollback {
   systemctl restart docker-failmap-admin.service
 
   # wait for admin backend to be available
-  timeout 30 /bin/sh -c 'while ! curl -s failmap-admin:8000 -H host:admin.faalkaart.nl >/dev/null ;do sleep 1; done'
+  timeout 30 /bin/sh -c 'while ! curl -s failmap-admin:8000 -H host:<%= @hostname %> >/dev/null ;do sleep 1; done'
   echo
   echo "Rollback complete!"
   echo
@@ -42,13 +42,13 @@ curl -s -XPOST influxdb:8086/write?db=events --data-binary "deploy,user=$user ve
 systemctl restart docker-failmap-admin.service
 
 # wait for admin backend to be available
-timeout 30 /bin/sh -c 'while ! curl -s failmap-admin:8000 -H host:admin.faalkaart.nl >/dev/null ;do sleep 1; done'
+timeout 30 /bin/sh -c 'while ! curl -s failmap-admin:8000 -H host:<%= @hostname %> >/dev/null ;do sleep 1; done'
 
 set +x
 echo
 echo "Admin restarted, please verify and press [enter] to continue deploy or [ctrl-c] to rollback."
 echo
-echo "https://admin.faalkaart.nl/"
+echo "https://<%= @hostname %>/"
 echo
 # wait for user input
 read -r
@@ -62,7 +62,7 @@ systemctl stop docker-failmap-\*.service
 systemctl start docker-failmap-\*.service
 
 # wait for admin backend to be available
-timeout 30 /bin/sh -c 'while ! curl -s failmap-admin:8000 -H host:admin.faalkaart.nl >/dev/null ;do sleep 1; done'
+timeout 30 /bin/sh -c 'while ! curl -s failmap-admin:8000 -H host:<%= @hostname %> >/dev/null ;do sleep 1; done'
 
 # show container startus after deploy
 docker ps

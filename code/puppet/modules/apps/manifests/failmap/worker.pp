@@ -1,6 +1,6 @@
 # Configure the failmap worker
 class apps::failmap::worker (
-  $hostname              = 'faalkaart.nl',
+  $hostname              = $apps::failmap::hostname,
   $pod                   = $apps::failmap::pod,
   $image                 = $apps::failmap::image,
   $broker                = $apps::failmap::broker,

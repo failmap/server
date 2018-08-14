@@ -32,7 +32,7 @@
 #
 
 # # CA for validating access to monitoring frontends (eg: Grafana)
-# base::monitoring::server::client_ca: *failmap_ca
+# ::apps::failmap::monitoring::server::client_ca: *failmap_ca
 #
 # # allow external connections to broker for remote workers (scanners)
 # apps::failmap::broker::enable_remote: true
