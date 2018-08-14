@@ -1,6 +1,19 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+unless ARGV[0] == "plugin"
+  required_plugins = %w( vagrant-vbguest vagrant-serverspec )
+  plugins_to_install = required_plugins.select { |plugin| not Vagrant.has_plugin? plugin }
+  if not plugins_to_install.empty?
+    puts "Installing plugins: #{plugins_to_install.join(' ')}"
+    if system "vagrant plugin install #{plugins_to_install.join(' ')}"
+      exec "vagrant #{ARGV.join(' ')}"
+    else
+      abort "Installation of one or more plugins has failed. Aborting."
+    end
+  end
+end
+
 Vagrant.configure("2") do |config|
   config.vm.box = ENV['VAGRANT_BOX'] || "debian/jessie64"
 
@@ -47,10 +60,6 @@ Vagrant.configure("2") do |config|
     # apply latests configuration
     /vagrant/scripts/apply.sh
   SHELL
-
-  unless Vagrant.has_plugin?("vagrant-serverspec")
-    raise 'vagrant-serverspec is not installed, see REAMDE.md'
-  end
 
   # run serverspec as a provisioner to test the previously provisioned machine
   config.vm.provision :serverspec do |spec|
