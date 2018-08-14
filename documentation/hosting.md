@@ -26,15 +26,26 @@ This project uses Puppet configuration management in a masterless configuration.
 # Installation
 To install a full production Failmap stack the following is required:
 
-- 'Server' Dedicated bare-metal or virtual host running *Debian Jessie (8.0)*
-- SSH access to the host
+- 'Server' Dedicated bare-metal or virtual host running **Debian Jessie (8.0)** and internet connectivity
+- Terminal access to the host (SSH or via VM console, etc)
 - Sudo/root permissions on the host
-- (recommended) DNS hostname/domain
+- Hostnames pointing to the server IPv4 and IPv6 addresses (replace example.com with your primary domain):
 
-Login to the server as `root` or as normal user and sudo to root `sudo su -`.
+  - example.com
+  - admin.example.com
+  - grafana.example.com
+  - failserver.example.com (optional)
 
-Run the following command:
+1. Bring the server up, configure basic Debian settings and give it a hostname like: `failserver.example.com` (this is used to match configuration, see next step). Using the frontend hostname (`example.com`) is not advised.
 
-    wget -q -o- https://gitlab.com/failmap/server/raw/master/install.sh | /bin/bash
+1. Create a server hostname configuration in `configuration/per-hostname/` with the hostname previously chosen. (see other files in the `configuration/` directory for documentations/examples). 
 
-Wait until everything completes and the notice `Applied catalog in xxx seconds` appears.
+1. Make sure this file is commited to the repository and pushed to Gitlab `master` or create your own fork of this repository and adjust the URL in step 5 accordingly!
+
+1. Login to the server as `root` or as normal user and sudo to root `sudo su -`.
+
+1. Run the following command:
+
+        wget -q -o- https://gitlab.com/failmap/server/raw/master/install.sh | /bin/bash
+
+1.  Grab a Mate (or 2) and wait until everything completes and the notice `Applied catalog in xxx seconds` appears.
