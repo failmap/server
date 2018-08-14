@@ -1,0 +1,95 @@
+# configuration for production server
+# do not use these settings unless you are hosting for Internet cleanup foundation
+
+classes:
+  # required for interface hash
+  - network
+  - apps::failmap::monitoring
+  - apps::failmap::monitoring::server
+
+
+# letsencrypt account settings
+letsencrypt::email: info@faalkaart.nl
+
+# ensure default ipv4 config and enable static ipv6
+network::interfaces_hash:
+  eth0:
+    enable_dhcp: true
+  eth0_v6:
+    interface: eth0
+    family: inet6
+    # assigned by transip
+    ipaddress: 2a01:7c8:d001:2f6::1
+    netmask: 48
+    gateway: 2a01:7c8:d001::1	
+
+base::docker::ipv6_ndpproxy: 2a01:7c8:d001:2f6::0/64
+base::docker::ipv6_subnet: 2a01:7c8:d001:2f6:0::0/80
+apps::failmap::ipv6_subnet: 2a01:7c8:d001:2f6:1::0/80
+
+# CA for validating access to administrative instance of Failmap application
+apps::failmap::admin::client_ca: &failmap_ca |
+  -----BEGIN CERTIFICATE-----
+  MIIEQDCCAyigAwIBAgIQEmLWz+QdooUgvAF2olReXTANBgkqhkiG9w0BAQsFADCB
+  uTELMAkGA1UEBhMCTkwxDDAKBgNVBAgTA04vQTEMMAoGA1UEBxMDTi9BMQwwCgYD
+  VQQJEwNOL0ExDDAKBgNVBBETA04vQTEuMCwGA1UEChMlU3RpY2h0aW5nIEludGVy
+  bmV0IENsZWFudXAgRm91bmRhdGlvbjESMBAGA1UECxMJRmFhbGthYXJ0MS4wLAYD
+  VQQDEyVTdGljaHRpbmcgSW50ZXJuZXQgQ2xlYW51cCBGb3VuZGF0aW9uMB4XDTE3
+  MTAxMzE2MjYyM1oXDTIyMTAxMjE2MjYyM1owgbkxCzAJBgNVBAYTAk5MMQwwCgYD
+  VQQIEwNOL0ExDDAKBgNVBAcTA04vQTEMMAoGA1UECRMDTi9BMQwwCgYDVQQREwNO
+  L0ExLjAsBgNVBAoTJVN0aWNodGluZyBJbnRlcm5ldCBDbGVhbnVwIEZvdW5kYXRp
+  b24xEjAQBgNVBAsTCUZhYWxrYWFydDEuMCwGA1UEAxMlU3RpY2h0aW5nIEludGVy
+  bmV0IENsZWFudXAgRm91bmRhdGlvbjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+  AQoCggEBALxzJzYm9qSTV7x2E7+B6vpwvZB1IJPL/fDwnHKeGBZZVb1C54/VtotU
+  3z5trE+1EV0xmPJjWtnGBcoae5UPBM04JJtBG6hRi8hWUhCurliz7D7/EQEkFVv+
+  v3G3ibx97aMcXc52i5JBmOUimt5MY9RzGfagF4TYa6sPEbJXALLQ6ucOfeckUhQq
+  F8ENhIzwjG0rfiw4T6zsiMpLtGC//h2konfThDMN9YN2ckpEOgToxZ3U7LfCANoF
+  PdjD/wt6MnbQcf33P5toad2h475luYrgIL7CzCkcg+eOsPTPE+DnGZVDoznMNk/A
+  peIENezaFaHWyO3c5l+iKSSkRK+zbgECAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgIE
+  MA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFA1HLgBwzRyE9eIoJHxTwDrmYV3p
+  MA0GCSqGSIb3DQEBCwUAA4IBAQCIJiocty0rFwxMCuNSMnWEXOISrW4nSwpsPISE
+  rVmMqOXj/8dz+zMUFLthHUd7Kotr39G4Q2nGTy+zdScHsQHuhvfBX7s8w3Ma8GR6
+  oJWWadigttZPUFxaHwJNQZMfk1seDS+kiK8/AVQCCdlfyTVa4X+cXCtE/E766Ta2
+  jLiF40ZGRd3i3LNYCxLs/QViB1Qt/dFhmLUrlD7pw6xgcSthyxMj/CSHf0rFFBpV
+  tlac7qVwg8uwtijb9I/kPeGz7cYrB3R/tQLJ4cxgq8I2y910KhFkS2LFIKGQ7hm7
+  vzu4wrBBWT2CeLQYqDCNbsMCX4dgRdfRKWzrxS9t9+OA59uJ
+  -----END CERTIFICATE-----
+
+# Set frontend hostname for this server
+apps::failmap::hostname: faalmap.co.uk
+
+# CA for validating access to monitoring frontends (Grafana)
+apps::failmap::monitoring::server::client_ca: *failmap_ca
+
+# allow external connections to broker for remote workers (scanners)
+apps::failmap::broker::enable_remote: true
+
+# CA for validating remote workers connecting with the broker
+apps::failmap::broker::client_ca: *failmap_ca
+
+# users & sudo permissions
+accounts::users:
+  test:
+    ensure: absent
+  aequitas:
+    sudo: true
+    keys:
+      key1:
+        type: ssh-rsa
+        key: AAAAB3NzaC1yc2EAAAABIwAAAQEAzTqFM62DY6nnBSEpO6lnFp80cAqs12rIfZ9iDZh/TvXuvVgrsKPaKTM5fLiulH+CntCxjmywEochYrLUiq2RnVVaoKGQsdRdCY9UGNhAK5l4v+5V5DiZBxVCEgfYwIdw1Jya+vMGKxhZ0VQprj5Yw98OfwvyX5ZksIJnHevNW+gYkeZtr0D8ETatx2ph7JI34bkSOQG607aaed8YB2U7oziTHiiuD553bSoVP26HozhLViliLGaGNOdhLZR8ionZKmc6zCrzSDb2iGPUOdjalYVxi9sqLjHwo0Mfj40AzsRYEhJ1E0LrTNA3pSjJULCWdheDEjzXpUViJlvN/2/HhQ==
+    shell: /usr/bin/fish
+  failenschmidt:
+    keys:
+      failenschmidt:
+        type: ssh-rsa
+        key: AAAAB3NzaC1yc2EAAAADAQABAAABAQDqzPKED7azmfqjDQ6/qOOZwe6V9bZ3YDJ6UDJ9OHUPVaiKtaKDl+1OhTh3TRA+XkeOKk/8/de/TsbHYQ/100hOqx6yr+TW5ClGRVDNNBZ1LMDSk5WURFnT2cjodDznzLCdGLagMA2Trwc9yrv/m8lvn7cuAshgDj/7CTNGgPnnRvVnjp4Hu0Ca8e7RKEvqZvgqcuwPe304svE/PGT1Dth9xS26Xhjs82NOmJweZS+VycOV17pvtTDCmnMp6eBDQhgz90UuVK5n+8bMNA2PcIE/r21Pt8bJyIchRImEeLLs7IpS6gUfEQ5sGmyzP0yaztdE3aJi4LX+lzc3RHY9dXwf
+  stitch:
+    sudo: true
+    keys:
+      stitch:
+        type: ssh-rsa
+        key: AAAAB3NzaC1yc2EAAAADAQABAAACAQDSD/TFYNq8V/RofrxLZWiPpdM/bj3b6vto+oRhfAb+4gsfsyxbrpETvHKdahCiJTZA+jheJQdaS2IWkrpZw1sCV0pSMcD6aZJWaDomfY2wNkrNs69mDzIL3HCsqUOVft5Md46Uh21+2vLIFgPLLrn58wOBszCK5DFTTQ9VrAirpwsaZ/rJj1iFwd+35MJVDe6K5LDF1tVEJl4MdqOs2Yhi25Zuz/ynP7zeF6420arqbbXjlSIDHbTjHJ54rBvDHqhg1cuYN4CGc3Fx7NTHfSYX4tlUvVS0EDLcNXWN+QlU4EI7qXHLjGastc7UqnLc4oFivQUOjlVFizF+hghb14MFYrAegTbzdS4kAROXLv/SVr360SVXfHdL2I3AE5oC9/IEsDXiWHEPZv/OX2t/reuCkt3hIZ4MQRZyXsO5TaDrJb8mnVIpbXOGrzlQ0Eec5IvEVotz0wLxK3zOk/Hs0oTOxpbryg9j5iMBQ2CyXBR3Er0YkPeuWjj3YMNbO33yaaER+EZXdg/cfYnuowM0wGXjYwmASTzNX4CDT1VjxS3H3V6+wMxM9aNmk+kFumGtW8b9VQNC55hokK4QeCteBv2bS99+Vnki0MfGI+1H1ljviJrXJ8EeYmY15CgPRtjYPiHRZdCuLTRR//4ZaZMbCussvOlGAxZ05LcIC5fiPmiHvQ==
+    shell: /usr/bin/fish
+
+apps::failmap::worker::workers_configuration:
+  scanner: [--concurrency=20]
