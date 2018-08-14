@@ -2,10 +2,8 @@
 
 cd "$(dirname "$0")/.." || exit
 
-# perform some sanity checks
 if test -z "$(find code/puppet/vendor/modules -mindepth 1)"; then
-  echo "No vendor modules found in 'code/puppet/vendor/modules', can't continue!"
-  exit 1
+  librarian-puppet install || exit
 fi
 
 # ensure secret random seed is present on the host
