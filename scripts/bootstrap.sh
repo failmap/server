@@ -19,21 +19,22 @@ BASH_XTRACEFD=19
 set -xe
 
 # don't ask for passwords to sudo anymore
+mkdir -p /etc/sudoers.d/
 echo "%sudo   ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/10_sudo
 chmod 0440 /etc/sudoers.d/10_sudo
 
-test -x /usr/bin/lsb_release || (apt-get -q update; apt-get install -yqq lsb-release)
+test -x /usr/bin/lsb_release || (apt-get -qq update; apt-get install -yqq lsb-release)
 
 release=$(/usr/bin/lsb_release -sc)
 
 if ! command -v curl; then
-  apt-get -q update
+  apt-get -qq update
   apt-get install -yqq curl
 fi
 curl -s "http://apt.puppetlabs.com/puppetlabs-release-pc1-${release}.deb" \
   -o "puppetlabs-release-pc1-${release}.deb"
 dpkg -i "puppetlabs-release-pc1-${release}.deb"
-apt-get -q update
+apt-get -qq update
 # install puppet and some dependencies
 apt-get install -yqq puppet-agent rsync apt-transport-https git ruby
 # used to install puppet modules using Puppetfile
