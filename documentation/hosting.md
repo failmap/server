@@ -37,4 +37,4 @@ Run the following command:
 
     wget -q -o- https://gitlab.com/failmap/server/raw/master/install.sh | /bin/bash
 
-Wait until everything completes.
+Wait until everything completes and the notice `Applied catalog in xxx seconds` appears.

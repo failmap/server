@@ -56,7 +56,7 @@ apps::failmap::admin::client_ca: &failmap_ca |
   -----END CERTIFICATE-----
 
 # Set frontend hostname for this server
-apps::failmap::hostname: faalmap.co.uk
+apps::failmap::hostname: failmap.co.uk
 
 # CA for validating access to monitoring frontends (Grafana)
 apps::failmap::monitoring::server::client_ca: *failmap_ca
