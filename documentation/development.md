@@ -8,9 +8,12 @@ The following tools are required to run the virtual machine:
 
 - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 - [Vagrant](https://www.vagrantup.com/downloads.html)
-- vagrant-vbguest (`vagrant plugin install vagrant-vbguest`)
-- vagrant-landrush (`vagrant plugin install landrush`)
-- vagrant-serverspec(`vagrant plugin install vagrant-serverspec`)
+
+## Setup
+
+The following instructions work for macOS with [homebrew](https://brew.sh/) installed for installing all dependencies:
+
+    brew bundle install
 
 ## Instructions
 
