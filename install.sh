@@ -11,7 +11,7 @@ if ! test "$(whoami)" == "root";then
   exit 1
 fi
 
-if ! grep -E 'Debian GNU/Linux [89]|Ubuntu 18.04' /etc/os-release;then
+if ! grep -E 'Debian GNU/Linux [89]|Ubuntu 18.04' /etc/os-release >/dev/null;then
   echo "OS release not support!"
   cat /etc/os-release
   exit 1

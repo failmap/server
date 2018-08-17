@@ -26,6 +26,9 @@ chmod 0440 /etc/sudoers.d/10_sudo
 test -x /usr/bin/lsb_release || (apt-get -qq update; apt-get install -yqq lsb-release)
 
 release=$(/usr/bin/lsb_release -sc)
+if test "$release" == "bionic"; then
+  release=xenial
+fi
 
 if ! command -v curl; then
   apt-get -qq update

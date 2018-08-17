@@ -2,6 +2,8 @@
 
 cd "$(dirname "$0")/.." || exit
 
+export PATH=/opt/puppetlabs/bin:$PATH
+
 if ! test -d code/puppet/vendor/modules; then
   echo "Installing 3rd party Puppet modules"
   cd code/puppet || exit
