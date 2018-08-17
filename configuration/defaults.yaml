@@ -10,16 +10,8 @@ classes:
   - apps::failmap::frontend
   - apps::failmap::worker
 
-env: hosted
-
 # site config
 sites::disable_default: true
 
 # letsencrypt account settings
 letsencrypt::email: postmaster@example.com
-
-# (ab)use TLS certificate and key from the main website which is generated using letsencrypt.
-# We prefer not having secrets that need to be deployed to the server and still have to think
-# of a good way to make this work for non-http TLS ports like Redis (one such solution might be
-# delagating letsencrypt dns-01 TXT records and running a DNS daemon on the server).
-apps::failmap::broker::tls_combined_path: /etc/letsencrypt.sh/certs/faalkaart.nl/combined.pem

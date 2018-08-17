@@ -93,3 +93,5 @@ accounts::users:
 
 apps::failmap::worker::workers_configuration:
   scanner: [--concurrency=20]
+
+apps::failmap::broker::tls_combined_path: /etc/letsencrypt.sh/certs/failmap.co.uk/combined.pem

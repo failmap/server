@@ -1,7 +1,5 @@
 # configuration dev/test (eg: vagrant)
 
-env: test
-
 # do not use production letsencrypt endpoint
 letsencrypt::staging: true
 
