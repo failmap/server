@@ -44,7 +44,6 @@ Vagrant.configure("2") do |config|
   # provision using puppet
   config.vm.provision "shell", inline: <<-SHELL
     set -e
-    echo "export FACTER_env=vagrant" > /etc/profile.d/facter-env.sh
     # use tmp directory outside of vagrant root for performance and host conflict prevention
     echo "export LIBRARIAN_PUPPET_TMP=/tmp" > /etc/profile.d/use-fast-tmpdir.sh
 
@@ -58,7 +57,7 @@ Vagrant.configure("2") do |config|
     make -C /vagrant code/puppet/Puppetfile.lock
 
     # apply latests configuration
-    /vagrant/scripts/apply.sh
+    SHOW_WARNINGS=1 /vagrant/scripts/apply.sh
   SHELL
 
   # run serverspec as a provisioner to test the previously provisioned machine

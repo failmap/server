@@ -35,4 +35,4 @@ git clone --quiet --branch master "$git_source" /opt/failmap/server/
 /opt/failmap/server/scripts/bootstrap.sh
 
 # bring to system to the desired state
-FACTER_env=hosted IGNORE_WARNINGS=1 /opt/failmap/server/scripts/apply.sh
+/opt/failmap/server/scripts/apply.sh

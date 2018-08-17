@@ -10,6 +10,8 @@ classes:
   - apps::failmap::frontend
   - apps::failmap::worker
 
+env: hosted
+
 # site config
 sites::disable_default: true
 
