@@ -15,7 +15,7 @@ address-ttl 30000
 # messages, and respond to them according to a set of rules (see below).
 # <interface> is required. You may have several 'proxy' sections.
 
-proxy eth0 {
+proxy <%= @ndproxy_interface %> {
 
    # router <yes|no|true|false>
    # This option turns on or off the router flag for Neighbor Advertisement

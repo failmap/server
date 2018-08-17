@@ -48,6 +48,7 @@ class base::docker (
   }
 
   if $ipv6_ndpproxy {
+    $ndproxy_interface = $::networking['primary']
     file { '/var/run/ndppd':
       ensure => directory,
     }
@@ -63,8 +64,9 @@ class base::docker (
       content => template('base/ndppd.conf.erb'),
     }
     ~> service {'ndppd':
-      ensure => running,
-      enable => true,
+      ensure   => running,
+      enable   => true,
+      provider => systemd,
     }
 
     # fix where pid directory does not exist after boot
