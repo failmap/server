@@ -9,6 +9,7 @@ define accounts::user (
   if $sudo {
       $sudo_ensure = present
       $groups = ['sudo', 'docker']
+      Package[docker] -> User[$name]
   } else {
       $sudo_ensure = absent
       $groups = []
