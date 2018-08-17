@@ -19,16 +19,18 @@ class base::haproxy {
 
   # configure haproxy to use dnsmasq resolver which allow querying consul service records
   haproxy::resolver { 'default':
-    nameservers     => {
+    nameservers      => {
       'dns1' => '127.0.0.1:53',
     },
-    hold            => {
+    hold             => {
       'nx'    => '30s',
       'valid' => '10s'
     },
-    resolve_retries => 3,
-    timeout         => {
+    resolve_retries  => 3,
+    timeout          => {
       'retry' => '1s'
     },
+    # silence warning about exported resources not being available
+    collect_exported => false,
   }
 }

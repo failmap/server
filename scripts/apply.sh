@@ -31,6 +31,7 @@ echo "Starting Puppet provisioning"
   --detailed-exitcodes \
   --modulepath=code/puppet/modules:code/puppet/vendor/modules \
   --hiera_config=code/puppet/hiera.yaml \
+  --user=root --group=root \
   --execute "include base" "$@" \
     > >(eval $ignore_filter) \
     2> >(eval $ignore_filter)

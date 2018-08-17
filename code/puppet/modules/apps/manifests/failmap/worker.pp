@@ -12,8 +12,8 @@ class apps::failmap::worker (
   $db_user = $db_name
 
   # database
-  $random_seed = file('/var/lib/puppet/.random_seed')
-  $db_password = fqdn_rand_string(32, '', "${random_seed}${db_user}")
+
+  $db_password = simplib::passgen($db_user, {'length' => 32})
 
   if $apps::failmap::ipv6_subnet {
     $ipv6_support = 1

@@ -17,13 +17,17 @@ class base::consul (
 
   # make consul DNS entries resolvable on host system
   Package['dnsmasq']
-  -> file { '/etc/dnsmasq.d/consul.conf':
-    content => "server=/consul/127.0.0.1#8600\nrev-server=172.16.0.0/12,127.0.0.1#8600",
+  -> file { '/etc/dnsmasq.conf':
+    content => @(EOL)
+      interface=lo
+      interface=docker0
+      conf-dir=/etc/dnsmasq.d
+    |EOL
   }
-  ~> file_line { 'dnsmasq consul forward':
-    line => 'conf-dir=/etc/dnsmasq.d/',
-    path => '/etc/dnsmasq.conf',
-  } ~> Service['dnsmasq']
+  ~> file { '/etc/dnsmasq.d/consul.conf':
+    content => "server=/consul/127.0.0.1#8600\nrev-server=172.17.0.0/16,127.0.0.1#8600",
+  }
+  ~> Service['dnsmasq']
 
   Package['resolvconf']
   -> file_line { 'consul search domain':

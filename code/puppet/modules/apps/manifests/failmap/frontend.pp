@@ -14,8 +14,8 @@ class apps::failmap::frontend (
   # database readonly user
   # used for frontend instance, ie: high traffic public facing.
   # should only be able to read from database
-  $random_seed = file('/var/lib/puppet/.random_seed')
-  $db_password = fqdn_rand_string(32, '', "${random_seed}${db_user}")
+
+  $db_password = simplib::passgen($db_user, {'length' => 32})
   mysql_user { "${db_user}@localhost":
     password_hash => mysql_password($db_password),
   }
@@ -28,8 +28,7 @@ class apps::failmap::frontend (
   # database interactive user
   # used for interactive components (eg: login (non-admin), url/org submit)
   # has write access to the database content
-  $interactive_random_seed = file('/var/lib/puppet/.random_seed')
-  $interactive_db_password = fqdn_rand_string(32, '', "${interactive_random_seed}${interactive_db_user}")
+  $interactive_db_password = simplib::passgen($interactive_db_user, {'length' => 32})
   mysql_user { "${interactive_db_user}@localhost":
     password_hash => mysql_password($interactive_db_password),
   }
@@ -48,7 +47,7 @@ class apps::failmap::frontend (
       ensure => present;
   } -> Docker::Run[$appname]
 
-  $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
+  $secret_key = simplib::passgen('secret_key', {'length' => 32})
 
   # frontend instance, used for serving readonly content to high traffic public
   Docker::Image[$image]
@@ -75,7 +74,7 @@ class apps::failmap::frontend (
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
       # HTTP check won't do because of Django ALLOWED_HOSTS
-      "SERVICE_CHECK_SCRIPT=curl\\ -si\\ http://\$SERVICE_IP/\\ -Hhost:${appname}\\|grep\\ 200\\ OK",
+      "SERVICE_CHECK_SCRIPT=curl -sI http://\\\$SERVICE_IP:8000/ -Hhost:${hostname}|head -n1|grep 200.OK",
     ],
     env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net             => $pod,
@@ -108,7 +107,7 @@ class apps::failmap::frontend (
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${pod}-interactive",
       # HTTP check won't do because of Django ALLOWED_HOSTS
-      "SERVICE_CHECK_SCRIPT=curl\\ -si\\ http://\$SERVICE_IP/\\ -Hhost:${appname}\\|grep\\ 200\\ OK",
+      "SERVICE_CHECK_SCRIPT=curl -sI http://\\\$SERVICE_IP:8000/ -Hhost:${hostname}|head -n1|grep 200.OK",
     ],
     env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net             => $pod,

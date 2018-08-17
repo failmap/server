@@ -15,8 +15,7 @@ class apps::failmap::admin (
   $db_user = $db_name
 
   # database
-  $random_seed = file('/var/lib/puppet/.random_seed')
-  $db_password = fqdn_rand_string(32, '', "${random_seed}${db_user}")
+  $db_password = simplib::passgen($db_user, {'length' => 32})
   mysql::db { $db_name:
     user     => $db_user,
     password => $db_password,
@@ -25,7 +24,7 @@ class apps::failmap::admin (
     charset  => utf8,
     collate  => utf8_general_ci,
     # admin requires all permissions to manage database (and migrations)
-    grant    => ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'CREATE', 'INDEX', 'DROP', 'ALTER'],
+    grant    => ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'CREATE', 'INDEX', 'DROP', 'ALTER', 'REFERENCES'],
   }
 
   @telegraf::input { "mysql-${db_name}":
@@ -37,7 +36,7 @@ class apps::failmap::admin (
     ],
   }
 
-  $secret_key = fqdn_rand_string(32, '', "${random_seed}secret_key")
+  $secret_key = simplib::passgen('secret_key', {'length' => 32})
 
   # common options for all docker invocations (ie: cli helpers/service)
   $docker_environment = [
@@ -81,7 +80,7 @@ class apps::failmap::admin (
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
       # HTTP check won't do because of Django ALLOWED_HOSTS
-      "SERVICE_CHECK_SCRIPT=curl\\ -si\\ http://\$SERVICE_IP/admin/login/\\ -Hhost:${appname}\\|grep\\ 200\\ OK",
+      "SERVICE_CHECK_SCRIPT=curl -sI http://\\\$SERVICE_IP:8000/admin/login -Hhost:${hostname}|head -n1|grep 200.OK",
     ]),
     env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net             => $pod,
@@ -148,17 +147,28 @@ class apps::failmap::admin (
     content => '/bin/journalctl -f -u docker-failmap-*',
     mode    => '0744',
   }
+  file { '/usr/local/bin/failmap-db-migrate':
+    content => @("EOL"),
+      #!/bin/bash
+      set -e
+      /usr/bin/docker run ${docker_environment_args} \
+        -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
+        ${image} migrate --noinput
+      | EOL
+    mode    => '0744',
+  }
 
   # run migration in a separate container
-  Docker::Image[$image]
+  [Docker::Image[$image], Mysql_database[failmap]]
   ~> exec {"${appname}-migrate":
-    command     => "/usr/bin/docker run ${docker_environment_args} \
-                    -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
-                    ${image} migrate --noinput",
+    command     => '/usr/local/bin/failmap-db-migrate',
     refreshonly => true,
   }
+  # Run migration before starting app containers, so apps don't plunge in a 
+  # unprepared database, this makes sure 'kitchen test' completes in one go
+  -> Docker::Run <| |>
   # make sure we only start migrating once mysql server is running
-  Service['mysql'] ~> Exec["${appname}-migrate"]
+  Service[$::mysql::server::service_name] ~> Exec["${appname}-migrate"]
 
   # create a compressed rotating dataset backup every day/week
   cron { "${appname} daily dataset backup":

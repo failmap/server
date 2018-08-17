@@ -1,19 +1,31 @@
 # configuration dev/test (eg: vagrant)
 
+env: test
+
 # do not use production letsencrypt endpoint
 letsencrypt::staging: true
 
 sites::realm: faalserver.faalkaart.test
 
-apps::failmap::frontend::hostname: faalkaart.test
+apps::failmap::hostname: faalkaart.test
 
 # map public hostnames back to dev hostnames for test convenience
 base::dns::localhost_redirects:
   - faalkaart.test
   - www.faalkaart.test
-  - faalkaart.nl
-  - www.faalkaart.nl
-  - admin.faalkaart.nl
+  - admin.faalkaart.test
+
+hosts:
+  # mock test endpoint for worker IPv6 connectivity check
+  faalkaart.nl-mock-v4:
+    host_aliases: [faalkaart.nl]
+    ip: 'fd00::1'
+  faalkaart.nl-mock-v6:
+    host_aliases: [faalkaart.nl]
+    ip: '172.17.0.1'
+
+base::docker::ipv6_subnet: fd00::0/80
+apps::failmap::ipv6_subnet: fd00:1::0/80
 
 # CA for validating access to administrative instance of Failmap application
 apps::failmap::admin::client_ca: &failmap_ca |

@@ -3,7 +3,7 @@ class base::dns (
   $localhost_redirects=[],
 ){
   # create host entries from hiera configuration
-  create_resources('host', lookup('hosts', Hash, unique, {}))
+  create_resources(host, lookup(hosts, Hash, hash, {}))
 
   # create redirects to localhost (mostly used for test suites)
   host { 'localhost-redirects-4':
@@ -24,4 +24,7 @@ class base::dns (
   # race conditions cause DNS services to be unavailable during package installs.
   # Postpone DNS config until every other package is installed.
   Package <| title != dnsmasq and title != resolvconf |> -> Package['resolvconf']
+
+  # make sure docker0 interface is ready for dnsmasq to bind to
+  Service[docker] -> Service[dnsmasq]
 }

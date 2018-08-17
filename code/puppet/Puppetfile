@@ -19,7 +19,7 @@ mod 'puppetlabs-vcsrepo'
 mod 'thias-php'
 mod 'puppetlabs-mysql'
 mod 'example42-network'
-mod 'puppetlabs-docker', '<1.0.5'
+mod 'puppetlabs-docker'
 # pin for puppet4+ compat
 mod 'KyleAnderson/consul', '>=3.0.0'
 mod 'puppet/collectd'
@@ -28,7 +28,9 @@ mod 'datacentred/telegraf', '>=2.0.0',
   # until 2.0.0 is available from puppet forge.
   :git => 'https://github.com/yankcrime/puppet-telegraf.git',
   :ref => '2.0.0'
-mod 'puppetlabs-haproxy'
+mod 'puppetlabs-haproxy',
+  :git => 'https://github.com/aequitas/puppetlabs-haproxy.git',
+  :branch => 'master'
 mod 'saz/sudo'
 
 mod 'aequitas/letsencrypt',
@@ -36,5 +38,6 @@ mod 'aequitas/letsencrypt',
   :ref => '00e6b598cd4a1f18501bb6901d0ae06a0a055093'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
-  :ref => 'f5cd5107d22b9e519ebe081ab7bb1764abf59c27'
+  :ref => 'a77b5941f705e012356cb4ee1394d342bb788852'
 
+mod 'simp/simplib'

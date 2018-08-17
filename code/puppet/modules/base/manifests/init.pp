@@ -9,7 +9,7 @@ class base {
   class { '::apt::backports': }
 
   # utility packages
-  package { ['sl', 'atop', 'htop', 'unzip']:
+  package { ['sl', 'atop', 'htop', 'unzip', 'jq']:
     ensure => latest,
   }
 

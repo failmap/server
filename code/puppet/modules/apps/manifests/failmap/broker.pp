@@ -1,7 +1,7 @@
 # configure message broker
 class apps::failmap::broker (
   $pod = $apps::failmap::pod,
-  $client_ca = undef,
+  String $client_ca = undef,
   $external_port='1337',
   $internal_port='6379',
   String $tls_combined_path=undef,
@@ -29,8 +29,9 @@ class apps::failmap::broker (
   file { $client_ca_path:
     content => $client_ca,
   }
+  -> ::Haproxy::Instance[haproxy]
 
-  include base::haproxy
+  include ::base::haproxy
 
   haproxy::listen { 'broker':
     collect_exported => false,
