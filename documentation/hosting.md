@@ -26,7 +26,10 @@ This project uses Puppet configuration management in a masterless configuration.
 # Installation
 To install a full production Failmap stack the following is required:
 
-- 'Server' Dedicated bare-metal or virtual host running **Debian Jessie (8.0)** and internet connectivity
+- Dedicated bare-metal or virtual host with internet connectivity running either:
+  - Debian 8
+  - Debian 9
+  - Ubuntu 18.04
 - Terminal access to the host (SSH or via VM console, etc)
 - Sudo/root permissions on the host
 - Hostnames pointing to the server IPv4 and IPv6 addresses (replace example.com with your primary domain):
@@ -36,7 +39,9 @@ To install a full production Failmap stack the following is required:
   - grafana.example.com
   - failserver.example.com (optional)
 
-1. Bring the server up, configure basic Debian settings and give it a hostname like: `failserver.example.com` (this is used to match configuration, see next step). Using the frontend hostname (`example.com`) is not advised.
+**Warning**: this installation assumes to run on a clean and dedicated host for a Failmap installation! It will modify the OS and take over things like firewalling, Docker, SSH, etc. Do not run on a server with existing other software as the actions performed cannot be undone easily/automatically.
+
+1. Bring the server up, configure basic settings (language, keyboard, user) as seen fit and give it a hostname like: `failserver.example.com` (this is used to match configuration, see next step). Using the frontend hostname (`example.com`) is not advised.
 
 1. Create a server hostname configuration in `configuration/per-hostname/` with the hostname previously chosen. (see other files in the `configuration/` directory for documentations/examples). 
 
@@ -46,6 +51,6 @@ To install a full production Failmap stack the following is required:
 
 1. Run the following command:
 
-        wget -q -o- https://gitlab.com/failmap/server/raw/master/install.sh | /bin/bash
+        wget -q -O- https://gitlab.com/failmap/server/raw/master/install.sh | /bin/bash
 
 1.  Grab a Mate (or 2) and wait until everything completes and the notice `Applied catalog in xxx seconds` appears.

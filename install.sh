@@ -2,21 +2,25 @@
 
 # foolproof installationscript for failmap
 
+set -e 
+
+git_source=${GIT_SOURCE:-https://gitlab.com/failmap/server.git}
+
 if ! test "$(whoami)" == "root";then
   echo "Must run as root!"
   exit 1
 fi
 
-if ! grep "Debian GNU/Linux 8" /etc/os-release >/dev/null;then
-  echo "OS must be Debian 8"
+if ! grep -E 'Debian GNU/Linux [89]|Ubuntu 18.04' /etc/os-release;then
+  echo "OS release not support!"
+  cat /etc/os-release
   exit 1
 fi
 
-cd ~
-
-set -ev
+set -v
 
 # cleanup previous attempt if this a retry run of this script
+cd /
 rm -rf /.bootstrap_* /opt/failmap/server/
 mkdir -p /opt/failmap/server/
 
@@ -25,7 +29,7 @@ apt-get update -qq
 apt-get install -yqq git curl 
 
 # get the source
-git clone --quiet --branch master https://gitlab.com/failmap/server.git /opt/failmap/server/
+git clone --quiet --branch master "$git_source" /opt/failmap/server/
 
 # install puppet et al
 /opt/failmap/server/scripts/bootstrap.sh
