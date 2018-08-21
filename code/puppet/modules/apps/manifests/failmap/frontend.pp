@@ -116,12 +116,15 @@ class apps::failmap::frontend (
   }
 
   sites::vhosts::proxy { $hostname:
-    proxy    => "${appname}.service.dc1.consul:8000",
+    proxy         => "${appname}.service.dc1.consul:8000",
     # use consul as proxy resolver
-    resolver => ['127.0.0.1:8600'],
+    resolver      => ['127.0.0.1:8600'],
     # allow upstream to set caching headers, cache upstream responses
     # and serve stale results if backend is unavailable or broken
-    caching  => upstream,
+    caching       => upstream,
+    proxy_timeout => '60s',
+    # default timeout if not provided by upstream, make odd number to easily identify in web inspecter.
+    expires       => 599,
   }
 
   file { "/etc/nginx/conf.d/${hostname}.rate_limit.conf":
@@ -175,6 +178,19 @@ class apps::failmap::frontend (
       'limit_req'          => 'zone=game;',
       'proxy_no_cache'     =>'yes;',
       'proxy_cache_bypass' =>'yes;',
+    },
+  }
+
+  nginx::resource::location { "${hostname}-maptile-proxy":
+    server                     => $hostname,
+    ssl                        => true,
+    ssl_only                   => true,
+    www_root                   => undef,
+    location                   => '/proxy/',
+    proxy                      => "\$backend",
+    expires                    => '7d',
+    location_custom_cfg_append => {
+      'set'                  => "\$backend http://${pod}-frontend.service.dc1.consul:8000;",
     },
   }
 

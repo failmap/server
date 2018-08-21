@@ -55,5 +55,6 @@ class apps::failmap::monitoring::server (
     resolver         => ['127.0.0.1:8600'],
     # require client certificate for access
     client_ca        => $client_ca,
+    proxy_timeout    => '60s',
   }
 }
