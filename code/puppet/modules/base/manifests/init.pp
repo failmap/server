@@ -3,13 +3,11 @@ class base {
   $osinfo = $::os['distro']['description']
   notice("fqdn=${::fqdn}, env=${::env}, os=${osinfo}")
 
-  class { '::cron': }
-
   class { '::apt': }
   class { '::apt::backports': }
 
   # utility packages
-  package { ['sl', 'atop', 'htop', 'unzip', 'jq']:
+  package { ['sl', 'atop', 'htop', 'unzip', 'jq', 'cron']:
     ensure => latest,
   }
 
