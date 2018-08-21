@@ -86,7 +86,6 @@ class apps::failmap::broker (
   file {'/usr/local/bin/redis-queues.py':
     content => template('apps/redis-queues.py.erb')
   }
-  ~> Service['redis-queue-monitor']
 
   file { '/etc/systemd/system/redis-queue-monitor.service':
     content => @("END")
@@ -94,22 +93,31 @@ class apps::failmap::broker (
     Description=Monitor celery redis queue size
     After=systemd-networkd.service
     Requires=systemd-networkd.service
-
     [Service]
+    Type=oneshot
     ExecStart=/usr/bin/python3 /usr/local/bin/redis-queues.py
+    TimeoutStartSec=1m
     Environment=BROKER=${appname}
-    RestartSec=5s
-    Restart=always
-
-    [Install]
-    WantedBy=multi-user.target
     |END
     ,
     mode    => '0644',
   }
-  ~> service {'redis-queue-monitor':
+
+  file { '/etc/systemd/system/redis-queue-monitor.timer':
+    content => @(END)
+    [Unit]
+    Description=Trigger celery redis queue monitor every minute
+    [Timer]
+    OnBootSec=1m
+    OnUnitActiveSec=1m
+    [Install]
+    WantedBy=timers.target
+    |END
+    ,
+    mode    => '0644',
+  }
+  ~> service {'redis-queue-monitor.timer':
     ensure => running,
     enable => true,
   }
-
 }
