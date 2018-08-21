@@ -8,7 +8,7 @@ all: code/puppet/vendor/modules
 code/puppet/vendor/modules: code/puppet/Puppetfile
 	$(MAKE) -C code/puppet/ $*
 
-apply deploy: check code/puppet/vendor/modules
+apply deploy: fix check code/puppet/vendor/modules
 	scripts/deploy.sh ${host} ${args}
 
 plan: args=--test
