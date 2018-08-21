@@ -10,7 +10,7 @@ class base::docker (
   }
 
   class {'::docker':
-    extra_parameters => concat(['--dns=172.17.0.1', '--ipv6'], $ipv6_parameters),
+    extra_parameters => concat(['--ipv6'], $ipv6_parameters),
   }
 
   @telegraf::input { 'docker':

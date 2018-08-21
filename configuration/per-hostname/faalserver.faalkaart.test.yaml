@@ -60,3 +60,6 @@ apps::failmap::admin::client_ca: &failmap_ca |
 apps::failmap::broker::client_ca: *failmap_ca
 
 apps::failmap::broker::tls_combined_path: /etc/letsencrypt.sh/certs/faalkaart.test/combined.pem
+
+# use insecure quicker generate DH key to improve test environment setup speed
+sites::dh_keysize: 512
