@@ -15,3 +15,5 @@ sites::disable_default: true
 
 # letsencrypt account settings
 letsencrypt::email: postmaster@example.com
+
+letsencrypt::post_command: '/bin/systemctl reload nginx; /bin/systemctl reload haproxy;'

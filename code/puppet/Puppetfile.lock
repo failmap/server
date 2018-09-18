@@ -67,8 +67,8 @@ FORGE
 
 GIT
   remote: https://github.com/aequitas/puppet-letsencrypt.git
-  ref: 8801814c02298a92082873d9a392ed5f261d9058
-  sha: 8801814c02298a92082873d9a392ed5f261d9058
+  ref: 797eeeff765eee09a53b4ba812c13c1333b90c67
+  sha: 797eeeff765eee09a53b4ba812c13c1333b90c67
   specs:
     aequitas-letsencrypt (0.2.0)
       puppetlabs-stdlib (>= 1.0.0)
