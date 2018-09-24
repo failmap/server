@@ -73,8 +73,8 @@ class apps::failmap::frontend (
       'DEBUG=',
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
-      # HTTP check won't do because of Django ALLOWED_HOSTS
-      "SERVICE_CHECK_SCRIPT=curl -sI http://\\\$SERVICE_IP:8000/ -Hhost:${hostname}|head -n1|grep 200.OK",
+      # standard consul HTTP check won't do because of Django ALLOWED_HOSTS
+      'SERVICE_CHECK_TCP=true',
     ],
     env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net             => $pod,
@@ -106,8 +106,8 @@ class apps::failmap::frontend (
       'DEBUG=',
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${pod}-interactive",
-      # HTTP check won't do because of Django ALLOWED_HOSTS
-      "SERVICE_CHECK_SCRIPT=curl -sI http://\\\$SERVICE_IP:8000/ -Hhost:${hostname}|head -n1|grep 200.OK",
+      # standard consul HTTP check won't do because of Django ALLOWED_HOSTS
+      'SERVICE_CHECK_TCP=true',
     ],
     env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net             => $pod,

@@ -18,7 +18,7 @@ plan: check code/puppet/vendor/modules
 fix:
 	$(MAKE) -C code/puppet/ $@
 
-check:
+check: | fix
 	shellcheck scripts/*.sh
 	$(MAKE) -C code/puppet/ $@
 

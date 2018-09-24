@@ -79,8 +79,8 @@ class apps::failmap::admin (
     env             => concat($docker_environment,[
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
-      # HTTP check won't do because of Django ALLOWED_HOSTS
-      "SERVICE_CHECK_SCRIPT=curl -sI http://\\\$SERVICE_IP:8000/admin/login -Hhost:${hostname}|head -n1|grep 200.OK",
+      # standard consul HTTP check won't do because of Django ALLOWED_HOSTS
+      'SERVICE_CHECK_TCP=true',
     ]),
     env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net             => $pod,
@@ -164,7 +164,7 @@ class apps::failmap::admin (
     command     => '/usr/local/bin/failmap-db-migrate',
     refreshonly => true,
   }
-  # Run migration before starting app containers, so apps don't plunge in a 
+  # Run migration before starting app containers, so apps don't plunge in a
   # unprepared database, this makes sure 'kitchen test' completes in one go
   -> Docker::Run <| |>
   # make sure we only start migrating once mysql server is running
@@ -180,5 +180,32 @@ class apps::failmap::admin (
     command => '/usr/local/bin/failmap create-dataset -o - | gzip > /var/backups/failmap_dataset_week_$(date +%U).json.gz',
     hour    => 5,
     weekday => 1
+  }
+
+  Docker::Image[$image]
+  ~> docker::run { 'failmap-flower':
+    image           => $image,
+    command         => 'celery flower --broker=redis://broker:6379/0 --port=8000',
+    # combine specific and generic docker environment options
+    env             => [
+      # name by which service is known to service discovery (consul)
+      'SERVICE_NAME=failmap-flower',
+      'SERVICE_CHECK_HTTP=/',
+    ],
+    net             => $pod,
+    username        => 'nobody:nogroup',
+    tty             => true,
+    systemd_restart => 'always',
+  }
+  -> sites::vhosts::proxy { "flower.${apps::failmap::hostname}":
+    proxy            => 'failmap-flower.service.dc1.consul:8000',
+    nowww_compliance => class_c,
+    # use consul as proxy resolver
+    resolver         => ['127.0.0.1:8600'],
+    client_ca        => $client_ca,
+    # admin is accessible for authenticated users only that need to see a live view
+    # of changes, do not cache anything
+    caching          => disabled,
+    proxy_timeout    => '90s',
   }
 }
