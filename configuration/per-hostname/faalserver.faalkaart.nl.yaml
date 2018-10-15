@@ -89,8 +89,14 @@ accounts::users:
     shell: /usr/bin/fish
 
 apps::failmap::worker::workers_configuration:
-  scanner: [--concurrency=20]
-  qualys: [--concurrency=1]
+  # no eventlet on storage due to simultaneous write errors
+  storage: [--concurrency=20]
+  v6_internet: [--pool=eventlet --concurrency=20]
+  v4_internet: [--pool=eventlet --concurrency=20]
+  all_internet: [--pool=eventlet --concurrency=20]
+  qualys: [--pool=eventlet --concurrency=1]
+  # scanner is deprecated, or a class?
+  scanner: [--pool=eventlet --concurrency=20]
 
 # (ab)use TLS certificate and key from the main website which is generated using letsencrypt.
 # We prefer not having secrets that need to be deployed to the server and still have to think
