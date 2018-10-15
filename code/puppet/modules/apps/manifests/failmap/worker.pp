@@ -57,7 +57,7 @@ class apps::failmap::worker (
     ~> docker::run { "${appname}-${role}":
       image           => $image,
       # be informative and run memory efficient worker pool
-      command         => "celery worker --loglevel=info --pool=eventlet ${worker_args}",
+      command         => "celery worker --loglevel=info ${worker_args}",
       volumes         => [
         # make mysql accesible from within container
         '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
