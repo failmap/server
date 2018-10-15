@@ -54,3 +54,17 @@ To install a full production Failmap stack the following is required:
         wget -q -O- https://gitlab.com/failmap/server/raw/master/install.sh | /bin/bash
 
 1.  Grab a Mate (or 2) and wait until everything completes and the notice `Applied catalog in xxx seconds` appears.
+
+
+# Upgrading
+
+1. Login on the machine you want to upgrade.
+
+1. Go to /opt/failmap/server `cd /opt/failmap/server`
+
+1. Download the new server sources: `git pull origin/master`
+
+1. Apply the update by running apply.sh: `./scripts/apply.sh`
+
+
+
