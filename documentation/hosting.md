@@ -60,9 +60,12 @@ To install a full production Failmap stack the following is required:
 
 1. Login on the machine you want to upgrade.
 
+1. If not available, download the server sources neede for the upgrade:
+1. Make the failmap directory: `mkdir /opt/failmap/` and download the sources `git clone https://gitlab.com/failmap/server/`
+
 1. Go to /opt/failmap/server `cd /opt/failmap/server`
 
-1. Download the new server sources: `git pull origin/master`
+1. Download the new server sources: `git pull origin`
 
 1. Apply the update by running apply.sh: `./scripts/apply.sh`
 
