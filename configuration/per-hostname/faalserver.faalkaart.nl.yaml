@@ -95,6 +95,7 @@ apps::failmap::worker::workers_configuration:
   v4_internet: [--pool=eventlet --concurrency=20]
   all_internet: [--pool=eventlet --concurrency=20]
   qualys: [--pool=eventlet --concurrency=1]
+  hyper: [--pool=eventlet --concurrency=1]
   # scanner is deprecated, or a class?
   scanner: [--pool=eventlet --concurrency=20]
 
