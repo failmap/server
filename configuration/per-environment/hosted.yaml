@@ -103,3 +103,14 @@ base::firewall::rules:
     proto: all
     action: drop
     provider: ip6tables
+
+apps::failmap::worker::workers_configuration:
+  # no eventlet on storage due to simultaneous write errors
+  storage: [--concurrency=20]
+  v6_internet: [--pool=eventlet --concurrency=20]
+  v4_internet: [--pool=eventlet --concurrency=20]
+  all_internet: [--pool=eventlet --concurrency=20]
+  qualys: [--pool=eventlet --concurrency=1]
+  hyper: [--pool=eventlet --concurrency=1]
+  # scanner is deprecated, or a class?
+  scanner: [--pool=eventlet --concurrency=20]
