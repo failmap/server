@@ -43,9 +43,9 @@ class apps::failmap::worker (
       ensure => present;
   }
 
-  # three worker instances are created, one for generic administrative tasks (storage),
-  # one for 'normal' scanners and one for rate limited qualys scanners
-  $worker_roles = ['storage', 'scanner', 'scanner_qualys', 'scanner_endpoint_discovery']
+  # Several worker instances are created, one for generic administrative tasks (storage),
+  # one for rate limited qualys scans, one for v6, v4 and one for both
+  $worker_roles = ['storage', 'qualys', 'v6_internet', 'v4_internet', 'all_internet']
   $worker_roles.each | $role | {
     if $workers_configuration[$role] {
       $worker_args = join($workers_configuration[$role], ' ')
