@@ -6,6 +6,8 @@ class base {
   class { '::apt': }
   class { '::apt::backports': }
 
+  class { 'base::mysql': }
+
   # utility packages
   package { ['sl', 'atop', 'htop', 'unzip', 'jq', 'cron']:
     ensure => latest,
