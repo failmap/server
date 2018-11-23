@@ -71,12 +71,12 @@ class apps::failmap::broker (
   # firewall rule to allow incoming connections
   @firewall { '300 broker incoming external workers (redis,haproxy)':
     proto  => tcp,
-    port   => $external_port,
+    dport  => $external_port,
     action => $action,
   }
   @firewall { '300 v6 broker incoming external workers (redis,haproxy)':
     proto    => tcp,
-    port     => $external_port,
+    dport    => $external_port,
     action   => $action,
     provider => ip6tables,
   }

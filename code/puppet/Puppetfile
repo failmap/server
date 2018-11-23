@@ -3,17 +3,15 @@
 
 forge "https://forgeapi.puppetlabs.com"
 
-# mod 'saz-ssh', '>3.0.1'
-# until release with new concat dependency is released
-# https://github.com/saz/puppet-ssh/pull/233
-mod 'saz-ssh',
-:git => 'https://github.com/saz/puppet-ssh.git',
-:ref => 'fb2de7592b5a75930a6eefb283ce070a3051d9d2'
-
+mod 'saz-ssh', '>=4'
 mod 'puppet-unattended_upgrades'
 mod 'puppetlabs-firewall'
 mod 'puppetlabs-ntp'
-mod 'petems/swap_file'
+# Resolve deprecation warnings; https://github.com/petems/petems-swap_file/pull/81
+mod 'petems/swap_file',
+  :git => 'https://github.com/jtreminio/petems-swap_file.git',
+  :ref => 'a497b192d0cbeaab754448caffda51ffbe9fbbfb'
+
 mod 'puppetlabs-stdlib'
 mod 'puppetlabs-vcsrepo'
 mod 'thias-php'
