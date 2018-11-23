@@ -6,6 +6,9 @@ class base::haproxy {
     merge_options  => true,
   }
 
+  # make sure haproxy is installed before triggering renew (and restart of haproxy)
+  Class[haproxy] -> Exec['letsencrypt renew']
+
   # use recent haproxy with resolver support
   apt::pin { '_backports_haproxy':
     packages => ['haproxy', 'libssl1.0.0'],

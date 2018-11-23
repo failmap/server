@@ -23,3 +23,5 @@ letsencrypt::post_command: '/bin/systemctl reload nginx; /bin/systemctl reload h
 # See also base/mysql.pp
 mysql::server::package_name: "mysql-community-server"
 mysql::client::package_name: "mysql-community-client"
+
+nginx::gzip: "on"

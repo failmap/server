@@ -9,5 +9,5 @@ class base::mysql {
     source   => '/var/lib/puppet/mysql-apt-config_0.8.9-1_all.deb',
   }
   ~> Exec['apt_update']
-  -> Class['mysql::server']
+  -> [Class['mysql::server'], Class['mysql::client']]
 }

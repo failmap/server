@@ -88,10 +88,10 @@ describe command('curl -sSvk https://faalkaart.test/game/') do
   its(:stderr) {should contain('HTTP/1.1 404 Not Found')}
 end
 
-# unauthenticated request to game
+# authenticated request to game
 describe command('curl -sSvk --cookie "sessionid=123" https://faalkaart.test/game/') do
-  # should be disallowed
-  its(:stderr) {should contain('HTTP/1.1 404 Not Found')}
+  # should be allowed
+  its(:stderr) {should contain('HTTP/1.1 200 OK')}
 end
 
 

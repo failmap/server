@@ -159,7 +159,7 @@ class apps::failmap::admin (
   }
 
   # run migration in a separate container
-  [Docker::Image[$image], Mysql_database[failmap]]
+  [Docker::Image[$image], Mysql::Db[failmap],]
   ~> exec {"${appname}-migrate":
     command     => '/usr/local/bin/failmap-db-migrate',
     refreshonly => true,
