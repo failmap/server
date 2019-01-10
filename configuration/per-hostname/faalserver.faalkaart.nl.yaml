@@ -55,6 +55,25 @@ apps::failmap::admin::client_ca: &failmap_ca |
   vzu4wrBBWT2CeLQYqDCNbsMCX4dgRdfRKWzrxS9t9+OA59uJ
   -----END CERTIFICATE-----
 
+# Set frontend hostname for this server
+apps::failmap::hostname: basisbeveiliging.nl
+
+sites::vhost_webroot:
+  faalkaart.nl: {}
+  admin.faalkaart.nl: {}
+
+base::files:
+  /var/www/faalkaart.nl/html/index.html:
+    require: File[/var/www/faalkaart.nl/html/]
+    content: |
+      <head><meta http-equiv="refresh" content="0;URL='https://%{lookup('apps::failmap::hostname')}/'" /></head>
+      You are being redirected to <a href="https://%{lookup('apps::failmap::hostname')}/">https://%{lookup('apps::failmap::hostname')}/</a>
+  /var/www/admin.faalkaart.nl/html/index.html:
+    require: File[/var/www/admin.faalkaart.nl/html/]
+    content: |
+      <head><meta http-equiv="refresh" content="0;URL='https://admin.%{lookup('apps::failmap::hostname')}/'" /></head>
+      You are being redirected to <a href="https://admin.%{lookup('apps::failmap::hostname')}/">https://admin.%{lookup('apps::failmap::hostname')}/</a>
+
 # CA for validating access to monitoring frontends (Grafana)
 apps::failmap::monitoring::server::client_ca: *failmap_ca
 
@@ -92,4 +111,4 @@ accounts::users:
 # We prefer not having secrets that need to be deployed to the server and still have to think
 # of a good way to make this work for non-http TLS ports like Redis (one such solution might be
 # delagating letsencrypt dns-01 TXT records and running a DNS daemon on the server).
-apps::failmap::broker::tls_combined_path: /etc/letsencrypt.sh/certs/faalkaart.nl/combined.pem
+apps::failmap::broker::tls_combined_path: "/etc/letsencrypt.sh/certs/%{lookup('apps::failmap::hostname')}/combined.pem"

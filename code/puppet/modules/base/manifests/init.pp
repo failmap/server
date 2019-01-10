@@ -1,5 +1,7 @@
 # provide application independent OS layer base settings
-class base {
+class base (
+  Hash[String,Hash] $files = {}
+){
   $osinfo = $::os['distro']['description']
   notice("fqdn=${::fqdn}, env=${::env}, os=${osinfo}")
 
@@ -25,4 +27,6 @@ class base {
   # use hiera configuration (hiera.yaml) to get a list of classes to include
   # https://puppet.com/docs/puppet/5.2/hiera_use_function.html#examples
   lookup('classes', {merge => unique}).include
+
+  create_resources(file, $files)
 }
