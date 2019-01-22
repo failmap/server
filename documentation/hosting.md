@@ -37,6 +37,7 @@ To install a full production Failmap stack the following is required:
   - example.com
   - admin.example.com
   - grafana.example.com
+  - flower.example.com
   - failserver.example.com (optional)
 
 **Warning**: this installation assumes to run on a clean and dedicated host for a Failmap installation! It will modify the OS and take over things like firewalling, Docker, SSH, etc. Do not run on a server with existing other software as the actions performed cannot be undone easily/automatically.
