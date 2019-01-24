@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# foolproof installationscript for failmap
+# foolproof installation script for failmap
 
-set -e 
+set -e
 
 git_source=${GIT_SOURCE:-https://gitlab.com/failmap/server.git}
 
@@ -17,6 +17,8 @@ if ! grep -E 'Debian GNU/Linux [89]|Ubuntu 18.04' /etc/os-release >/dev/null;the
   exit 1
 fi
 
+prompt "What is your name!" http://www.montypython.net/scripts/HG-bridgescene.php
+
 set -v
 
 # cleanup previous attempt if this a retry run of this script
@@ -26,7 +28,7 @@ mkdir -p /opt/failmap/server/
 
 # install dependencies
 apt-get update -qq
-apt-get install -yqq git curl 
+apt-get install -yqq git curl
 
 # get the source
 git clone --quiet --branch master "$git_source" /opt/failmap/server/

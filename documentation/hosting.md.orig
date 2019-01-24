@@ -38,11 +38,7 @@ To install a full production Failmap stack the following is required:
   - Debian 8
   - Debian 9
   - Ubuntu 18.04
-- Recommended specs are:
-  - 1-2 CPU
-  - 1-8GB RAM
-  - 50-100GB disks
-  - Network with internet
+- Recommended specs are: 1-2 CPU, 1-8GB RAM and 50-100GB disks.
 - Terminal access to the host (SSH or via VM console, etc)
 - Sudo/root permissions on the host
 - Hostnames pointing to the server IPv4 and IPv6 addresses (replace `example.com` with the domain you intend to use for the website):
@@ -50,7 +46,15 @@ To install a full production Failmap stack the following is required:
   - admin.example.com (for administrative backend)
   - grafana.example.com (optional, for viewing statistics)
 
+<<<<<<< HEAD
+  - example.com
+  - admin.example.com
+  - grafana.example.com
+  - flower.example.com
+  - failserver.example.com (optional)
+=======
 **Warning**: this installation assumes to run on a **clean and dedicated** host for a Failmap installation! It will **modify the OS** and take over things like firewalling, Docker, SSH, etc! **Do not run** on a server with existing other software or configuration as the actions performed cannot be undone easily/automatically!
+>>>>>>> Set new standard for server configuration
 
 With that said please follow these instructions to get a Failmap instance up and running:
 
