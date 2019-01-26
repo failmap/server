@@ -28,57 +28,80 @@ Additionally knowledge of the following related technologies is advised:
 - DNS
 - Networking
 
-This project uses Puppet configuration management in a masterless configuration. This allows OS and applications on the host to be shaped in the correct configuration for this project.
+## Whats in the box
 
-## Installation
+When using this installation method you will end up with a fully featured Failmap server including:
 
-To install a full production Failmap stack the following is required:
+- Full failmap installation with:
+  - Frontend map website (with https, http/2 and caching)
+  - Administrative backend (secured by TLS client certificates)
+  - Workers to automatically perform scanning tasks
+- Hardened server (firewall, security updates, etc)
+- Monitoring dashboards (Grafana, secured by TLS client certificates)
+- SSH for remote access
 
-- Dedicated bare-metal or virtual host with internet connectivity running either:
-  - Debian 8
-  - Debian 9
-  - Ubuntu 18.04
-- Recommended specs are:
+## Requirements
+
+To install the fully featured Failmap server the following is required:
+
+- Dedicated bare-metal or virtual host with:
+  - Debian based Linux (Debian 8/9 or Ubuntu 18.04) clean installed
   - 1-2 CPU
   - 1-8GB RAM
   - 50-100GB disks
-  - Network with internet
+  - internet connectivity (IPv4 and optional IPv6)
 - Terminal access to the host (SSH or via VM console, etc)
 - Sudo/root permissions on the host
 - Hostnames pointing to the server IPv4 and IPv6 addresses (replace `example.com` with the domain you intend to use for the website):
   - example.com (for the frontend, main site)
   - admin.example.com (for administrative backend)
   - grafana.example.com (optional, for viewing statistics)
+- A SASL Authenticated E-mail [Smarthost](https://en.wikipedia.org/wiki/Smart_host), eg: Gmail (optional, highly recommended)
 
-**Warning**: this installation assumes to run on a **clean and dedicated** host for a Failmap installation! It will **modify the OS** and take over things like firewalling, Docker, SSH, etc! **Do not run** on a server with existing other software or configuration as the actions performed cannot be undone easily/automatically!
+## Installation
+
+**Warning**: this installation assumes to run on a **clean and dedicated** host for a Failmap installation! It will **modify the OS** and take over things like firewalling, Docker, SSH, etc! **Do not run** on a server with existing other software or configuration that you do not want modified!
 
 With that said please follow these instructions to get a Failmap instance up and running:
 
-1. Bring the server up and follow the basic OS (Ubuntu/Debian) installation procedure. Configure basic settings (language, keyboard, user) as seen fit and give it a hostname you like. It can be anything you want, but using the frontend hostname (`example.com`) as server hostname is not advised.
+1. Bring the server up and follow the basic OS (Ubuntu/Debian) installation procedure (if it is not already installed). Configure basic settings (language, keyboard, user) as seen fit and give it a hostname you like. It can be anything you want, but using the frontend hostname (`example.com`) as server hostname is not advised.
 
-1. Login to the server via SSH or VM terminal as `root` user. Or as normal user and sudo to root `sudo su -`.
+1. Log in to the server via SSH or VM terminal as `root` user. Or as normal user and sudo to root `sudo su -`.
 
 1. Run the following command to start installation:
 
-        wget -q -O- https://gitlab.com/failmap/server/raw/master/install.sh | /bin/bash
+        wget -q -O- https://gitlab.com/failmap/server/raw/server_installation/install.sh > /install.sh; GIT_BRANCH=server_installation /bin/bash /install.sh
+
+        # TODO: when merging to master replace above with: wget -q -O- https://gitlab.com/failmap/server/raw/master/install.sh > /install.sh; /bin/bash /install.sh
 
 1. You will be ask a few questions required for configuration. After this installation will commence.
 
 1. Grab a Club-Mate (or 2) and wait until everything completes and the notice `All Done!` appears.
 
-1. You Failmap server is now ready. You can visit it on the domain you configured, eg: https://example.com or visit the administrative backend at: https://admin.example.com.
+1. You Failmap server is now ready. You can visit it on the domain you configured, eg: https://example.com
+
+1. For visiting the administrative backend (https://admin.faalkaart.nl) a client certificate is required to authenticate the visitor. Please refer to the [Admin Access](#Admin Access) section below for more information.
 
 ## Upgrading
 
-Failmap server configuration is split into a _base configuration_ (maintained by Internet Cleanup Foundation at https://gitlab.com/failmap/server/) and a _server configuration_ with customizations for a specific installation.
+Failmap server configuration is split into a _base configuration_ (maintained by Internet Cleanup Foundation at https://gitlab.com/failmap/server/) and a _server configuration_ (with customizations for a specific installation).
 
-If new features or bugfixes are developed in the base configuration the server can be updated on demand using the following procedure:
+If new features or bugfixes are developed in the _base configuration_ the server can be updated on demand using the following procedure:
 
 1. Open a terminal (eg: SSH) on the server and become root user (`sudo su -`)
 
-1. Run the following command:
+1. Run the following command to pull in new changes and apply the configuration:
 
-        failmap-server-update-configuration
+        failmap-server-update
+
+## Admin Access
+
+For visiting the administrative backend (https://admin.faalkaart.nl) a client certificate is required to authenticate the visitor.
+This certificate needs to be installed in your OS/browser. Without this certificate installed any attempt to access the administrative backend is probhibited.
+
+The certificate itself can be found on the server in `/opt/failmap/ca/certs/client.p12` and it will be emailed to the address provided as administrator address during the installation. For information on how to install this on your system please refer to: https://www.google.com/search?q=install+p12+certificate
+
+### Multiple administrative user
 
 ## Configuration (advanced)
 
@@ -86,6 +109,10 @@ An initial configuration file (the 'server configuration') is created during ins
 
 Aspects of the server can be customized in this file. All available settings and documentation can be found in this configuration file.
 
-After the configuration file has changed the following commands have to be run to apply the new configuration:
+After the configuration file has changed, the following command has to be run to apply the new configuration:
 
         failmap-server-apply-configuration
+
+## Customization (advanced)
+
+If you want customizations outside of the current possibilities of the configuration. Or want to make custom changes on the server that will not be overwritten by the configuration system (eg: custom firewall rules). Please contact the Internet Cleanup Foundation team for further assistance. Or if you know Puppet feel free to drop a merge-request in the Gitlab repository.

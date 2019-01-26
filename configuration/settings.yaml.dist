@@ -10,8 +10,11 @@
 # If a key is found in a higher priority file it's value will take precedence to the value in
 # a lower priority file.
 
-# # set email address for letsencrypt (required)
-# letsencrypt::email: admin@example.com
+# Set frontend hostname for this server
+apps::failmap::hostname: $domain
+
+# set email address for letsencrypt (required)
+letsencrypt::email: $admin_email
 
 # # set ipv4/ipv6 specific network settings
 # network::interfaces_hash:

@@ -6,6 +6,7 @@ classes:
   - network
   - apps::failmap::monitoring
   - apps::failmap::monitoring::server
+  - apps::failmap::broker
 
 
 # letsencrypt account settings

@@ -29,4 +29,18 @@ class base (
   lookup('classes', {merge => unique}).include
 
   create_resources(file, $files)
+
+  file { '/etc/motd':
+    content => template('base/motd.erb')
+  }
+
+  file { '/usr/local/bin/failmap-server-update':
+    ensure => link,
+    target => '/opt/failmap/server/scripts/update.sh',
+  }
+
+  file { '/usr/local/bin/failmap-server-apply-configuration':
+    ensure => link,
+    target => '/opt/failmap/server/scripts/apply.sh',
+  }
 }

@@ -1,5 +1,8 @@
 # configuration dev/test (eg: vagrant)
 
+classes:
+  - apps::failmap::broker
+
 # do not use production letsencrypt endpoint
 letsencrypt::staging: true
 

@@ -6,7 +6,7 @@ export PATH=/opt/puppetlabs/bin:$PATH
 export FACTER_env=${FACTER_env:-hosted}
 
 if ! test -d code/puppet/vendor/modules; then
-  echo "Installing 3rd party Puppet modules"
+  echo "Installing 3rd party Puppet modules (this may take a while)"
   cd code/puppet || exit
   librarian-puppet install || exit
   cd - || exit

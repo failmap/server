@@ -5,7 +5,6 @@ classes:
   - sites
   - base::docker
   - apps::failmap
-  - apps::failmap::broker
   - apps::failmap::admin
   - apps::failmap::frontend
   - apps::failmap::worker

@@ -19,7 +19,9 @@ fix:
 	$(MAKE) -C code/puppet/ $@
 
 check: | fix
-	shellcheck scripts/*.sh
+	shellcheck -x install.sh scripts/*.sh
+	# all shell scripts should be executable
+	find . -name "*.sh" \! -perm -a+x
 	$(MAKE) -C code/puppet/ $@
 
 bootstrap:
