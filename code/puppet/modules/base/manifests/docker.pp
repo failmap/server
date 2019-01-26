@@ -4,13 +4,13 @@ class base::docker (
   $ipv6_ndpproxy=undef
 ){
   if $ipv6_subnet {
-    $ipv6_parameters = ["--fixed-cidr-v6=${ipv6_subnet}"]
+    $ipv6_parameters = ['--ipv6', "--fixed-cidr-v6=${ipv6_subnet}"]
   } else {
     $ipv6_parameters = []
   }
 
   class {'::docker':
-    extra_parameters => concat(['--ipv6'], $ipv6_parameters),
+    extra_parameters => $ipv6_parameters,
   }
 
   @telegraf::input { 'docker':
