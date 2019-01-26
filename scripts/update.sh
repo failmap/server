@@ -12,7 +12,8 @@ fi
 cd /opt/failmap/server
 # pull in latest changed from upstream
 git remote update
-# for to update current working directory to upstream
+
+# force update current working directory to upstream
 branch=$(git rev-parse --abbrev-ref HEAD)
 git reset --hard "origin/$branch"
 

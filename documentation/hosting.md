@@ -47,7 +47,7 @@ To install the fully featured Failmap server the following is required:
 - Dedicated bare-metal or virtual host with:
   - Debian based Linux (Debian 8/9 or Ubuntu 18.04) clean installed
   - 1-2 CPU
-  - 1-8GB RAM
+  - 2-8GB RAM
   - 50-100GB disks
   - internet connectivity (IPv4 and optional IPv6)
 - Terminal access to the host (SSH or via VM console, etc)

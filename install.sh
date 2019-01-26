@@ -58,7 +58,7 @@ while true; do
     ip=$(dig +short "$domain")
     echo "Domain name '$domain' resolves to '$ip'."
 
-    if /sbin/ip addr | grep -E "inet $ip/";then
+    if /sbin/ip addr | grep -E "inet $ip/" >/dev/null;then
         echo "The domain name seems properly configured, continuing installation."
         break
     fi
@@ -88,6 +88,9 @@ while true; do
 done
 echo "letsencrypt::email: $admin_email" >> /opt/failmap/server/configuration/settings.yaml
 
+echo
+echo "Saving settings in '/opt/failmap/server/configuration/settings.yaml':"
+cat /opt/failmap/server/configuration/settings.yaml
 echo
 echo -e "${b}No more questions. Will now start installation.${n}"
 echo
