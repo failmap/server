@@ -33,7 +33,7 @@ mod 'saz/sudo'
 
 mod 'aequitas/letsencrypt',
   :git => 'https://github.com/aequitas/puppet-letsencrypt.git',
-  :ref => '797eeeff765eee09a53b4ba812c13c1333b90c67'
+  :ref => 'e8c40a566ee5270f9ee22de0e9ab032b723ce63d'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
   :ref => 'a77b5941f705e012356cb4ee1394d342bb788852'
