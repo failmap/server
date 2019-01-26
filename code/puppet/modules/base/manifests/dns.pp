@@ -21,6 +21,17 @@ class base::dns (
   -> package { 'resolvconf': ensure => latest}
   ~> service { 'resolvconf': ensure => running, enable => true}
 
+  Package['dnsmasq']
+  -> file { '/etc/dnsmasq.conf':
+    content => @(EOL)
+      bind-interfaces
+      interface=lo
+      interface=docker0
+      conf-dir=/etc/dnsmasq.d
+    |EOL
+  }
+  ~> Service[dnsmasq]
+
   # race conditions cause DNS services to be unavailable during package installs.
   # Postpone DNS config until every other package is installed.
   Package <| title != dnsmasq and title != resolvconf |> -> Package['resolvconf']

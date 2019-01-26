@@ -3,7 +3,7 @@
 # install/update all dependencies for provisioning
 
 if ! test "$(whoami)" == "root";then
-  echo "Must run as root!"
+  echo "Must run as root or using sudo!"
   exit 1
 fi
 

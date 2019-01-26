@@ -16,15 +16,8 @@ class base::consul (
   }
 
   # make consul DNS entries resolvable on host system
-  Package['dnsmasq']
-  -> file { '/etc/dnsmasq.conf':
-    content => @(EOL)
-      interface=lo
-      interface=docker0
-      conf-dir=/etc/dnsmasq.d
-    |EOL
-  }
-  ~> file { '/etc/dnsmasq.d/consul.conf':
+  File['/etc/dnsmasq.conf']
+  -> file { '/etc/dnsmasq.d/consul.conf':
     content => "server=/consul/127.0.0.1#8600\nrev-server=172.17.0.0/16,127.0.0.1#8600",
   }
   ~> Service['dnsmasq']

@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
-cd "$(dirname "$0")/.." || exit
+# apply puppet configuration
+
+if ! test "$(whoami)" == "root";then
+  echo "Must run as root or using sudo!"
+  exit 1
+fi
+
+cd "$(dirname "$(readlink -f "$0")")/.." || exit
 
 export PATH=/opt/puppetlabs/bin:$PATH
 export FACTER_env=${FACTER_env:-hosted}
