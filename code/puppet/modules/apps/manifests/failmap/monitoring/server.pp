@@ -36,25 +36,25 @@ class apps::failmap::monitoring::server (
 
   # Grafana Graphing frontend
   $appname = grafana
-  $hostname = "${appname}.${::apps::failmap::hostname}"
 
   docker::run { $appname:
     image   => 'grafana/grafana',
     links   => ['influxdb:influxdb'],
     volumes => ['/srv/grafana/:/var/lib/grafana/'],
     env     => [
-      "GF_SERVER_ROOT_URL=https://${hostname}",
+      "GF_SERVER_ROOT_URL=https://admin.${apps::failmap::hostname}/grafana/",
+      "GF_SERVER_DOMAIN=admin.${apps::failmap::hostname}",
       'GF_INSTALL_PLUGINS=grafana-piechart-panel',
+      'GF_AUTH_ANONYMOUS_ENABLED=true',
     ],
   }
 
-  sites::vhosts::proxy { $hostname:
-    proxy            => "${appname}.service.dc1.consul:3000",
-    nowww_compliance => class_c,
-    # use consul as proxy resolver
-    resolver         => ['127.0.0.1:8600'],
-    # require client certificate for access
-    client_ca        => $client_ca,
-    proxy_timeout    => '60s',
+  nginx::resource::location { 'admin-grafana':
+    server   => "admin.${apps::failmap::hostname}",
+    ssl      => true,
+    ssl_only => true,
+    www_root => undef,
+    proxy    => "http://${appname}.service.dc1.consul:3000/",
+    location => '/grafana/',
   }
 }
