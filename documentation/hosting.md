@@ -52,11 +52,7 @@ To install the fully featured Failmap server the following is required:
   - internet connectivity (IPv4 and optional IPv6)
 - Terminal access to the host (SSH or via VM console, etc)
 - Sudo/root permissions on the host
-- Hostnames pointing to the server IPv4 and IPv6 addresses (replace `example.com` with the domain you intend to use for the website):
-  - example.com (for the frontend, main site)
-  - admin.example.com (for administrative backend)
-  - grafana.example.com (optional, for viewing statistics)
-- A SASL Authenticated E-mail [Smarthost](https://en.wikipedia.org/wiki/Smart_host), eg: Gmail (optional, highly recommended)
+- DNS A record pointing to the server IPv4 addresses (and optional AAAA record for IPv6). In this document we will use `example.com` as placeholder for the DNS record name you intend to use for the website. Using a subdomain is also possible, eg: `map.example.com`. (optional, highly recommended)
 
 ## Installation
 
@@ -64,7 +60,7 @@ To install the fully featured Failmap server the following is required:
 
 With that said please follow these instructions to get a Failmap instance up and running:
 
-1. Bring the server up and follow the basic OS (Ubuntu/Debian) installation procedure (if it is not already installed). Configure basic settings (language, keyboard, user) as seen fit and give it a hostname you like. It can be anything you want, but using the frontend hostname (`example.com`) as server hostname is not advised.
+1. Bring the server up and follow the basic OS (Ubuntu/Debian) installation procedure (if it is not already installed). Configure basic settings (language, keyboard, user) as seen fit and give it a hostname you like (it does not have to match the DNS A record used for the website).
 
 1. Log in to the server via SSH or VM terminal as `root` user. Or as normal user and sudo to root `sudo su -`.
 
@@ -74,13 +70,17 @@ With that said please follow these instructions to get a Failmap instance up and
 
         # TODO: when merging to master replace above with: wget -q -O- https://gitlab.com/failmap/server/raw/master/install.sh > /install.sh; /bin/bash /install.sh
 
-1. You will be ask a few questions required for configuration. After this installation will commence.
+1. Grab a Club-Mate (or 2) and wait until everything completes and you are greeted by a rainbow.
 
-1. Grab a Club-Mate (or 2) and wait until everything completes and the notice `All Done!` appears.
+1. You Failmap server is now ready, you can visit the frontend at it's public IP address or the domain name (if you have already configured a DNS record).
 
-1. You Failmap server is now ready. You can visit it on the domain you configured, eg: https://example.com
+1. HTTPS is enabled by default but with a **insecure** self-signed certificate. To properly configure automatic HTTPS using Letsencrypt please refer to [Configuring HTTPS](#Configuring HTTPS) or simply run the following command on the server:
 
-1. For visiting the administrative backend (https://admin.faalkaart.nl) a client certificate is required to authenticate the visitor. Please refer to the [Admin Access](#Admin Access) section below for more information.
+        failmap-server-setup-https
+
+1. For visiting the administrative backend (https://example.com/admin/) or monitoring (https://example.com/grafana), credentials are required. Run the following command or refer to the [Admin Access](#Admin Access) section below for advanced configuration using client certificates:
+
+        failmap-server-setup-admin
 
 ## Upgrading
 
@@ -93,6 +93,14 @@ If new features or bugfixes are developed in the _base configuration_ the server
 1. Run the following command to pull in new changes and apply the configuration:
 
         failmap-server-update
+
+## Configuring HTTPS
+
+The server is configured with a default self-signed **insecure** certificate. But it is easy to configure automated certificates using Letsencrypt.
+
+Before enabling Letsencrypt make sure you have a DNS A record configured for the public IP address of the server. Next, run the following command to verify the DNS configuration and enable Letsencrypt:
+
+        failmap-server-setup-https
 
 ## Admin Access
 
