@@ -46,19 +46,17 @@ Vagrant.configure("2") do |config|
     set -e
     # use tmp directory outside of vagrant root for performance and host conflict prevention
     echo "export LIBRARIAN_PUPPET_TMP=/tmp" > /etc/profile.d/use-fast-tmpdir.sh
+    . /etc/profile.d/use-fast-tmpdir.sh
 
     # install dependencies for Puppet, don't use Vagrant Puppet, we want to test bootstrapping
     /vagrant/scripts/bootstrap.sh
 
-    # reload profile after installing puppet to pick up PATH change
-    source /etc/profile
-
-    # pull in puppet modules if required
-    make -C /vagrant code/puppet/Puppetfile.lock
-
     # apply latests configuration
     SHOW_WARNINGS=1 /vagrant/scripts/apply.sh
-  SHELL
+
+    # wait for everthing to be online
+    timeout 30 /bin/sh -c 'while sleep 1; do curl -sSvk https://faalkaart.test 2>/dev/null | grep MSPAINT >/dev/null && exit 0; done'
+    SHELL
 
   # run serverspec as a provisioner to test the previously provisioned machine
   config.vm.provision :serverspec do |spec|

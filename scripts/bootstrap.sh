@@ -15,34 +15,40 @@ test -f "$bootstrap_hash_file" && exit 0
 exec 19>&1
 BASH_XTRACEFD=19
 
+function apt-get-install {
+  if ! test -f /var/log/apt/history.log;then apt-get -qq update;fi
+  apt-get install -yqq "$@"
+}
+
 # propagate command errors, print commands before executing
 set -xe
+export DEBIAN_FRONTEND=noninteractive
 
 # don't ask for passwords to sudo anymore
 mkdir -p /etc/sudoers.d/
 echo "%sudo   ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/10_sudo
 chmod 0440 /etc/sudoers.d/10_sudo
 
-test -x /usr/bin/lsb_release || (apt-get -qq update; apt-get install -yqq lsb-release)
-
+test -x /usr/bin/lsb_release || apt-get-install lsb-release
 release=$(/usr/bin/lsb_release -sc)
 if test "$release" == "bionic"; then
   release=xenial
 fi
 
 if ! command -v curl; then
-  apt-get -qq update
-  apt-get install -yqq curl
+ apt-get-install curl
 fi
 curl -s "http://apt.puppetlabs.com/puppetlabs-release-pc1-${release}.deb" \
   -o "puppetlabs-release-pc1-${release}.deb"
 dpkg -i "puppetlabs-release-pc1-${release}.deb"
+# force update after adding new repository
 apt-get -qq update
+
 # install puppet and some dependencies
-apt-get install -yqq puppet-agent rsync apt-transport-https git ruby
+DEBIAN_FRONTEND=noninteractive apt-get-install puppet-agent rsync apt-transport-https git ruby
 # used to install puppet modules using Puppetfile
 gem install -q librarian-puppet
-# dependencies for some puppet modules (telegraf, consul), find out why they are not installed automatically
+# dependencies for some puppet modules (telegraf, consul), TODO: find out why they are not installed automatically
 /opt/puppetlabs/puppet/bin/gem install -q toml-rb curl
 rm -f "puppetlabs-release-pc1-${release}.deb"
 

@@ -1,12 +1,13 @@
 # configure message broker
 class apps::failmap::broker (
-  $pod = $apps::failmap::pod,
   String $client_ca = undef,
   $external_port='1337',
   $internal_port='6379',
   String $tls_combined_path=undef,
   Boolean $enable_remote=false,
 ){
+  include ::apps::failmap
+  $pod = $apps::failmap::pod
   $appname = 'broker'
 
   docker::run { $appname:
