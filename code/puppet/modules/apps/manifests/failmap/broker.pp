@@ -1,9 +1,9 @@
 # configure message broker
 class apps::failmap::broker (
-  String $client_ca = undef,
+  Optional[String] $client_ca = undef,
+  Optional[String] $tls_combined_path=undef,
   $external_port='1337',
   $internal_port='6379',
-  String $tls_combined_path=undef,
   Boolean $enable_remote=false,
 ){
   include ::apps::failmap
@@ -26,60 +26,62 @@ class apps::failmap::broker (
     ],
   }
 
-  $client_ca_path = "/etc/ssl/certs/haproxy-client-ca-${appname}.pem"
-  file { $client_ca_path:
-    content => $client_ca,
-  }
-  -> ::Haproxy::Instance[haproxy]
+  if $client_ca != undef {
+    $client_ca_path = "/etc/ssl/certs/haproxy-client-ca-${appname}.pem"
+    file { $client_ca_path:
+      content => $client_ca,
+    }
+    -> ::Haproxy::Instance[haproxy]
 
-  include ::base::haproxy
+    include ::base::haproxy
 
-  haproxy::listen { 'broker':
-    collect_exported => false,
-    mode             => tcp,
-    options          => {
-      timeout => [
-        'client 60m',
-        'server 60m',
-      ],
-    },
-    bind             => {
-      "0.0.0.0:${external_port}" => [
-        # use TLS for connection
-        'ssl', 'crt', $tls_combined_path,
-        # require client certificate
-        'verify', 'required', 'ca-file', $client_ca_path,
-      ]
-    },
-  }
-  haproxy::balancermember { 'broker':
-    listening_service => 'broker',
-    ports             => $internal_port,
-    server_names      => $appname,
-    ipaddresses       => "${appname}.service.dc1.consul",
-    options           => 'check resolvers default resolve-prefer ipv4 init-addr last,libc,none',
-  }
+    haproxy::listen { 'broker':
+      collect_exported => false,
+      mode             => tcp,
+      options          => {
+        timeout => [
+          'client 60m',
+          'server 60m',
+        ],
+      },
+      bind             => {
+        "0.0.0.0:${external_port}" => [
+          # use TLS for connection
+          'ssl', 'crt', $tls_combined_path,
+          # require client certificate
+          'verify', 'required', 'ca-file', $client_ca_path,
+        ]
+      },
+    }
+    haproxy::balancermember { 'broker':
+      listening_service => 'broker',
+      ports             => $internal_port,
+      server_names      => $appname,
+      ipaddresses       => "${appname}.service.dc1.consul",
+      options           => 'check resolvers default resolve-prefer ipv4 init-addr last,libc,none',
+    }
 
-  # make sure borrowed letsencrypt certificate exists before using it
-  Class['Apps::Failmap::Admin'] -> Class['::Haproxy']
+    # make sure borrowed letsencrypt certificate exists before using it
+    Class['Apps::Failmap::Admin'] -> Class['::Haproxy']
 
-  if $enable_remote {
-    $action = accept
-  } else {
-    $action = reject
-  }
+    if $enable_remote {
+      $action = accept
+    } else {
+      $action = reject
+    }
 
-  # firewall rule to allow incoming connections
-  @firewall { '300 broker incoming external workers (redis,haproxy)':
-    proto  => tcp,
-    dport  => $external_port,
-    action => $action,
-  }
-  @firewall { '300 v6 broker incoming external workers (redis,haproxy)':
-    proto    => tcp,
-    dport    => $external_port,
-    action   => $action,
-    provider => ip6tables,
+    # firewall rule to allow incoming connections
+    @firewall { '300 broker incoming external workers (redis,haproxy)':
+      proto  => tcp,
+      dport  => $external_port,
+      action => $action,
+    }
+    @firewall { '300 v6 broker incoming external workers (redis,haproxy)':
+      proto    => tcp,
+      dport    => $external_port,
+      action   => $action,
+      provider => ip6tables,
+    }
   }
 
   ensure_packages(['python3-redis','python3-statsd'], {ensure => latest})

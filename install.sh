@@ -7,7 +7,7 @@ set -e
 git_source=${GIT_SOURCE:-https://gitlab.com/failmap/server.git}
 git_branch=${GIT_BRANCH:-master}
 
-n="\\e[0m"
+n="\\e[39m"
 b="\\e[1m"
 y="\\e[33m"
 
