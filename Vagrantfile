@@ -12,9 +12,6 @@ Vagrant.configure("2") do |config|
   # enable ipv6
   config.vm.network "private_network", ip: "fde4:8dba:82e1::c4"
 
-  # set hostname which is used to select development settings (hiera/*.yaml)
-  config.vm.hostname = "faalserver.faalkaart.test"
-
   # enable development hostname resolving
   if Vagrant.has_plugin?("landrush")
     config.landrush.enabled = true
@@ -28,28 +25,74 @@ Vagrant.configure("2") do |config|
     "code/puppet/vendor",
   ]
 
-  # provision using puppet
-  config.vm.provision "shell", inline: <<-SHELL
-    set -e
-    # improve installation speed by using cache
-    export LIBRARIAN_PUPPET_TMP=/vagrant/code/puppet/.tmp
+  config.vm.define "default", primary: true do |config|
+    # set hostname which is used to select development settings (hiera/*.yaml)
+    config.vm.hostname = "faalserver.faalkaart.test"
 
-    # install dependencies for Puppet, don't use Vagrant Puppet, we want to test bootstrapping
-    /vagrant/scripts/bootstrap.sh
+    # provision using puppet
+    config.vm.provision "shell", inline: <<-SHELL
+      set -e
+      # improve installation speed by using cache
+      export LIBRARIAN_PUPPET_TMP=/vagrant/code/puppet/.tmp
 
-    # apply latests configuration
-    SHOW_WARNINGS=1 /vagrant/scripts/apply.sh
+      # install dependencies for Puppet, don't use Vagrant Puppet, we want to test bootstrapping
+      /vagrant/scripts/bootstrap.sh
 
-    # wait for everthing to be online
-    echo "Waiting for failmap to be online before starting tests."
-    timeout 30 /bin/sh -c 'while sleep 1; do curl -sSvk https://faalkaart.test 2>/dev/null | grep MSPAINT >/dev/null && exit 0; done'
-    SHELL
+      # apply latests configuration
+      SHOW_WARNINGS=1 /vagrant/scripts/apply.sh
+      SHELL
 
-  # run serverspec as a provisioner to test the previously provisioned machine
-  config.vm.provision :serverspec do |spec|
-    # pattern for specfiles to search
-    spec.pattern = 'tests/serverspec/*.rb'
+    config.vm.provision "shell", inline: <<-SHELL
+      # wait for everthing to be online
+      echo "Waiting up to 30 seconds for failmap to be online before starting tests."
+      timeout 30 /bin/sh -c 'while sleep 1; do curl -sSvk https://faalkaart.test 2>/dev/null | grep MSPAINT >/dev/null && exit 0; done'
+      SHELL
+
+      # run serverspec as a provisioner to test the previously provisioned machine
+    config.vm.provision :serverspec do |spec|
+      # pattern for specfiles to search
+      spec.pattern = 'tests/serverspec/*.rb'
+    end
   end
 
-  config.vm.post_up_message = "Tell people to visit http://faalkaart.faalserver.test"
+  config.vm.define "install.sh" do |config|
+    config.vm.hostname = "example.com"
+
+    config.vm.provision "shell", inline: <<-SHELL
+      set -e
+
+      # the source is copied to the VM using rsync, the install.sh script expects to clone from a repository
+      # convert the copied source into a makeshift repository. (copying .git/ allong with the source costs more)
+      apt-get update >/dev/null; DEBIAN_FRONTEND=noninteractive apt-get install -yqq git >/dev/null
+      cd /vagrant; git init; git add .; git commit --message "commit message"
+
+      # improve installation speed by using cache
+      export LIBRARIAN_PUPPET_TMP=/vagrant/code/puppet/.tmp
+
+      # inject settings into installation script to allow proper testing
+      CONFIGURATION="
+      apps::failmap::hostname: faalkaart.test
+      letsencrypt::staging: true
+      letsencrypt::renew::allow_failure: true
+      sites::dh_keysize: 512
+      base::dns::localhost_redirects: [faalkaart.test,www.faalkaart.test,admin.faalkaart.test]
+      "
+
+      GIT_SOURCE=/vagrant FAILMAP_CONFIGURATION="$CONFIGURATION" /vagrant/install.sh
+      SHELL
+
+    config.vm.provision "shell", inline: <<-SHELL
+      # wait for everthing to be online
+      echo "Waiting up to 30 seconds for failmap to be online before starting tests."
+      timeout 30 /bin/sh -c 'while sleep 1; do curl -sSvk https://faalkaart.test 2>/dev/null | grep MSPAINT >/dev/null && exit 0; done'
+      SHELL
+
+    # run serverspec as a provisioner to test the previously provisioned machine
+    config.vm.provision :serverspec do |spec|
+      # pattern for specfiles to search
+      spec.pattern = 'tests/serverspec/*.rb'
+    end
+
+  end
+
 end

@@ -5,6 +5,9 @@ classes:
 
 # do not use production letsencrypt endpoint
 letsencrypt::staging: true
+# initial letsencrypt run will fail due to not being registered and not
+# being able to (no outside network connection possible), so ignore failure
+letsencrypt::renew::allow_failure: true
 
 sites::realm: faalserver.faalkaart.test
 
