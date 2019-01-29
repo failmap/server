@@ -73,7 +73,6 @@ Vagrant.configure("2") do |config|
       CONFIGURATION="
       apps::failmap::hostname: faalkaart.test
       letsencrypt::staging: true
-      letsencrypt::renew::allow_failure: true
       sites::dh_keysize: 512
       base::dns::localhost_redirects: [faalkaart.test,www.faalkaart.test,admin.faalkaart.test]
       "

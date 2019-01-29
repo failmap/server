@@ -15,10 +15,7 @@ sites::disable_default: true
 # letsencrypt account settings
 letsencrypt::email: postmaster@example.com
 
-letsencrypt::post_command: '/bin/systemctl reload nginx; which haproxy && /bin/systemctl reload haproxy;'
-
-# initial letsencrypt renewal can fail due to DNS not being setup (yet), do not propagate this error and lets installation continue.
-# letsencrypt::renew::allow_failure: true
+letsencrypt::post_command: '/bin/systemctl reload nginx; which haproxy && /bin/systemctl reload haproxy || true;'
 
 # Makes puppet-mysql use the package from mysql.org instead of debian repos.
 # This is needed to allow mysql 5.6+ on debian jessie
