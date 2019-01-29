@@ -17,12 +17,11 @@ BASH_XTRACEFD=19
 
 function apt-get-install {
   if ! test -f /var/log/apt/history.log;then apt-get -qq update;fi
-  apt-get install -yqq "$@"
+  DEBIAN_FRONTEND=noninteractive apt-get install -yqq "$@" >/dev/null
 }
 
 # propagate command errors, print commands before executing
 set -xe
-export DEBIAN_FRONTEND=noninteractive
 
 # don't ask for passwords to sudo anymore
 mkdir -p /etc/sudoers.d/
@@ -45,7 +44,7 @@ dpkg -i "puppetlabs-release-pc1-${release}.deb"
 apt-get -qq update
 
 # install puppet and some dependencies
-DEBIAN_FRONTEND=noninteractive apt-get-install puppet-agent rsync apt-transport-https git ruby
+apt-get-install puppet-agent rsync apt-transport-https git ruby
 # used to install puppet modules using Puppetfile
 gem install -q librarian-puppet
 # dependencies for some puppet modules (telegraf, consul), TODO: find out why they are not installed automatically
