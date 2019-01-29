@@ -16,7 +16,7 @@ exec 19>&1
 BASH_XTRACEFD=19
 
 function apt-get-install {
-  if ! test -f /var/log/apt/history.log;then apt-get -qq update;fi
+  if ! test -f /var/log/apt/history.log;then apt-get -qq update >/dev/null;fi
   DEBIAN_FRONTEND=noninteractive apt-get install -yqq "$@" >/dev/null
 }
 

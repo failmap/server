@@ -6,6 +6,7 @@ set -e
 
 git_source=${GIT_SOURCE:-https://gitlab.com/failmap/server.git}
 git_branch=${GIT_BRANCH:-master}
+configuration=${FAILMAP_CONFIGURATION}
 
 n="\\e[39m"
 b="\\e[1m"
@@ -42,6 +43,10 @@ apt-get install -yqq git >/dev/null
 
 # getting the source
 git clone --quiet --branch "$git_branch" "$git_source" /opt/failmap/server/
+
+if ! test -z "$configuration"; then
+    echo "$configuration" >> /opt/failmap/server/configuration/settings.yaml
+fi
 
 # installing configuration management dependencies
 /opt/failmap/server/scripts/bootstrap.sh

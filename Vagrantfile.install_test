@@ -12,14 +12,7 @@ Vagrant.configure("2") do |config|
   # enable ipv6
   config.vm.network "private_network", ip: "fde4:8dba:82e1::c4"
 
-  # set hostname which is used to select development settings (hiera/*.yaml)
-  config.vm.hostname = "faalserver.faalkaart.test"
-
-  # enable development hostname resolving
-  if Vagrant.has_plugin?("landrush")
-    config.landrush.enabled = true
-    config.landrush.tld = "faalkaart.test"
-  end
+  config.vm.hostname = "example.com"
 
   config.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: [
     ".git/",
@@ -31,14 +24,24 @@ Vagrant.configure("2") do |config|
   # provision using puppet
   config.vm.provision "shell", inline: <<-SHELL
     set -e
+
+    # the source is copied to the VM using rsync, the install.sh script expects to clone from a repository
+    # convert the copied source into a makeshift repository. (copying .git/ allong with the source costs more)
+    apt-get update >/dev/null; DEBIAN_FRONTEND=noninteractive apt-get install -yqq git >/dev/null
+    cd /vagrant; git init; git add .; git commit --message "commit message"
+
     # improve installation speed by using cache
     export LIBRARIAN_PUPPET_TMP=/vagrant/code/puppet/.tmp
 
-    # install dependencies for Puppet, don't use Vagrant Puppet, we want to test bootstrapping
-    /vagrant/scripts/bootstrap.sh
+    # inject settings into installation script to allow proper testing
+    CONFIGURATION="
+    apps::failmap::hostname: faalkaart.test
+    letsencrypt::staging: true
+    sites::dh_keysize: 512
+    base::dns::localhost_redirects: [faalkaart.test,www.faalkaart.test,admin.faalkaart.test]
+    "
 
-    # apply latests configuration
-    SHOW_WARNINGS=1 /vagrant/scripts/apply.sh
+    GIT_SOURCE=/vagrant FAILMAP_CONFIGURATION="$CONFIGURATION" /vagrant/install.sh
 
     # wait for everthing to be online
     echo "Waiting for failmap to be online before starting tests."
@@ -50,6 +53,4 @@ Vagrant.configure("2") do |config|
     # pattern for specfiles to search
     spec.pattern = 'tests/serverspec/*.rb'
   end
-
-  config.vm.post_up_message = "Tell people to visit http://faalkaart.faalserver.test"
 end
