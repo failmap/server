@@ -24,14 +24,22 @@ class base (
 
   class {'base::dns': }
 
+  class {'base::servertool': }
+
   # use hiera configuration (hiera.yaml) to get a list of classes to include
   # https://puppet.com/docs/puppet/5.2/hiera_use_function.html#examples
   lookup('classes', {merge => unique}).include
 
   create_resources(file, $files)
 
-  file { '/etc/motd':
-    content => template('base/motd.erb')
+  concat { '/etc/motd':
+    ensure => present,
+  }
+
+  concat::fragment { 'motd banner':
+    target  => '/etc/motd',
+    content => template('base/motd.erb'),
+    order   => '0'
   }
 
   file { '/usr/local/bin/failmap-server-update':
@@ -40,7 +48,7 @@ class base (
   }
 
   file { '/usr/local/bin/failmap-server-apply-configuration':
-    ensure => link,
-    target => '/opt/failmap/server/scripts/apply.sh',
+    content => "#!/bin/bash\nset -e\ncd /opt/failmap/server\n/opt/failmap/server/scripts/apply.sh",
+    mode    => '0755',
   }
 }
