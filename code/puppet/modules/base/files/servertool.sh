@@ -29,6 +29,7 @@ function server_information {
 Public IP: $public_ip
 Server hostname: $hostname
 Website domain name: $domainname
+Administrative e-mail: $admin_email
 
 Server configuration version: $server_version ($server_commit)
 Failmap application version: $app_version
@@ -38,28 +39,111 @@ EOF
   whiptail --title "Server Information" --msgbox "$server_information" 15 60
 }
 
+function configure_domainname {
+  domainname=$1
+  admin_email=$2
+
+  cat > /opt/failmap/server/configuration/settings.d/domainname.yaml <<EOF
+apps::failmap::hostname: $domainname
+letsencrypt::staging: false
+letsencrypt::email: $admin_email
+EOF
+
+  /usr/local/bin/failmap-server-apply-configuration
+}
+
+function domainname {
+  while true; do
+      text=$(cat <<EOF
+What domain name should the frontend website be served under?
+
+For proper security and HTTPS the domain name for the frontend needs to be
+explicitly configured.
+EOF
+)
+      domainname=$(whiptail --inputbox "$text" \
+        10 78 "$domainname" --title "Domain Name" 3>&1 1>&2 2>&3)
+      exitstatus=$?
+      if [ ! $exitstatus = 0 ]; then
+        return
+      fi
+      if [[ ! $domainname =~ ^[a-z0-9\._-]+\.[a-z]+$ ]];then
+          echo -e "${r}Error: '$domainname' is not a valid domain name.\\n${n}"
+          continue
+      fi
+
+      echo "Verifying if provided domain name '$domainname' can be used."
+      ip=$(dig +short "$domainname")
+      echo "Domain name '$domainname' resolves to '$ip'."
+      sleep 3
+
+      if ! /sbin/ip addr | grep -E "inet $ip/";then
+        echo "Warning: the domain name '$domainname' does not resolve to an IP configured for this server."
+        echo
+        echo "It is possible the domain name is configured properly but DNS has not propagated yet."
+        echo
+        read -p "Do you want to continue configuration of this domain name (y/n)?" -n1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]];then
+            break
+        fi
+      fi
+      break
+  done
+  echo "The domain name seems properly configured."
+
+  while true; do
+      admin_email=$(whiptail --inputbox "Please specify an email address that will be used for Letsencrypt (https)" \
+        8 78 "$admin_email" --title "Admin Email"  3>&1 1>&2 2>&3)
+      exitstatus=$?
+      if [ $exitstatus = 0 ]; then
+          break
+      fi
+
+      if [[ ! $admin_email =~ ^.+@.+$ ]];then
+          echo -e "${r}Error: '$admin_email' is not a valid e-mail address.\\n${n}"
+          continue
+      fi
+  done
+
+  configure_domainname "$domainname" "$admin_email"
+}
+
 function mainmenu {
   sleep 0.1
-  choice=$(whiptail --notags --title "Server administration tool" --menu "" 12 78 6 \
-    "info" "Show server information (again)." \
-    "domainname" "Add/change frontend domain name." \
-    "update_server" "Update server configuration." \
-    "update_app" "Update the Failmap application." \
-    "users" "Add/remove administrative users." \
-    "exit" "Exit the tool." 3>&1 1>&2 2>&3)
-    if test -z "$choice" ;then
-      choice="exit"
-    fi
-    echo "$choice"
+  menu=(
+    "info" "Show server information (again)"
+    "stats" "Server diagnostics (cpu, memory, etc)"
+    "logs" "Server logs (live)"
+    "loghistory" "Server logs (history)"
+    "" ""
+    "domainname" "Add/change frontend domain name"
+    "users" "Add/remove administrative users"
+    "" ""
+    "update_server" "Update server configuration"
+    "update_app" "Update the Failmap application"
+    "" ""
+    "exit" "Exit the tool"
+  )
+  choice=$(whiptail --notags --title "Server administration tool" --menu "" \
+    "$((${#menu[@]} / 2 + 6))" 78 "$((${#menu[@]} / 2))" "${menu[@]}" 3>&1 1>&2 2>&3)
+  if test -z "$choice" ;then
+    choice="exit"
+  fi
+  echo "$choice"
 }
 
 server_information
 
 while true;do
   choice=$(mainmenu)
-  test "info" == "$choice" && exec "$self"
-  test "update_server" == "$choice" && (/usr/local/bin/failmap-server-apply-configuration;sleep 5)
+  test "info" == "$choice" && server_information
+  test "stats" == "$choice" && atop || true
+  test "logs" == "$choice" && journalctl -f || true
+  test "loghistory" == "$choice" && journalctl || true
+  test "domainname" == "$choice" && (domainname && exec "$self" || true)
+  test "update_server" == "$choice" && (/usr/local/bin/failmap-server-update;sleep 5)
   test "update_app" == "$choice" && (/usr/local/bin/failmap-deploy;sleep 5)
-  test "users" == "$choice" && /usr/games/sl -alF
+  test "users" == "$choice" && /usr/games/sl -alF || true
   test "exit" == "$choice" && exit 0
 done

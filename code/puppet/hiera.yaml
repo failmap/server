@@ -6,10 +6,15 @@ defaults:
   datadir: "../../configuration"
   data_hash: yaml_data
 hierarchy:
-  - name: "Default"
+  - name: "admin-tool per-host configuration settings"
+    glob: "settings.d/*.yaml"
+  - name: "per-host configuration settings"
     paths:
-      - "overrides/dev.yaml"
-      - "per-hostname/%{::fqdn}.yaml"
-      - "per-environment/%{::env}.yaml"
       - "settings.yaml"
+  - name: "failmap organisation settings"
+    paths:
+      - "per-hostname/%{::fqdn}.yaml"
+  - name: "default settings"
+    paths:
+      - "per-environment/%{::env}.yaml"
       - "defaults.yaml"
