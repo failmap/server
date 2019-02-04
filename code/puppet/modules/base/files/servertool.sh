@@ -152,13 +152,13 @@ server_information
 
 while true;do
   choice=$(mainmenu)
-  test "info" == "$choice" && server_information
-  test "stats" == "$choice" && atop || true
-  test "logs" == "$choice" && journalctl -f || true
-  test "loghistory" == "$choice" && journalctl || true
-  test "domainname" == "$choice" && (domainname && exec "$self" || true)
-  test "update_server" == "$choice" && (/usr/local/bin/failmap-server-update;sleep 5)
-  test "update_app" == "$choice" && (/usr/local/bin/failmap-deploy;sleep 5)
-  test "users" == "$choice" && /usr/games/sl -alF || true
-  test "exit" == "$choice" && exit 0
+  if test "info" == "$choice";then server_information; fi
+  if test "stats" == "$choice";then atop; fi
+  if test "logs" == "$choice";then journalctl -f; fi
+  if test "loghistory" == "$choice";then journalctl; fi
+  if test "domainname" == "$choice";then domainname; fi
+  if test "update_server" == "$choice";then /usr/local/bin/failmap-server-update;sleep 5; fi
+  if test "update_app" == "$choice";then /usr/local/bin/failmap-deploy;sleep 5; fi
+  if test "users" == "$choice";then /usr/games/sl -alF; fi
+  if test "exit" == "$choice";then exit 0; fi
 done
