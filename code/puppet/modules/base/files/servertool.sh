@@ -11,18 +11,33 @@ self="$(readlink -f "$0")"
 
 set -e
 
-echo "Gathering information"
+echo -n "Gathering information"
 
 public_ip=$(/opt/puppetlabs/bin/facter networking.ip)
-hostname=$(hostname)
-domainname=$(/opt/puppetlabs/bin/puppet lookup --hiera_config /opt/failmap/server/code/puppet/hiera.yaml --render-as s apps::failmap::hostname 2>/dev/null)
+echo -n .
+hostname=$(hostname -f)
+echo -n .
+domainname=$(/opt/puppetlabs/bin/puppet lookup --hiera_config /opt/failmap/server/code/puppet/hiera.yaml \
+  --render-as s apps::failmap::hostname 2>/dev/null)
 if [ -z "$domainname" ];then
   domainname="(not configured)"
 fi
+echo -n .
+admin_email=$(/opt/puppetlabs/bin/puppet lookup --hiera_config /opt/failmap/server/code/puppet/hiera.yaml \
+  --render-as s letsencrypt::email 2>/dev/null)
+if [ -z "$admin_email" ];then
+  admin_email="(not configured)"
+fi
+echo -n .
+
 server_version=$(git --git-dir /opt/failmap/server/.git rev-list --all --count)
+echo -n .
 server_commit=$(git --git-dir /opt/failmap/server/.git rev-parse --short HEAD)
+echo -n .
 
 app_version=$(/usr/local/bin/failmap shell -c 'import failmap; print(failmap.__version__)' 2>/dev/null)
+echo -n .
+echo
 
 function server_information {
   server_information=$(cat <<EOF
