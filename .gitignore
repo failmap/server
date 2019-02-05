@@ -4,3 +4,4 @@ code/puppet/.gem
 .vagrant/
 configuration/overrides/dev.yaml
 configuration/settings.yaml
+code/servertool/main
