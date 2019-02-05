@@ -7,6 +7,8 @@ import (
 	"os/exec"
 	"os/signal"
 
+	"github.com/chzyer/readline"
+
 	"github.com/manifoldco/promptui"
 )
 
@@ -77,6 +79,23 @@ var menu = []menuItem{
 	menuItem{"manage_user", "Manage administrative users", func() { run("/usr/games/sl") }},
 
 	menuItem{"exit", "Exit", func() { os.Exit(0) }},
+}
+
+type stderr struct{}
+
+func (s *stderr) Write(b []byte) (int, error) {
+	if len(b) == 1 && b[0] == 7 {
+		return 0, nil
+	}
+	return os.Stderr.Write(b)
+}
+
+func (s *stderr) Close() error {
+	return os.Stderr.Close()
+}
+
+func init() {
+	readline.Stdout = &stderr{}
 }
 
 func main() {
