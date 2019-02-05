@@ -20,6 +20,7 @@ rsync -v -a --delete --no-motd \
   --include 'code/puppet/vendor/modules/*/manifests/' \
   --include 'code/puppet/vendor/modules/*/templates/' \
   --exclude 'code/puppet/vendor/*/*/*' \
+  --exclude 'code/servertool/*' \
   "$host:provision/"
 
 if test -z "$DEBUG";then
