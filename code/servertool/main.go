@@ -81,6 +81,34 @@ var menu = []menuItem{
 	menuItem{"exit", "Exit", func() { os.Exit(0) }},
 }
 
+func main() {
+	templates := &promptui.SelectTemplates{
+		Active:   fmt.Sprintf("%s {{ .Title | underline }}", promptui.IconSelect),
+		Inactive: "  {{.Title }}",
+		Selected: fmt.Sprintf(`{{ "%s" | green }} {{ .Title | faint }}`, promptui.IconGood),
+	}
+
+	prompt := promptui.Select{
+		Label:     "Please make a choice",
+		Size:      len(menu),
+		Items:     menu,
+		Templates: templates,
+	}
+
+	for {
+		choice, _, err := prompt.Run()
+
+		if err != nil {
+			fmt.Printf("Aborted %v\n", err)
+			break
+		}
+
+		menu[choice].action()
+	}
+}
+
+// hack to disable terminal bell
+// https://github.com/manifoldco/promptui/issues/49#issuecomment-428801411
 type stderr struct{}
 
 func (s *stderr) Write(b []byte) (int, error) {
@@ -96,31 +124,4 @@ func (s *stderr) Close() error {
 
 func init() {
 	readline.Stdout = &stderr{}
-}
-
-func main() {
-	for {
-		templates := &promptui.SelectTemplates{
-			Active:   fmt.Sprintf("%s {{ .Title | underline }}", promptui.IconSelect),
-			Inactive: "  {{.Title }}",
-			Selected: fmt.Sprintf(`{{ "%s" | green }} {{ .Title | faint }}`, promptui.IconGood),
-		}
-
-		prompt := promptui.Select{
-			Label:     "Please make a choice",
-			Size:      len(menu),
-			Items:     menu,
-			Templates: templates,
-		}
-
-		choice, _, err := prompt.Run()
-
-		if err != nil {
-			fmt.Printf("Aborted %v\n", err)
-			break
-		}
-
-		menu[choice].action()
-
-	}
 }
