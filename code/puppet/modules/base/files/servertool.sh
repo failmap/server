@@ -82,7 +82,7 @@ EOF
       if [ ! $exitstatus = 0 ]; then
         return
       fi
-      if [[ ! $domainname =~ ^[a-z0-9\._-]+\.[a-z]+$ ]];then
+      if [[ ! $domainname =~ ^([a-z0-9\._-]+\.)+[a-z]+$ ]];then
           echo -e "${r}Error: '$domainname' is not a valid domain name.\\n${n}"
           continue
       fi

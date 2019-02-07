@@ -13,6 +13,13 @@ class base::docker (
     extra_parameters => $ipv6_parameters,
   }
 
+  cron { 'docker garbage collection':
+    command => '/usr/bin/docker system prune --all -f',
+    hour    => 18,
+    minute  => 0,
+    weekday => 0,
+  }
+
   @telegraf::input { 'docker':
     plugin_type => docker,
     options     => [{
