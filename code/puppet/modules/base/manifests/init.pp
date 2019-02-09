@@ -51,4 +51,12 @@ class base (
     content => "#!/bin/bash\nset -e\ncd /opt/failmap/server\n/opt/failmap/server/scripts/apply.sh",
     mode    => '0755',
   }
+
+  # prevent unauthorized access to configuration
+  file { '/opt/failmap/server/':
+    ensure => directory,
+    owner  => root,
+    group  => sudo,
+    mode   => '0750',
+  }
 }

@@ -6,107 +6,14 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
-	"os/exec"
-	"os/signal"
 	"regexp"
 	"strings"
 	"time"
 
-	"github.com/chzyer/readline"
-
 	"github.com/manifoldco/promptui"
+	"github.com/sethvargo/go-password/password"
+	"gopkg.in/yaml.v2"
 )
-
-const domainNameConfigFile = "/opt/failmap/server/configuration/settings.d/domainname.yaml"
-const domainNameConfigTempl = `---
-# configuration writting by 'failmap-server-tool'
-apps::failmap::hostname: %s
-letsencrypt::staging: false
-letsencrypt::email: %s
-`
-
-type fact struct {
-	collect func() (string, error)
-	value   string
-}
-
-func (f *fact) Value() string {
-	if f.value == "" {
-		value, err := f.collect()
-		if err != nil {
-			fmt.Println(err)
-			value = "-error-"
-		}
-		f.value = strings.TrimSpace(value)
-	}
-	return f.value
-}
-
-var facts = map[string]*fact{
-	"Public IP Address": &fact{
-		func() (string, error) { return cmdOutput("/opt/puppetlabs/bin/facter", "networking.ip") }, "",
-	},
-	"Server hostname": &fact{os.Hostname, ""},
-	"Website domain name": &fact{
-		func() (string, error) {
-			return cmdOutput("/opt/puppetlabs/bin/puppet", "lookup",
-				"--hiera_config=/opt/failmap/server/code/puppet/hiera.yaml",
-				"--render-as=s", "apps::failmap::hostname", "--default=''")
-		}, "",
-	},
-	"Administrative e-mail": &fact{
-		func() (string, error) {
-			return cmdOutput("/opt/puppetlabs/bin/puppet", "lookup",
-				"--hiera_config=/opt/failmap/server/code/puppet/hiera.yaml",
-				"--render-as=s", "letsencrypt::email", "--default=''")
-		}, "",
-	},
-	"Server configuration version": &fact{
-		func() (string, error) {
-			return cmdOutput("git", "--git-dir=/opt/failmap/server/.git", "rev-list", "--all", "--count")
-		}, "",
-	},
-	"Server configuration hash": &fact{
-		func() (string, error) {
-			return cmdOutput("git", "--git-dir=/opt/failmap/server/.git", "rev-parse", "--short", "HEAD")
-		}, "",
-	},
-	"Application version": &fact{
-		func() (string, error) {
-			return cmdOutput("/usr/local/bin/failmap", "shell",
-				"-c", "import failmap; print(failmap.__version__)")
-		}, "",
-	},
-}
-
-func cmdOutput(cmd string, args ...string) (string, error) {
-	c := exec.Command(cmd, args...)
-	out, err := c.Output()
-	if err != nil {
-		return "", fmt.Errorf("Failed to execute: '%s': %s, %s", cmd, err, c.Stderr)
-	}
-	return string(out), nil
-}
-
-func run(command string, args ...string) {
-	cmd := exec.Command(command, args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	go func() {
-		for sig := range c {
-			if sig == os.Interrupt {
-				cmd.Process.Kill()
-			}
-		}
-	}()
-	err := cmd.Run()
-	if err != nil {
-		fmt.Printf("\n\033[2K%s\n\033[2K\n", err)
-	}
-}
 
 type menuItem struct {
 	Title  string
@@ -172,9 +79,20 @@ func configureDomain() {
 		return
 	}
 
-	domainNameConfig := fmt.Sprintf(domainNameConfigTempl, domainName, emailAddress)
+	const domainNameConfigFile = "/opt/failmap/server/configuration/settings.d/domainname.yaml"
+
+	domainNameConfig, _ := yaml.Marshal(struct {
+		Hostname string `yaml:"apps::failmap::hostname"`
+		Email    string `yaml:"letsencrypt::email"`
+		Staging  bool   `yaml:"letsencrypt::staging"`
+	}{
+		domainName,
+		emailAddress,
+		false,
+	})
+
 	fmt.Printf("The following configuration will been written to: %s\n", domainNameConfigFile)
-	fmt.Println(domainNameConfig)
+	fmt.Println(string(domainNameConfig))
 	fmt.Println("After this the new configuration will be applied.")
 	prompt = promptui.Prompt{
 		Label:     "Do you want to continue",
@@ -193,6 +111,134 @@ func configureDomain() {
 		return
 	}
 	run("/usr/local/bin/failmap-server-apply-configuration")
+
+	facts["Website domain name"].value = domainName
+	facts["Administrative e-mail"].value = emailAddress
+}
+
+func configureUsers() {
+	var err error
+	defer func() {
+		if err != nil {
+			fmt.Printf("Error: %s", err)
+		}
+	}()
+	accounts := strings.Split(facts["Administrative users"].Value(), ",")
+
+	prompt := promptui.Select{
+		Label: "Modify/delete existing administrative user, or add new one",
+		Size:  len(accounts) + 1,
+		Items: append(accounts, "Add new administrative user"),
+	}
+	_, choice, err := prompt.Run()
+	if err != nil {
+		return
+	}
+
+	type Account struct {
+		Ensure      string
+		Sudo        bool
+		WebPassword string
+	}
+	var username string
+	account := Account{
+		"present",
+		true,
+		"",
+	}
+	var generatePassword bool
+
+	if choice == "Add new administrative user" {
+		prompt := promptui.Prompt{
+			Label: "What should the username be",
+			Validate: func(input string) error {
+				if !regexp.MustCompile("^[a-zA-Z0-9_]+$").MatchString(input) {
+					return errors.New("Not a valid username")
+				}
+				return nil
+			},
+		}
+		username, err = prompt.Run()
+		if err != nil {
+			return
+		}
+		generatePassword = true
+
+	} else {
+		username = choice
+
+		prompt := promptui.Select{
+			Label: fmt.Sprintf("What action do you want to perform on user '%s'", username),
+			Size:  2,
+			Items: []string{"Generate new password", "Delete user"},
+		}
+		_, choice, err := prompt.Run()
+		if err != nil {
+			return
+		}
+
+		switch choice {
+		case "Generate new password":
+			generatePassword = true
+
+		case "Delete user":
+			prompt := promptui.Prompt{
+				Label:     fmt.Sprintf("Are you sure you want to delete user '%s'", username),
+				IsConfirm: true,
+			}
+			result, err := prompt.Run()
+			if err != nil || strings.ToLower(result) != "y" {
+				return
+			}
+			account.Ensure = "absent"
+			account.Sudo = false
+		}
+	}
+
+	if generatePassword {
+		account.WebPassword, err = password.Generate(64, 10, 10, false, false)
+		if err != nil {
+			return
+		}
+
+		fmt.Println("The following password was generated for this user:")
+		fmt.Println()
+		fmt.Println(account.WebPassword)
+		fmt.Println()
+		fmt.Println("Please note this password cannot be used to login using SSH.")
+		fmt.Println("It can only be used to log into the web interface.")
+		fmt.Println("The password cannot be changed, but you can regenerate a ")
+		fmt.Println("new and secure password using this tool at any time.")
+	}
+
+	// write the user account settings into Hiera and apply configuration
+	data, err := yaml.Marshal(struct {
+		Accounts map[string]Account `yaml:"accounts::users"`
+	}{Accounts: map[string]Account{username: account}})
+	var filename = fmt.Sprintf("/opt/failmap/server/configuration/settings.d/%s.yaml", username)
+	err = ioutil.WriteFile(filename, []byte(data), 0644)
+	if err != nil {
+		fmt.Printf("\nFailed to write configuration to file!\n\n")
+		return
+	}
+	run("/usr/local/bin/failmap-server-apply-configuration")
+
+	facts["Administrative users"].value = ""
+	go facts["Administrative users"].Value()
+}
+
+func updateServerConfig() {
+	// TODO: move to update.sh??
+	branch := facts["Configuration release channel"].Value()
+	if branch != "master" {
+		fmt.Printf("You are currently on the '%s' release channel.\n", branch)
+		fmt.Println("This is not the main release channel!")
+		time.Sleep(1 * time.Second)
+	}
+
+	run("/usr/local/bin/failmap-server-update")
+
+	// TODO: relaunch servertool if binary was updated?
 }
 
 var menu = []menuItem{
@@ -202,6 +248,7 @@ var menu = []menuItem{
 				fmt.Printf("%30s : %s\n", k, v.Value())
 			}
 		}},
+	menuItem{"", func() {}},
 	menuItem{"System statistics (cpu, memory, etc)", func() {
 		fmt.Printf("\nPress [q] or [ctrl-c] to quit atop.\n")
 		time.Sleep(1 * time.Second)
@@ -217,10 +264,15 @@ var menu = []menuItem{
 		time.Sleep(1 * time.Second)
 		run("journalctl")
 	}},
+	menuItem{"", func() {}},
 	menuItem{"Configure domain name / Setup HTTPS", configureDomain},
-	menuItem{"Update server configuration", func() { run("/usr/local/bin/failmap-server-update") }},
+	menuItem{"Manage administrative users / SSH access", configureUsers},
+	menuItem{"", func() {}},
+	menuItem{"Update server configuration", updateServerConfig},
 	menuItem{"Update Failmap application", func() { run("/usr/local/bin/failmap-deploy") }},
-	menuItem{"Manage administrative users", func() { run("/usr/games/sl") }},
+	menuItem{"", func() {}},
+	menuItem{"Upgrade to Failmap PRO", func() { run("/usr/games/sl") }},
+	menuItem{"", func() {}},
 	// menuItem{"Enable/disable servertool at login", func() {
 	// 	flagFile := os.Getenv("HOME") + "/.no_servertool"
 	// 	if _, err := os.Stat(flagFile); os.IsNotExist(err) {
@@ -240,12 +292,20 @@ func main() {
 		os.Exit(1)
 	}
 
+	fmt.Println()
+	fmt.Println("Welcome to the Failmap server administration tool.")
+	fmt.Println()
+	fmt.Println("This tool will help with basic configuration tasks and")
+	fmt.Println("incidental maintenance/monitoring.")
+	fmt.Println()
+	fmt.Println("At any time use [ctrl]+[c] to abort/exit.")
+	fmt.Println()
+
 	templates := &promptui.SelectTemplates{
 		Active:   fmt.Sprintf("%s {{ .Title | underline }}", promptui.IconSelect),
 		Inactive: "  {{.Title }}",
 		Selected: fmt.Sprintf(`{{ "%s" | green }} {{ .Title | faint }}`, promptui.IconGood),
 	}
-
 	prompt := promptui.Select{
 		Label:     "Please make a choice",
 		Size:      len(menu),
@@ -254,6 +314,9 @@ func main() {
 	}
 
 	for {
+		fmt.Println()
+		fmt.Println()
+		fmt.Println()
 		choice, _, err := prompt.Run()
 
 		if err != nil {
@@ -262,29 +325,5 @@ func main() {
 		}
 
 		menu[choice].action()
-	}
-}
-
-// hack to disable terminal bell
-// https://github.com/manifoldco/promptui/issues/49#issuecomment-428801411
-type stderr struct{}
-
-func (s *stderr) Write(b []byte) (int, error) {
-	if len(b) == 1 && b[0] == 7 {
-		return 0, nil
-	}
-	return os.Stderr.Write(b)
-}
-
-func (s *stderr) Close() error {
-	return os.Stderr.Close()
-}
-
-func init() {
-	readline.Stdout = &stderr{}
-
-	// collect facts on the background at startup
-	for _, v := range facts {
-		go v.Value()
 	}
 }

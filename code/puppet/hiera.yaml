@@ -7,7 +7,7 @@ defaults:
   data_hash: yaml_data
 hierarchy:
   - name: "admin-tool per-host configuration settings"
-    glob: "settings.d/*.yaml"
+    glob: "/opt/failmap/server/configuration/settings.d/*.yaml"
   - name: "per-host configuration settings"
     paths:
       - "settings.yaml"

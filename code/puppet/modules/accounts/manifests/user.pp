@@ -5,6 +5,7 @@ define accounts::user (
   $keys={},
   $shell='/bin/bash',
   $sudo_key_auth=$accounts::sudo_key_auth,
+  Optional[String] $webpassword=undef
 ){
   if $sudo {
       $sudo_ensure = present

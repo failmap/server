@@ -1,6 +1,6 @@
 all: ../puppet/modules/base/files/servertool
 
-src=main.go
+src=$(wildcard *.go)
 
 servertool-darwin-amd64: gopath/ ${src}
 	GOOS=darwin GOARCH=amd64 go build -o $@
