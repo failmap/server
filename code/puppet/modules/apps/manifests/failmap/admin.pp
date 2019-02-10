@@ -92,16 +92,27 @@ class apps::failmap::admin (
   # https://gitlab.com/failmap/server/issues/8
   Docker::Run[$appname] -> Service['nginx']
 
+  # disable basic auth (user/password authentication) if client certificate authentication is enabled
+  if $client_ca {
+    $auth_basic = undef
+    $auth_basic_user_file = undef
+  } else {
+    $auth_basic = 'Admin login'
+    $auth_basic_user_file = '/etc/nginx/admin.htpasswd'
+  }
+
   sites::vhosts::proxy { $hostname:
-    proxy            => "${appname}.service.dc1.consul:8000",
-    nowww_compliance => class_c,
+    proxy                => "${appname}.service.dc1.consul:8000",
+    nowww_compliance     => class_c,
     # use consul as proxy resolver
-    resolver         => ['127.0.0.1:8600'],
-    client_ca        => $client_ca,
+    resolver             => ['127.0.0.1:8600'],
+    client_ca            => $client_ca,
+    auth_basic           => $auth_basic,
+    auth_basic_user_file => $auth_basic_user_file,
     # admin is accessible for authenticated users only that need to see a live view
     # of changes, do not cache anything
-    caching          => disabled,
-    proxy_timeout    => '90s',
+    caching              => disabled,
+    proxy_timeout        => '90s',
   }
 
   # add convenience command to run admin actions via container
@@ -212,12 +223,14 @@ class apps::failmap::admin (
   # file to store users allowed to authenticate to the admin backend
   concat { '/etc/nginx/admin.htpasswd':
     ensure => present,
-    owner  => root,
+    owner  => 'www-data',
     group  => root,
     mode   => '0600',
   }
+  # make sure concat empties the file if there are no users defined
   concat::fragment { 'empty':
     target  => '/etc/nginx/admin.htpasswd',
-    content => '# managed by puppet',
+    content => "# managed by puppet\n",
+    order   => 0,
   }
 }

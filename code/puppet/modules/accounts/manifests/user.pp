@@ -61,12 +61,11 @@ define accounts::user (
       ensure => absent,
     }
   }
-  notice("pass '${webpassword}'")
   if $webpassword != '' and $webpassword != undef {
-    $passwd = ht_crypt($webpassword, simplib::passgen('secret_key', {'length' => 32}))
+    $passwd = ht_crypt($webpassword, simplib::passgen('htpasswd_seed'))
     concat::fragment { "admin user ${name}":
       target  => '/etc/nginx/admin.htpasswd',
-      content => "${name}:${passwd}",
+      content => "${name}:${passwd}\n",
     }
   }
 }

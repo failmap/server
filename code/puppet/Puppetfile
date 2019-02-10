@@ -13,6 +13,7 @@ mod 'petems/swap_file',
   :ref => 'a497b192d0cbeaab754448caffda51ffbe9fbbfb'
 
 mod 'puppetlabs-stdlib'
+mod 'puppet-nginx', '0.15.0'
 mod 'puppetlabs-vcsrepo'
 mod 'thias-php'
 mod 'puppetlabs-mysql'
@@ -36,7 +37,7 @@ mod 'aequitas/letsencrypt',
   :ref => '0d1081bd885fc68755d95d0d75c4dc55319e51ce'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
-  :ref => 'a77b5941f705e012356cb4ee1394d342bb788852'
+  :ref => '67bcd613a24030c355174eafcb7f3cd4116c9729'
 
 mod 'simp/simplib'
 mod "leinaddm/htpasswd"

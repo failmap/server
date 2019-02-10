@@ -73,8 +73,8 @@ GIT
 
 GIT
   remote: https://github.com/aequitas/puppet-sites.git
-  ref: a77b5941f705e012356cb4ee1394d342bb788852
-  sha: a77b5941f705e012356cb4ee1394d342bb788852
+  ref: 67bcd613a24030c355174eafcb7f3cd4116c9729
+  sha: 67bcd613a24030c355174eafcb7f3cd4116c9729
   specs:
     aequitas-sites (0.1.0)
       puppet-logrotate (>= 1.1.1)
@@ -120,6 +120,7 @@ DEPENDENCIES
   leinaddm-htpasswd (>= 0)
   petems-swap_file (>= 0)
   puppet-collectd (>= 0)
+  puppet-nginx (= 0.15.0)
   puppet-unattended_upgrades (>= 0)
   puppetlabs-docker (>= 0)
   puppetlabs-firewall (>= 0)
