@@ -139,18 +139,21 @@ func configureUsers() {
 		Ensure      string
 		Sudo        bool
 		WebPassword string
+		SSHPubKey   string
 	}
 	var username string
 	account := Account{
 		"present",
 		true,
 		"",
+		"",
 	}
 	var generatePassword bool
+	var setSSHPubKey bool
 
 	if choice == "Add new administrative user" {
 		prompt := promptui.Prompt{
-			Label: "What should the username be",
+			Label: "Please specify the desired username",
 			Validate: func(input string) error {
 				if !regexp.MustCompile("^[a-zA-Z0-9_]+$").MatchString(input) {
 					return errors.New("Not a valid username")
@@ -164,13 +167,21 @@ func configureUsers() {
 		}
 		generatePassword = true
 
+		prompt = promptui.Prompt{
+			Label:     fmt.Sprintf("Do you want to add a public key for SSH login"),
+			IsConfirm: true,
+		}
+
+		if result, _ := prompt.Run(); strings.ToLower(result) == "y" {
+			setSSHPubKey = true
+		}
 	} else {
 		username = choice
 
 		prompt := promptui.Select{
 			Label: fmt.Sprintf("What action do you want to perform on user '%s'", username),
-			Size:  2,
-			Items: []string{"Generate new password", "Delete user"},
+			Size:  3,
+			Items: []string{"Generate new password", "Set SSH public key", "Delete user"},
 		}
 		_, choice, err := prompt.Run()
 		if err != nil {
@@ -180,7 +191,8 @@ func configureUsers() {
 		switch choice {
 		case "Generate new password":
 			generatePassword = true
-
+		case "Set SSH public key":
+			setSSHPubKey = true
 		case "Delete user":
 			prompt := promptui.Prompt{
 				Label:     fmt.Sprintf("Are you sure you want to delete user '%s'", username),
@@ -205,10 +217,32 @@ func configureUsers() {
 		fmt.Println()
 		fmt.Println(account.WebPassword)
 		fmt.Println()
-		fmt.Println("Please note this password cannot be used to login using SSH.")
 		fmt.Println("It can only be used to log into the web interface.")
 		fmt.Println("The password cannot be changed, but you can regenerate a ")
 		fmt.Println("new and secure password using this tool at any time.")
+		fmt.Println()
+		fmt.Println("Please note this password cannot be used to login using SSH.")
+		fmt.Println("For SSH login set a public key for the user.")
+		fmt.Println()
+	}
+	if setSSHPubKey {
+		fmt.Println("SSH public/private key pair is used to allow the user to login via SSH.")
+		fmt.Println("For more information refer to: https://help.ubuntu.com/community/SSH/OpenSSH/Keys")
+		fmt.Println("")
+		fmt.Println("For security reasons we disallow password based SSH login.")
+		prompt := promptui.Prompt{
+			Label: "Please provide the SSH public key",
+			Validate: func(input string) error {
+				if !regexp.MustCompile("^AAAA[0-9A-Za-z+/]+[=]{0,3}$").MatchString(input) {
+					return errors.New("Invalid SSH public key, only the 'key' part should be provided. Omit the 'ssh-rsa' prefix and 'name' at the end")
+				}
+				return nil
+			},
+		}
+		account.SSHPubKey, err = prompt.Run()
+		if err != nil {
+			return
+		}
 	}
 
 	// write the user account settings into Hiera and apply configuration
@@ -273,23 +307,24 @@ var menu = []menuItem{
 	menuItem{"", func() {}},
 	menuItem{"Upgrade to Failmap PRO", func() { run("/usr/games/sl") }},
 	menuItem{"", func() {}},
-	// menuItem{"Enable/disable servertool at login", func() {
-	// 	flagFile := os.Getenv("HOME") + "/.no_servertool"
-	// 	if _, err := os.Stat(flagFile); os.IsNotExist(err) {
-	// 		os.OpenFile(flagFile, os.O_RDONLY|os.O_CREATE, 0666)
-	// 		fmt.Println("Disabling servertool at login")
-	// 	} else {
-	// 		os.Remove(flagFile)
-	// 		fmt.Println("Enabling servertool at login")
-	// 	}
-	// }},
-	menuItem{"Exit", func() { os.Exit(0) }},
+	menuItem{"Enable/disable servertool at login", func() {
+		flagFile := "/home/" + os.Getenv("SUDO_USER") + "/.no_servertool"
+		if _, err := os.Stat(flagFile); os.IsNotExist(err) {
+			os.OpenFile(flagFile, os.O_RDONLY|os.O_CREATE, 0666)
+			fmt.Println("Disabling servertool at login")
+		} else {
+			os.Remove(flagFile)
+			fmt.Println("Enabling servertool at login")
+		}
+	}},
+	menuItem{"Escape to shell", func() { run(os.Getenv("SHELL")) }},
+	menuItem{"Exit/Logout", func() { os.Exit(0) }},
 }
 
 func main() {
 	if os.Geteuid() != 0 {
 		fmt.Printf("Please run as root: sudo %s\n", os.Args[0])
-		os.Exit(1)
+		// os.Exit(1)
 	}
 
 	fmt.Println()
@@ -314,8 +349,6 @@ func main() {
 	}
 
 	for {
-		fmt.Println()
-		fmt.Println()
 		fmt.Println()
 		choice, _, err := prompt.Run()
 

@@ -24,3 +24,7 @@ mysql::server::package_name: "mysql-community-server"
 mysql::client::package_name: "mysql-community-client"
 
 nginx::gzip: "on"
+
+lookup_options:
+  accounts::users:
+    merge: deep

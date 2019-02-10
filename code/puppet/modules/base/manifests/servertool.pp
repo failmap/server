@@ -10,4 +10,8 @@ class base::servertool {
     source => 'puppet:///modules/base/servertool',
     mode   => '0755',
   }
+
+  file {'/etc/profile.d/servertool.sh':
+    content => '[[ $- == *i* ]] && ! test -f $HOME/.no_servertool && sudo /usr/local/bin/failmap-server-tool && exit'
+  }
 }

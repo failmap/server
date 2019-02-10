@@ -39,3 +39,4 @@ mod 'aequitas/sites',
   :ref => 'a77b5941f705e012356cb4ee1394d342bb788852'
 
 mod 'simp/simplib'
+mod "leinaddm/htpasswd"

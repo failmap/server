@@ -8,7 +8,10 @@ all: code/puppet/vendor/modules
 code/puppet/vendor/modules: code/puppet/Puppetfile
 	$(MAKE) -C code/puppet/ $*
 
-apply deploy: fix check code/puppet/vendor/modules
+code/puppet/modules/base/files/servertool: $(wildcard code/servertool/*.go)
+	cd code/servertool; $(MAKE) $*
+
+apply deploy: fix check code/puppet/vendor/modules code/puppet/modules/base/files/servertool
 	scripts/deploy.sh ${host} ${args}
 
 plan: args=--test

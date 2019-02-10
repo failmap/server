@@ -208,4 +208,16 @@ class apps::failmap::admin (
     caching          => disabled,
     proxy_timeout    => '90s',
   }
+
+  # file to store users allowed to authenticate to the admin backend
+  concat { '/etc/nginx/admin.htpasswd':
+    ensure => present,
+    owner  => root,
+    group  => root,
+    mode   => '0600',
+  }
+  concat::fragment { 'empty':
+    target  => '/etc/nginx/admin.htpasswd',
+    content => '# managed by puppet',
+  }
 }

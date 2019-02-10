@@ -5,6 +5,7 @@ define accounts::user (
   $keys={},
   $shell='/bin/bash',
   $sudo_key_auth=$accounts::sudo_key_auth,
+  Optional[String] $sshpubkey=undef,
   Optional[String] $webpassword=undef
 ){
   if $sudo {
@@ -31,11 +32,20 @@ define accounts::user (
       shell      => $shell,
   }
 
-  $key_defaults = {
-    ensure   => $ensure,
-    user     => $name,
+  if $ensure == present {
+    $key_defaults = {
+      user     => $name,
+    }
+    create_resources(ssh_authorized_key, $keys, $key_defaults)
+
+    if $sshpubkey {
+      ssh_authorized_key {'default':
+        user => $name,
+        type => 'ssh-rsa',
+        key  => $sshpubkey,
+      }
+    }
   }
-  create_resources(ssh_authorized_key, $keys, $key_defaults)
 
   if $sudo and $sudo_key_auth {
     File[$pam_ssh_agent_auth::key_dir] -> Ssh_authorized_key <||>
@@ -49,6 +59,14 @@ define accounts::user (
   } else {
     file {"/etc/sudo_ssh_authorized_keys/${name}":
       ensure => absent,
+    }
+  }
+  notice("pass '${webpassword}'")
+  if $webpassword != '' and $webpassword != undef {
+    $passwd = ht_crypt($webpassword, simplib::passgen('secret_key', {'length' => 32}))
+    concat::fragment { "admin user ${name}":
+      target  => '/etc/nginx/admin.htpasswd',
+      content => "${name}:${passwd}",
     }
   }
 }
