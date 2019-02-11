@@ -35,3 +35,12 @@ func run(command string, args ...string) {
 		fmt.Printf("\n\033[2K%s\n\033[2K\n", err)
 	}
 }
+
+func runOk(command string, args ...string) bool {
+	cmd := exec.Command(command, args...)
+	err := cmd.Run()
+	if err != nil {
+		return false
+	}
+	return true
+}

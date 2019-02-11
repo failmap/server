@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 
@@ -34,6 +36,10 @@ func configureDomain() {
 		},
 	}
 	domainName, err := prompt.Run()
+	if err != nil || domainName == "" {
+		fmt.Println("Aborting")
+		return
+	}
 
 	fmt.Printf("\nVerifying if domain name is usable...\n")
 	var domainNameErrors []error
@@ -75,7 +81,7 @@ func configureDomain() {
 		},
 	}
 	emailAddress, err := prompt.Run()
-	if err != nil {
+	if err != nil || emailAddress == "" {
 		return
 	}
 
@@ -154,19 +160,39 @@ func configureUsers() {
 	var generatePassword bool
 	var setSSHPubKey bool
 
+	forbiddenUsers := []string{"admin"}
+	file, err := os.Open("/etc/passwd")
+	if err != nil {
+		fmt.Println("Failed to open /etc/passwd")
+		return
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		items := strings.Split(scanner.Text(), ":")
+		username := items[0]
+		forbiddenUsers = append(forbiddenUsers, username)
+	}
+
 	if choice == "Add new administrative user" {
 		prompt := promptui.Prompt{
 			Label: "Please specify the desired username",
 			Validate: func(input string) error {
-				if !regexp.MustCompile("^[a-zA-Z0-9_]+$").MatchString(input) {
+				if !regexp.MustCompile("^[a-zA-Z0-9_]{5,}$").MatchString(input) {
 					return errors.New("Not a valid username")
 				}
-				// TODO: disallow exising users
+				for _, u := range forbiddenUsers {
+					if input == u {
+						return errors.New("This username is not allowed")
+					}
+				}
+
 				return nil
 			},
 		}
 		username, err = prompt.Run()
-		if err != nil {
+		if err != nil || username == "" {
 			return
 		}
 		generatePassword = true
@@ -235,7 +261,7 @@ func configureUsers() {
 		fmt.Println("")
 		fmt.Println("For security reasons we disallow password based SSH login.")
 		prompt := promptui.Prompt{
-			Label: "Please provide the SSH public key",
+			Label: "Please provide the SSH public key or [ctrl]-[c] to remove current key",
 			Validate: func(input string) error {
 				if !regexp.MustCompile("^AAAA[0-9A-Za-z+/]+[=]{0,3}$").MatchString(input) {
 					return errors.New("Invalid SSH public key, only the 'key' part should be provided. Omit the 'ssh-rsa' prefix and 'name' at the end")
@@ -282,8 +308,13 @@ func updateServerConfig() {
 var menu = []menuItem{
 	menuItem{"Show system information",
 		func() {
-			for k, v := range facts {
-				fmt.Printf("%30s : %s\n", k, v.Value())
+			var keys []string
+			for k := range facts {
+				keys = append(keys, k)
+			}
+			sort.Strings(keys)
+			for _, k := range keys {
+				fmt.Printf("%30s : %s\n", k, facts[k].Value())
 			}
 		}},
 	menuItem{"", func() {}},
