@@ -66,9 +66,8 @@ With that said please follow these instructions to get a Failmap instance up and
 
 1. Run the following command to start installation:
 
-        wget -q -O- https://gitlab.com/failmap/server/raw/server_installation/install.sh > /install.sh; GIT_BRANCH=server_installation /bin/bash /install.sh
-
-        # TODO: when merging to master replace above with: wget -q -O- https://gitlab.com/failmap/server/raw/master/install.sh > /install.sh; /bin/bash /install.sh
+        wget -q -O- https://gitlab.com/failmap/server/raw/master/install.sh > /install.sh; /bin/bash /install.sh
+        
 
 1. Grab a Club-Mate (or 2) and wait until everything completes and you are greeted by a rainbow.
 
