@@ -1,6 +1,7 @@
 # provide application independent OS layer base settings
 class base (
-  Hash[String,Hash] $files = {}
+  Hash[String,Hash] $files = {},
+  String $source = 'https://gitlab.com/internet-cleanup-foundation/server/',
 ){
   $osinfo = $::os['distro']['description']
   notice("fqdn=${::fqdn}, env=${::env}, os=${osinfo}")
@@ -61,7 +62,7 @@ class base (
   -> vcsrepo { '/opt/failmap/server/':
     ensure   => present,
     provider => git,
-    source   => 'https://gitlab.com/internet-cleanup-foundation/server/',
+    source   => $source,
   }
   # prevent unauthorized access to configuration
   -> file { '/opt/failmap/server/configuration':

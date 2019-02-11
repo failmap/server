@@ -71,7 +71,7 @@ Vagrant.configure("2") do |config|
 
       # inject settings into installation script to allow proper testing
       CONFIGURATION="
-      apps::failmap::hostname: faalkaart.test
+      base::source: /vagrant
       letsencrypt::staging: true
       sites::dh_keysize: 512
       base::dns::localhost_redirects: [faalkaart.test,www.faalkaart.test,admin.faalkaart.test]

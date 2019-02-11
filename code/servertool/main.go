@@ -359,7 +359,7 @@ var menu = []menuItem{
 func main() {
 	if os.Geteuid() != 0 {
 		fmt.Printf("Please run as root: sudo %s\n", os.Args[0])
-		// os.Exit(1)
+		os.Exit(1)
 	}
 
 	fmt.Println()
