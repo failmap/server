@@ -52,8 +52,19 @@ class base (
     mode    => '0755',
   }
 
+  # ensure source is present
+  file { '/opt/failmap/':
+    ensure => directory,
+    owner  => root,
+    group  => root,
+  }
+  -> vcsrepo { '/opt/failmap/server/':
+    ensure   => present,
+    provider => git,
+    source   => 'https://gitlab.com/internet-cleanup-foundation/server/',
+  }
   # prevent unauthorized access to configuration
-  file { '/opt/failmap/server/':
+  -> file { '/opt/failmap/server/configuration':
     ensure => directory,
     owner  => root,
     group  => sudo,

@@ -11,6 +11,16 @@ class apps::failmap::frontend (
   $db_user = "${db_name}ro"
   $interactive_db_user = "${db_name}rw"
 
+  if $hostname == 'default' {
+    $nowww_compliance = 'class_c'
+    $default_vhost = true
+    $allowed_hosts = '*'
+  } else {
+    $nowww_compliance = 'class_b'
+    $default_vhost = false
+    $allowed_hosts = $hostname
+  }
+
   # database readonly user
   # used for frontend instance, ie: high traffic public facing.
   # should only be able to read from database
@@ -69,7 +79,7 @@ class apps::failmap::frontend (
       "DB_PASSWORD=${db_password}",
       # django generic settings
       "SECRET_KEY=${secret_key}",
-      "ALLOWED_HOSTS=${hostname}",
+      "ALLOWED_HOSTS=${allowed_hosts}",
       'DEBUG=',
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
@@ -102,7 +112,7 @@ class apps::failmap::frontend (
       "DB_PASSWORD=${interactive_db_password}",
       # django generic settings
       "SECRET_KEY=${secret_key}",
-      "ALLOWED_HOSTS=${hostname}",
+      "ALLOWED_HOSTS=${allowed_hosts}",
       'DEBUG=',
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${pod}-interactive",
@@ -116,15 +126,18 @@ class apps::failmap::frontend (
   }
 
   sites::vhosts::proxy { $hostname:
-    proxy         => "${appname}.service.dc1.consul:8000",
+    proxy            => "${appname}.service.dc1.consul:8000",
     # use consul as proxy resolver
-    resolver      => ['127.0.0.1:8600'],
+    resolver         => ['127.0.0.1:8600'],
     # allow upstream to set caching headers, cache upstream responses
     # and serve stale results if backend is unavailable or broken
-    caching       => upstream,
-    proxy_timeout => '60s',
+    caching          => upstream,
+    proxy_timeout    => '60s',
     # default timeout if not provided by upstream, make odd number to easily identify in web inspecter.
-    expires       => 599,
+    expires          => 599,
+    # if no explicit domainname is set fall back to listening on everything
+    default_vhost    => $default_vhost,
+    nowww_compliance => $nowww_compliance,
   }
 
   file { "/etc/nginx/conf.d/${hostname}.rate_limit.conf":

@@ -12,6 +12,7 @@ class base::servertool {
   }
 
   file {'/etc/profile.d/servertool.sh':
-    content => '[[ $- == *i* ]] && ! test -f $HOME/.no_servertool && sudo /usr/local/bin/failmap-server-tool && exit'
+    content => '! test "$(whoami)" == "root" && [[ $- == *i* ]] && \
+                ! test -f $HOME/.no_servertool && sudo /usr/local/bin/failmap-server-tool && exit'
   }
 }

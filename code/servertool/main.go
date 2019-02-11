@@ -123,8 +123,11 @@ func configureUsers() {
 			fmt.Printf("Error: %s", err)
 		}
 	}()
-	accounts := strings.Split(facts["Administrative users"].Value(), ",")
-
+	accountslist := facts["Administrative users"].Value()
+	accounts := strings.Split(accountslist, ",")
+	if accountslist == "-error retrieving value-" {
+		accounts = []string{}
+	}
 	prompt := promptui.Select{
 		Label: "Modify/delete existing administrative user, or add new one",
 		Size:  len(accounts) + 1,
@@ -158,6 +161,7 @@ func configureUsers() {
 				if !regexp.MustCompile("^[a-zA-Z0-9_]+$").MatchString(input) {
 					return errors.New("Not a valid username")
 				}
+				// TODO: disallow exising users
 				return nil
 			},
 		}

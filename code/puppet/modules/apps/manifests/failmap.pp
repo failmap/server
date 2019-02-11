@@ -1,6 +1,6 @@
 # resources shared by frontend, admin and workers
 class apps::failmap (
-  $hostname='faalkaart.nl',
+  $hostname='default',
   $pod='failmap',
   $ipv6_subnet=undef,
   $image='failmap/failmap:latest',

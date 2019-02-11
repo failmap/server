@@ -84,9 +84,13 @@ var facts = map[string]*fact{
 		func() (string, error) {
 			accountData, err := cmdOutput("/opt/puppetlabs/bin/puppet", "lookup",
 				"--hiera_config=/opt/failmap/server/code/puppet/hiera.yaml",
-				"--render-as=json", "--merge=deep", "accounts::users", "--default=''")
+				"--render-as=json", "--merge=deep", "accounts::users", "--default=")
 			if err != nil {
 				return "", err
+			}
+			// puppet lookup returns two doublequotes instead of nothing if default is empty
+			if strings.TrimSpace(accountData) == "\"\"" {
+				accountData = "{}"
 			}
 			type Account struct {
 				Ensure string
