@@ -51,7 +51,7 @@ Vagrant.configure("2") do |config|
       # run serverspec as a provisioner to test the previously provisioned machine
     config.vm.provision :serverspec do |spec|
       # pattern for specfiles to search
-      spec.pattern = 'tests/serverspec/*.rb'
+      spec.pattern = 'tests/serverspec/{base,frontend,frontend-nowww}.rb'
     end
   end
 
@@ -82,14 +82,14 @@ Vagrant.configure("2") do |config|
 
     config.vm.provision "shell", inline: <<-SHELL
       # wait for everthing to be online
-      echo "Waiting up to 30 seconds for failmap to be online before starting tests."
-      timeout 30 /bin/sh -c 'while sleep 1; do curl -sSvk https://faalkaart.test 2>/dev/null | grep MSPAINT >/dev/null && exit 0; done'
+      echo "Waiting up to 60 seconds for failmap to be online before starting tests."
+      timeout 60 /bin/sh -c 'while sleep 1; do curl -sSvk https://faalkaart.test 2>/dev/null | grep MSPAINT >/dev/null && exit 0; done'
       SHELL
 
     # run serverspec as a provisioner to test the previously provisioned machine
     config.vm.provision :serverspec do |spec|
       # pattern for specfiles to search
-      spec.pattern = 'tests/serverspec/*.rb'
+      spec.pattern = 'tests/serverspec/{base,frontend}.rb'
     end
 
   end
