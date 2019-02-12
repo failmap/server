@@ -35,7 +35,6 @@ if test -d /opt/failmap/;then
   cd /
   rm -rf /.bootstrap_* /opt/failmap/
 fi
-set -v
 
 # installing dependencies
 apt-get update -qq >/dev/null
@@ -44,14 +43,49 @@ apt-get install -yqq git >/dev/null
 # getting the source
 git clone --quiet --branch "$git_branch" "$git_source" /opt/failmap/server/
 
-if ! test -z "$configuration"; then
-    echo "$configuration" >> /opt/failmap/server/configuration/settings.yaml
-fi
-
 # installing configuration management dependencies
 /opt/failmap/server/scripts/bootstrap.sh
 
-# bringing the system in the desired state
-/opt/failmap/server/scripts/apply.sh
+if ! test -z "$configuration"; then
+  echo "$configuration" >> /opt/failmap/server/configuration/settings.yaml
+else
+  password=$(pwgen -B1s 32)
+  cat > /opt/failmap/server/configuration/settings.yaml <<EOF
+accounts::users:
+  wsm-user:
+    sudo: true
+    webpassword: $password
+EOF
+fi
 
-cat /etc/motd
+# bringing the system in the desired state
+if /opt/failmap/server/scripts/apply.sh; then
+  cat /etc/banner
+  echo
+  echo -e "${b}Confgratulations... Your Web Security Map installation is now ready.${n}"
+  echo
+  echo "You can visit your Web Security Map at: https://$(/opt/puppetlabs/bin/facter networking.ip)"
+  echo
+  echo "The Administrative section is available at: https://$(/opt/puppetlabs/bin/facter networking.ip)/admin"
+  if ! test -z "$password";then
+    echo
+    echo "You may login with the user 'wsm-user' and password '$password'"
+  fi
+  echo
+  echo "Because the domain name and HTTPS is not setup yet you will get a security warning that you need to click trough."
+  echo
+  echo "For further setup (domain name, https, user accounts, SSH, etc) please run the server tool:"
+  echo -e "  ${b}sudo failmap-server-tool${n}"
+else
+  echo
+  echo -e "${b}We apologize for the inconvenience.${n}"
+  echo
+  echo "But something went wrong during the installation."
+  echo
+  echo "You can retry the last step by running: "
+  echo -e "  ${b}/opt/failmap/server/scripts/apply.sh${n}"
+  echo
+  echo "If things still fail please consider opening an issue at:"
+  echo "  https://gitlab.com/internet-cleanup-foundation/server/issues/new"
+fi
+echo

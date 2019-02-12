@@ -39,7 +39,7 @@ define accounts::user (
     create_resources(ssh_authorized_key, $keys, $key_defaults)
 
     if $sshpubkey {
-      ssh_authorized_key {'default':
+      ssh_authorized_key {$name:
         user => $name,
         type => 'ssh-rsa',
         key  => $sshpubkey,

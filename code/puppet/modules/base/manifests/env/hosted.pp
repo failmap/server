@@ -23,7 +23,9 @@ class base::env::hosted (
   class { '::ssh':
     storeconfigs_enabled => false,
     server_options       => {
+      # improve ssh server security
       'PasswordAuthentication' => no,
+      'PermitRootLogin' => no,
     }
   }
 

@@ -43,6 +43,10 @@ class base (
     order   => '0'
   }
 
+  file {'/etc/banner':
+    content => template('base/motd.erb'),
+  }
+
   file { '/usr/local/bin/failmap-server-update':
     ensure => link,
     target => '/opt/failmap/server/scripts/update.sh',

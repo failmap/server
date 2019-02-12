@@ -44,7 +44,7 @@ dpkg -i "puppetlabs-release-pc1-${release}.deb"
 apt-get -qq update
 
 # install puppet and some dependencies
-apt-get-install puppet-agent rsync apt-transport-https git ruby
+apt-get-install puppet-agent rsync apt-transport-https git ruby pwgen
 # used to install puppet modules using Puppetfile
 gem install -q librarian-puppet
 # dependencies for some puppet modules (telegraf, consul), TODO: find out why they are not installed automatically
