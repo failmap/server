@@ -4,7 +4,7 @@
 
 set -e
 
-git_source=${GIT_SOURCE:-https://gitlab.com/failmap/server.git}
+git_source=${GIT_SOURCE:-https://gitlab.com/internet-cleanup-foundation/server.git}
 git_branch=${GIT_BRANCH:-master}
 configuration=${FAILMAP_CONFIGURATION}
 
@@ -14,7 +14,7 @@ y="\\e[33m"
 
 echo -e "${b}Welcome to Failmap installation.${n}"
 echo
-echo 'For help please visit: https://gitlab.com/failmap/server/blob/master/documentation/hosting.md'
+echo 'For help please visit: https://gitlab.com/internet-cleanup-foundation/server/blob/master/documentation/hosting.md'
 echo
 echo -e "${y}Warning: this installation script assumes to be run on a fresh installed OS and _will_ make changes to this server's OS. Press [ctrl-c] at any time to abort.${n}"
 
