@@ -36,6 +36,17 @@ if test -d /opt/failmap/;then
   rm -rf /.bootstrap_* /opt/failmap/
 fi
 
+# prevent daily apt update from interfering with install
+# https://unix.stackexchange.com/a/315517
+systemctl stop apt-daily.service
+systemctl kill --kill-who=all apt-daily.service
+
+# wait until `apt-get updated` has been killed
+while ! (systemctl list-units --all apt-daily.service | grep -F -q dead)
+do
+  sleep 1;
+done
+
 # installing dependencies
 apt-get update -qq >/dev/null
 apt-get install -yqq git >/dev/null
