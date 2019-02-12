@@ -4,7 +4,7 @@
 
 set -e
 
-git_source=${GIT_SOURCE:-https://gitlab.com/internet-cleanup-foundation/server.git}
+git_source=${GIT_SOURCE:-https://gitlab.com/internet-cleanup-foundation/server/}
 git_branch=${GIT_BRANCH:-master}
 configuration=${FAILMAP_CONFIGURATION}
 
