@@ -12,6 +12,11 @@ cd "$(dirname "$(readlink -f "$0")")/.." || exit
 export PATH=/opt/puppetlabs/bin:$PATH
 export FACTER_env=${FACTER_env:-hosted}
 
+# prevent issues with librarian-puppet when run from cloudinit
+if test -z "$HOME"; then
+  export HOME=/root
+fi
+
 if ! test -d code/puppet/vendor/modules; then
   echo "Installing 3rd party Puppet modules (this may take a while)"
   (cd code/puppet; librarian-puppet install) || exit
