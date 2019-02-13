@@ -121,7 +121,7 @@ class apps::websecmap::admin (
       ssl                  => true,
       ssl_only             => true,
       www_root             => undef,
-      resolver             => $resolver,
+      resolver             => ['127.0.0.1:8600'],
       location_cfg_append  => {
         'set $backend' => 'http://grafana.service.dc1.consul:3000',
       },
@@ -136,7 +136,7 @@ class apps::websecmap::admin (
       ssl_only             => true,
       www_root             => undef,
       proxy                => "\$backend",
-      resolver             => $resolver,
+      resolver             => ['127.0.0.1:8600'],
       location_cfg_append  => {
         'set $backend' => "http://${appname}.service.dc1.consul:8000",
       },

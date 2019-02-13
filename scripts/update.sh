@@ -16,7 +16,7 @@ git remote update
 branch=$(git rev-parse --abbrev-ref HEAD)
 
 echo
-echo "The following changes will be applied"
+echo "The following changes will be applied:"
 git log --pretty="format: - %s" "$branch...origin/$branch"
 echo
 
