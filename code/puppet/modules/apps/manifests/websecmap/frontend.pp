@@ -148,6 +148,7 @@ class apps::websecmap::frontend (
     ssl                  => true,
     ssl_only             => true,
     www_root             => undef,
+    proxy                => "\$backend",
     location_cfg_append  => {
       'set $backend' => 'http://grafana.service.dc1.consul:3000',
     },
