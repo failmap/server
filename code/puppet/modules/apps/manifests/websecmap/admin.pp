@@ -240,6 +240,7 @@ class apps::websecmap::admin (
     group  => root,
     mode   => '0600',
   }
+  -> Service[nginx]
   # make sure concat empties the file if there are no users defined
   concat::fragment { 'empty':
     target  => '/etc/nginx/admin.htpasswd',
