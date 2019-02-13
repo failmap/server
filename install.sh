@@ -60,6 +60,9 @@ git clone --quiet --branch "$git_branch" "$git_source" /opt/websecmap/server/
 if ! test -z "$configuration"; then
   echo "$configuration" >> /opt/websecmap/server/configuration/settings.yaml
 else
+  # set empty root password to allow login via console
+  passwd -d root
+  # configure web interface user
   password=$(pwgen -B1s 32)
   cat > /opt/websecmap/server/configuration/settings.yaml <<EOF
 accounts::users:
@@ -98,5 +101,9 @@ else
   echo
   echo "If things still fail please consider opening an issue at:"
   echo "  https://gitlab.com/internet-cleanup-foundation/server/issues/new"
+fi
+if ! test -z "$password"; then
+  echo
+  echo "Root login to this server is disabled for SSH. You can log in via console as user root with no password."
 fi
 echo
