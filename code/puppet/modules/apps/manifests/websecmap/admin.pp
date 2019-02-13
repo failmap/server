@@ -136,8 +136,6 @@ class apps::websecmap::admin (
       location             => '/admin/',
       auth_basic           => $auth_basic,
       auth_basic_user_file => $auth_basic_user_file,
-      caching              => disabled,
-      proxy_timeout        => '90s',
     }
 
   }
