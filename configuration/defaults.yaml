@@ -8,6 +8,8 @@ classes:
   - apps::websecmap::admin
   - apps::websecmap::frontend
   - apps::websecmap::worker
+  - apps::websecmap::monitoring
+  - apps::websecmap::monitoring::server
 
 # site config
 sites::disable_default: true
