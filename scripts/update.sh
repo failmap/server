@@ -7,7 +7,7 @@ if ! test "$(whoami)" == "root";then
   exit 1
 fi
 
-set -ex
+set -e
 
 cd /opt/websecmap/server
 # pull in latest changed from upstream
