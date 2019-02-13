@@ -73,8 +73,8 @@ GIT
 
 GIT
   remote: https://github.com/aequitas/puppet-sites.git
-  ref: 67bcd613a24030c355174eafcb7f3cd4116c9729
-  sha: 67bcd613a24030c355174eafcb7f3cd4116c9729
+  ref: e8e22cac66046b1c1a37b82f8ea5d3f110366199
+  sha: e8e22cac66046b1c1a37b82f8ea5d3f110366199
   specs:
     aequitas-sites (0.1.0)
       puppet-logrotate (>= 1.1.1)
