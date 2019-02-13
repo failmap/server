@@ -17,7 +17,7 @@ branch=$(git rev-parse --abbrev-ref HEAD)
 
 echo
 echo "The following changes will be applied"
-git log --pretty=oneline "$branch...origin/$branch"
+git log --pretty="format: - %s" "$branch...origin/$branch"
 echo
 
 # force update current working directory to upstream
