@@ -5,6 +5,7 @@ class apps::websecmap (
   $ipv6_subnet=undef,
   $image='websecmap/websecmap:latest',
   $broker='redis://broker:6379/0',
+  $db_name='websecmap'
 ){
   docker::image { $image:
     ensure    => present,

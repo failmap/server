@@ -8,7 +8,7 @@ class apps::websecmap::worker (
 ){
   $appname = "${pod}-worker"
 
-  $db_name = 'websecmap'
+  $db_name = $apps::websecmap::db_name
   $db_user = $db_name
 
   # database

@@ -11,7 +11,7 @@ class apps::websecmap::admin (
 
   $appname = "${pod}-admin"
 
-  $db_name = 'websecmap'
+  $db_name = $apps::websecmap::db_name
   $db_user = $db_name
 
   # database
@@ -170,7 +170,7 @@ class apps::websecmap::admin (
   }
 
   # run migration in a separate container
-  [Docker::Image[$image], Mysql::Db[websecmap],]
+  [Docker::Image[$image], Mysql::Db[$db_name],]
   ~> exec {"${appname}-migrate":
     command     => '/usr/local/bin/websecmap-db-migrate',
     refreshonly => true,

@@ -113,3 +113,6 @@ accounts::users:
 # of a good way to make this work for non-http TLS ports like Redis (one such solution might be
 # delagating letsencrypt dns-01 TXT records and running a DNS daemon on the server).
 apps::websecmap::broker::tls_combined_path: "/etc/letsencrypt.sh/certs/%{lookup('apps::websecmap::hostname')}/combined.pem"
+
+# keep old database name/user after rebrand to websecmap to avoid database rename
+apps::websecmap::db_name: failmap

@@ -7,7 +7,7 @@ class apps::websecmap::frontend (
 ){
   $appname = "${pod}-frontend"
 
-  $db_name = 'websecmap'
+  $db_name = $apps::websecmap::db_name
   $db_user = "${db_name}ro"
   $interactive_db_user = "${db_name}rw"
 
