@@ -25,14 +25,14 @@ class base::env::hosted (
     server_options       => {
       # improve ssh server security
       'PasswordAuthentication' => no,
-      'PermitRootLogin' => no,
+      'PermitRootLogin'        => no,
     }
   }
 
   # remind superusers of configurationmanagement
   file {
       '/etc/sudoers.lecture':
-            content => "THIS HOST IS MANAGED BY PUPPET. Please only make permanent changes\nthrough puppet and do not expect manual changes to be maintained!\nMore info: https://gitlab.com/failmap/server\n\n";
+            content => "THIS HOST IS MANAGED BY PUPPET. Please only make permanent changes\nthrough puppet and do not expect manual changes to be maintained!\nMore info: https://gitlab.com/websecmap/server\n\n";
   }
   -> sudo::conf { 'lecture':
     priority => 10,

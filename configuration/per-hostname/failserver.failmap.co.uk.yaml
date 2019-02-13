@@ -4,8 +4,8 @@
 classes:
   # required for interface hash
   - network
-  - apps::failmap::monitoring
-  - apps::failmap::monitoring::server
+  - apps::websecmap::monitoring
+  - apps::websecmap::monitoring::server
 
 
 # letsencrypt account settings
@@ -21,14 +21,14 @@ network::interfaces_hash:
     # assigned by transip
     ipaddress: 2a01:7c8:d001:2f6::1
     netmask: 48
-    gateway: 2a01:7c8:d001::1	
+    gateway: 2a01:7c8:d001::1
 
 base::docker::ipv6_ndpproxy: 2a01:7c8:d001:2f6::0/64
 base::docker::ipv6_subnet: 2a01:7c8:d001:2f6:0::0/80
-apps::failmap::ipv6_subnet: 2a01:7c8:d001:2f6:1::0/80
+apps::websecmap::ipv6_subnet: 2a01:7c8:d001:2f6:1::0/80
 
-# CA for validating access to administrative instance of Failmap application
-apps::failmap::admin::client_ca: &failmap_ca |
+# CA for validating access to administrative instance of WebSecMap application
+apps::websecmap::admin::client_ca: &websecmap_ca |
   -----BEGIN CERTIFICATE-----
   MIIEQDCCAyigAwIBAgIQEmLWz+QdooUgvAF2olReXTANBgkqhkiG9w0BAQsFADCB
   uTELMAkGA1UEBhMCTkwxDDAKBgNVBAgTA04vQTEMMAoGA1UEBxMDTi9BMQwwCgYD
@@ -56,16 +56,16 @@ apps::failmap::admin::client_ca: &failmap_ca |
   -----END CERTIFICATE-----
 
 # Set frontend hostname for this server
-apps::failmap::hostname: failmap.co.uk
+apps::websecmap::hostname: websecmap.co.uk
 
 # CA for validating access to monitoring frontends (Grafana)
-apps::failmap::monitoring::server::client_ca: *failmap_ca
+apps::websecmap::monitoring::server::client_ca: *websecmap_ca
 
 # allow external connections to broker for remote workers (scanners)
-apps::failmap::broker::enable_remote: true
+apps::websecmap::broker::enable_remote: true
 
 # CA for validating remote workers connecting with the broker
-apps::failmap::broker::client_ca: *failmap_ca
+apps::websecmap::broker::client_ca: *websecmap_ca
 
 # users & sudo permissions
 accounts::users:
@@ -91,4 +91,4 @@ accounts::users:
         key: AAAAB3NzaC1yc2EAAAADAQABAAACAQDSD/TFYNq8V/RofrxLZWiPpdM/bj3b6vto+oRhfAb+4gsfsyxbrpETvHKdahCiJTZA+jheJQdaS2IWkrpZw1sCV0pSMcD6aZJWaDomfY2wNkrNs69mDzIL3HCsqUOVft5Md46Uh21+2vLIFgPLLrn58wOBszCK5DFTTQ9VrAirpwsaZ/rJj1iFwd+35MJVDe6K5LDF1tVEJl4MdqOs2Yhi25Zuz/ynP7zeF6420arqbbXjlSIDHbTjHJ54rBvDHqhg1cuYN4CGc3Fx7NTHfSYX4tlUvVS0EDLcNXWN+QlU4EI7qXHLjGastc7UqnLc4oFivQUOjlVFizF+hghb14MFYrAegTbzdS4kAROXLv/SVr360SVXfHdL2I3AE5oC9/IEsDXiWHEPZv/OX2t/reuCkt3hIZ4MQRZyXsO5TaDrJb8mnVIpbXOGrzlQ0Eec5IvEVotz0wLxK3zOk/Hs0oTOxpbryg9j5iMBQ2CyXBR3Er0YkPeuWjj3YMNbO33yaaER+EZXdg/cfYnuowM0wGXjYwmASTzNX4CDT1VjxS3H3V6+wMxM9aNmk+kFumGtW8b9VQNC55hokK4QeCteBv2bS99+Vnki0MfGI+1H1ljviJrXJ8EeYmY15CgPRtjYPiHRZdCuLTRR//4ZaZMbCussvOlGAxZ05LcIC5fiPmiHvQ==
     shell: /usr/bin/fish
 
-apps::failmap::broker::tls_combined_path: /etc/letsencrypt.sh/certs/failmap.co.uk/combined.pem
+apps::websecmap::broker::tls_combined_path: /etc/letsencrypt.sh/certs/websecmap.co.uk/combined.pem

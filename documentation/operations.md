@@ -3,16 +3,16 @@ This project uses containers (Docker) for management/isolation of most of its co
 
 Required administrative operations can be performed using utility commands. All these commands require sudo/root.
 
-Updating to the latest release of Failmap:
+Updating to the latest release of WebSecMap:
 
-    sudo failmap-deploy
+    sudo websecmap-deploy
 
 Rolling back to version prior to deploy:
 
-    sudo failmap-rollback
+    sudo websecmap-rollback
 
 Clearing cache:
 
-    sudo failmap-frontend-clear-cache
+    sudo websecmap-frontend-clear-cache
 
 .... TODO

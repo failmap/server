@@ -4,6 +4,6 @@
 
 # Example: to enable monitoring uncomment:
 # classes:
-#   - apps::failmap::monitoring
-#   - apps::failmap::monitoring::server
+#   - apps::websecmap::monitoring
+#   - apps::websecmap::monitoring::server
 #

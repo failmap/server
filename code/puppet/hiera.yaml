@@ -7,11 +7,11 @@ defaults:
   data_hash: yaml_data
 hierarchy:
   - name: "admin-tool per-host configuration settings"
-    glob: "/opt/failmap/server/configuration/settings.d/*.yaml"
+    glob: "/opt/websecmap/server/configuration/settings.d/*.yaml"
   - name: "per-host configuration settings"
     paths:
       - "settings.yaml"
-  - name: "failmap organisation settings"
+  - name: "internet cleanup foundation settings"
     paths:
       - "per-hostname/%{::fqdn}.yaml"
   - name: "default settings"

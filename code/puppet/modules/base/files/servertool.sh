@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# friendly UI to manage Failmap server
+# friendly UI to manage WebSecMap server
 
 if ! test "$(whoami)" == "root";then
   echo "Error: must run as root! Login as root user or use sudo: sudo su -"
@@ -17,25 +17,25 @@ public_ip=$(/opt/puppetlabs/bin/facter networking.ip)
 echo -n .
 hostname=$(hostname -f)
 echo -n .
-domainname=$(/opt/puppetlabs/bin/puppet lookup --hiera_config /opt/failmap/server/code/puppet/hiera.yaml \
-  --render-as s apps::failmap::hostname 2>/dev/null)
+domainname=$(/opt/puppetlabs/bin/puppet lookup --hiera_config /opt/websecmap/server/code/puppet/hiera.yaml \
+  --render-as s apps::websecmap::hostname 2>/dev/null)
 if [ -z "$domainname" ];then
   domainname="(not configured)"
 fi
 echo -n .
-admin_email=$(/opt/puppetlabs/bin/puppet lookup --hiera_config /opt/failmap/server/code/puppet/hiera.yaml \
+admin_email=$(/opt/puppetlabs/bin/puppet lookup --hiera_config /opt/websecmap/server/code/puppet/hiera.yaml \
   --render-as s letsencrypt::email 2>/dev/null)
 if [ -z "$admin_email" ];then
   admin_email="(not configured)"
 fi
 echo -n .
 
-server_version=$(git --git-dir /opt/failmap/server/.git rev-list --all --count)
+server_version=$(git --git-dir /opt/websecmap/server/.git rev-list --all --count)
 echo -n .
-server_commit=$(git --git-dir /opt/failmap/server/.git rev-parse --short HEAD)
+server_commit=$(git --git-dir /opt/websecmap/server/.git rev-parse --short HEAD)
 echo -n .
 
-app_version=$(/usr/local/bin/failmap shell -c 'import failmap; print(failmap.__version__)' 2>/dev/null)
+app_version=$(/usr/local/bin/websecmap shell -c 'import websecmap; print(websecmap.__version__)' 2>/dev/null)
 echo -n .
 echo
 
@@ -47,7 +47,7 @@ Website domain name: $domainname
 Administrative e-mail: $admin_email
 
 Server configuration version: $server_version ($server_commit)
-Failmap application version: $app_version
+WebSecMap application version: $app_version
 EOF
 )
 
@@ -58,13 +58,13 @@ function configure_domainname {
   domainname=$1
   admin_email=$2
 
-  cat > /opt/failmap/server/configuration/settings.d/domainname.yaml <<EOF
-apps::failmap::hostname: $domainname
+  cat > /opt/websecmap/server/configuration/settings.d/domainname.yaml <<EOF
+apps::websecmap::hostname: $domainname
 letsencrypt::staging: false
 letsencrypt::email: $admin_email
 EOF
 
-  /usr/local/bin/failmap-server-apply-configuration
+  /usr/local/bin/websecmap-server-apply-configuration
 }
 
 function domainname {
@@ -136,7 +136,7 @@ function mainmenu {
     "users" "Add/remove administrative users"
     "" ""
     "update_server" "Update server configuration"
-    "update_app" "Update the Failmap application"
+    "update_app" "Update the WebSecMap application"
     "" ""
     "exit" "Exit the tool"
   )
@@ -157,8 +157,8 @@ while true;do
   if test "logs" == "$choice";then journalctl -f; fi
   if test "loghistory" == "$choice";then journalctl; fi
   if test "domainname" == "$choice";then domainname; fi
-  if test "update_server" == "$choice";then /usr/local/bin/failmap-server-update;sleep 5; fi
-  if test "update_app" == "$choice";then /usr/local/bin/failmap-deploy;sleep 5; fi
+  if test "update_server" == "$choice";then /usr/local/bin/websecmap-server-update;sleep 5; fi
+  if test "update_app" == "$choice";then /usr/local/bin/websecmap-deploy;sleep 5; fi
   if test "users" == "$choice";then /usr/games/sl -alF; fi
   if test "exit" == "$choice";then exit 0; fi
 done

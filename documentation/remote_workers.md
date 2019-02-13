@@ -1,6 +1,6 @@
 # Remote workers (scanners)
 
-It is possible to enable connections from remote workers (scanners) to allow scan tasks to be distributed to these workers for higher throughput and concurrency. To enable this set the configuration paramater `apps::failmap::broker::enable_remote` to `true`.
+It is possible to enable connections from remote workers (scanners) to allow scan tasks to be distributed to these workers for higher throughput and concurrency. To enable this set the configuration paramater `apps::websecmap::broker::enable_remote` to `true`.
 
 Remote worker connections are secured by TLS and require a valid client certificate for authentication. Currently the (letsencrypt) server certificate from the frontend (faalkaart.nl) is reused for TLS and the same CA is used for validating remote workers as for Admin and Monitoring.
 
@@ -11,16 +11,16 @@ Requirements:
 - Running Docker daemon (see: https://docs.docker.com/install/)
 - PKCS12 client certificate (a .p12 file that is also used for Admin authentication)
 
-Use the following command to run a remote worker for a Failmap instance:
+Use the following command to run a remote worker for a WebSecMap instance:
 
-    docker run --rm -ti --name failmap-worker -u nobody:nogroup \
+    docker run --rm -ti --name websecmap-worker -u nobody:nogroup \
       -e WORKER_ROLE=scanner_ipv4_only \
       -e BROKER=redis://faalkaart.nl:1337/0 \
       -v <PATH_TO_CLIENT_PKCS12>:/client.p12 \
-      failmap/failmap:latest \
+      websecmap/websecmap:latest \
       celery worker --loglevel info --concurrency=10
 
-`WORKER_ROLE` determines the kind of tasks this worker will pick up, for reference: https://gitlab.com/failmap/failmap/blob/master/failmap/celery/worker.py
+`WORKER_ROLE` determines the kind of tasks this worker will pick up, for reference: https://gitlab.com/websecmap/websecmap/blob/master/websecmap/celery/worker.py
 
 `BROKER` is the URL to the Redis message broker to connect to.
 

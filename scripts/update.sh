@@ -9,7 +9,7 @@ fi
 
 set -ex
 
-cd /opt/failmap/server
+cd /opt/websecmap/server
 # pull in latest changed from upstream
 git remote update
 
@@ -21,4 +21,4 @@ git reset --hard "origin/$branch"
 (cd code/puppet/; librarian-puppet install)
 
 # apply changes
-/opt/failmap/server/scripts/apply.sh "$@"
+/opt/websecmap/server/scripts/apply.sh "$@"

@@ -1,5 +1,5 @@
-# test failmap frontend application
-describe docker_container('failmap-frontend') do
+# test websecmap frontend application
+describe docker_container('websecmap-frontend') do
   it { should exist }
 end
 
@@ -81,6 +81,3 @@ describe command('curl -sSvk --cookie "sessionid=123" https://faalkaart.test/gam
   # should be allowed
   its(:stderr) {should contain('HTTP/1.1 200 OK')}
 end
-
-
-

@@ -1,8 +1,8 @@
-# Failmap server installation and maintenance
+# WebSecMap server installation and maintenance
 
 ## Introduction
 
-One of the core principles of the Failmap project is automation. This is reflected in the server configuration by having almost full configuration management. Setting up a hosted production instance of Failmap should be trivial and not require extensive knowledge of involved components (although it will help in troubleshooting).
+One of the core principles of the WebSecMap project is automation. This is reflected in the server configuration by having almost full configuration management. Setting up a hosted production instance of WebSecMap should be trivial and not require extensive knowledge of involved components (although it will help in troubleshooting).
 
 The following knowledge is _required_ for basic installation:
 
@@ -30,9 +30,9 @@ Additionally knowledge of the following related technologies is advised:
 
 ## Whats in the box
 
-When using this installation method you will end up with a fully featured Failmap server including:
+When using this installation method you will end up with a fully featured WebSecMap server including:
 
-- Full failmap installation with:
+- Full websecmap installation with:
   - Frontend map website (with https, http/2 and caching)
   - Administrative backend (secured by TLS client certificates)
   - Workers to automatically perform scanning tasks
@@ -42,7 +42,7 @@ When using this installation method you will end up with a fully featured Failma
 
 ## Requirements
 
-To install the fully featured Failmap server the following is required:
+To install the fully featured WebSecMap server the following is required:
 
 - Dedicated bare-metal or virtual host with:
   - Debian based Linux (Debian 8/9 or Ubuntu 18.04) clean installed
@@ -56,9 +56,9 @@ To install the fully featured Failmap server the following is required:
 
 ## Installation
 
-**Warning**: this installation assumes to run on a **clean and dedicated** host for a Failmap installation! It will **modify the OS** and take over things like firewalling, Docker, SSH, etc! **Do not run** on a server with existing other software or configuration that you do not want modified!
+**Warning**: this installation assumes to run on a **clean and dedicated** host for a WebSecMap installation! It will **modify the OS** and take over things like firewalling, Docker, SSH, etc! **Do not run** on a server with existing other software or configuration that you do not want modified!
 
-With that said please follow these instructions to get a Failmap instance up and running:
+With that said please follow these instructions to get a WebSecMap instance up and running:
 
 1. Bring the server up and follow the basic OS (Ubuntu/Debian) installation procedure (if it is not already installed). Configure basic settings (language, keyboard, user) as seen fit and give it a hostname you like (it does not have to match the DNS A record used for the website).
 
@@ -66,24 +66,24 @@ With that said please follow these instructions to get a Failmap instance up and
 
 1. Run the following command to start installation:
 
-        wget -q -O- https://gitlab.com/failmap/server/raw/master/install.sh > /install.sh; /bin/bash /install.sh
-        
+        wget -q -O- https://gitlab.com/websecmap/server/raw/master/install.sh > /install.sh; /bin/bash /install.sh
+
 
 1. Grab a Club-Mate (or 2) and wait until everything completes and you are greeted by a rainbow.
 
-1. You Failmap server is now ready, you can visit the frontend at it's public IP address or the domain name (if you have already configured a DNS record).
+1. You WebSecMap server is now ready, you can visit the frontend at it's public IP address or the domain name (if you have already configured a DNS record).
 
 1. HTTPS is enabled by default but with a **insecure** self-signed certificate. To properly configure automatic HTTPS using Letsencrypt please refer to [Configuring HTTPS](#Configuring HTTPS) or simply run the following command on the server:
 
-        failmap-server-setup-https
+        websecmap-server-setup-https
 
 1. For visiting the administrative backend (https://example.com/admin/) or monitoring (https://example.com/grafana), credentials are required. Run the following command or refer to the [Admin Access](#Admin Access) section below for advanced configuration using client certificates:
 
-        failmap-server-setup-admin
+        websecmap-server-setup-admin
 
 ## Upgrading
 
-Failmap server configuration is split into a _base configuration_ (maintained by Internet Cleanup Foundation at https://gitlab.com/failmap/server/) and a _server configuration_ (with customizations for a specific installation).
+WebSecMap server configuration is split into a _base configuration_ (maintained by Internet Cleanup Foundation at https://gitlab.com/websecmap/server/) and a _server configuration_ (with customizations for a specific installation).
 
 If new features or bugfixes are developed in the _base configuration_ the server can be updated on demand using the following procedure:
 
@@ -91,7 +91,7 @@ If new features or bugfixes are developed in the _base configuration_ the server
 
 1. Run the following command to pull in new changes and apply the configuration:
 
-        failmap-server-update
+        websecmap-server-update
 
 ## Configuring HTTPS
 
@@ -99,26 +99,26 @@ The server is configured with a default self-signed **insecure** certificate. Bu
 
 Before enabling Letsencrypt make sure you have a DNS A record configured for the public IP address of the server. Next, run the following command to verify the DNS configuration and enable Letsencrypt:
 
-        failmap-server-setup-https
+        websecmap-server-setup-https
 
 ## Admin Access
 
 For visiting the administrative backend (https://admin.faalkaart.nl) a client certificate is required to authenticate the visitor.
 This certificate needs to be installed in your OS/browser. Without this certificate installed any attempt to access the administrative backend is probhibited.
 
-The certificate itself can be found on the server in `/opt/failmap/ca/certs/client.p12` and it will be emailed to the address provided as administrator address during the installation. For information on how to install this on your system please refer to: https://www.google.com/search?q=install+p12+certificate
+The certificate itself can be found on the server in `/opt/websecmap/ca/certs/client.p12` and it will be emailed to the address provided as administrator address during the installation. For information on how to install this on your system please refer to: https://www.google.com/search?q=install+p12+certificate
 
 ### Multiple administrative user
 
 ## Configuration (advanced)
 
-An initial configuration file (the 'server configuration') is created during installation (see above) and is stored on the server on the path: `/opt/failmap/server/configuration/settings.yaml`
+An initial configuration file (the 'server configuration') is created during installation (see above) and is stored on the server on the path: `/opt/websecmap/server/configuration/settings.yaml`
 
 Aspects of the server can be customized in this file. All available settings and documentation can be found in this configuration file.
 
 After the configuration file has changed, the following command has to be run to apply the new configuration:
 
-        failmap-server-apply-configuration
+        websecmap-server-apply-configuration
 
 ## Customization (advanced)
 

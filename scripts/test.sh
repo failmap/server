@@ -125,10 +125,10 @@ echo "$response" | grep 'HTTP/2 200' || failed "$response"
 # webserver should serve stale responses if backend is down
 # indirectly this tests server caching as well
 curl -sSIk "https://$domain"
-sudo systemctl stop docker-failmap-frontend.service
+sudo systemctl stop docker-websecmap-frontend.service
 response=$(curl -sSIk "https://$domain")
 echo "$response" | grep 200 || failed "$response"
-sudo systemctl start docker-failmap-frontend.service
+sudo systemctl start docker-websecmap-frontend.service
 
 # success
 set +v

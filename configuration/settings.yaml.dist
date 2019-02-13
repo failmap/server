@@ -11,7 +11,7 @@
 # a lower priority file.
 
 # Set frontend hostname for this server
-apps::failmap::hostname: $domain
+apps::websecmap::hostname: $domain
 
 # set email address for letsencrypt (required)
 letsencrypt::email: $admin_email
@@ -27,18 +27,18 @@ letsencrypt::email: $admin_email
 #     netmask: 48
 #     gateway: 2001:db8::1
 
-# # CA for validating access to administrative instance of Failmap application
-# apps::failmap::admin::client_ca: &failmap_ca |
+# # CA for validating access to administrative instance of WebSecMap application
+# apps::websecmap::admin::client_ca: &websecmap_ca |
 #   -----BEGIN CERTIFICATE-----
 # 	...
 #   -----END CERTIFICATE-----
 #
 
 # # CA for validating access to monitoring frontends (eg: Grafana)
-# ::apps::failmap::monitoring::server::client_ca: *failmap_ca
+# ::apps::websecmap::monitoring::server::client_ca: *websecmap_ca
 #
 # # allow external connections to broker for remote workers (scanners)
-# apps::failmap::broker::enable_remote: true
+# apps::websecmap::broker::enable_remote: true
 #
 # # CA for validating remote workers connecting with the broker
-# apps::failmap::broker::client_ca: *failmap_ca
+# apps::websecmap::broker::client_ca: *websecmap_ca

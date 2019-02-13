@@ -1,18 +1,18 @@
 #!/bin/bash
 
-# foolproof installation script for failmap
+# foolproof installation script for websecmap
 
 set -e
 
 git_source=${GIT_SOURCE:-https://gitlab.com/internet-cleanup-foundation/server/}
 git_branch=${GIT_BRANCH:-master}
-configuration=${FAILMAP_CONFIGURATION}
+configuration=${WEBSECMAP_CONFIGURATION}
 
 n="\\e[39m"
 b="\\e[1m"
 y="\\e[33m"
 
-echo -e "${b}Welcome to Failmap installation.${n}"
+echo -e "${b}Welcome to WebSecMap installation.${n}"
 echo
 echo 'For help please visit: https://gitlab.com/internet-cleanup-foundation/server/blob/master/documentation/hosting.md'
 echo
@@ -29,11 +29,11 @@ if ! grep -E 'Debian GNU/Linux [89]|Ubuntu 18.04' /etc/os-release >/dev/null;the
   exit 1
 fi
 
-if test -d /opt/failmap/;then
+if test -d /opt/websecmap/;then
   set -v
   # cleaning up previous attempt
   cd /
-  rm -rf /.bootstrap_* /opt/failmap/
+  rm -rf /.bootstrap_* /opt/websecmap/
 fi
 
 # prevent daily apt update from interfering with install
@@ -52,16 +52,16 @@ apt-get update -qq >/dev/null
 apt-get install -yqq git >/dev/null
 
 # getting the source
-git clone --quiet --branch "$git_branch" "$git_source" /opt/failmap/server/
+git clone --quiet --branch "$git_branch" "$git_source" /opt/websecmap/server/
 
 # installing configuration management dependencies
-/opt/failmap/server/scripts/bootstrap.sh
+/opt/websecmap/server/scripts/bootstrap.sh
 
 if ! test -z "$configuration"; then
-  echo "$configuration" >> /opt/failmap/server/configuration/settings.yaml
+  echo "$configuration" >> /opt/websecmap/server/configuration/settings.yaml
 else
   password=$(pwgen -B1s 32)
-  cat > /opt/failmap/server/configuration/settings.yaml <<EOF
+  cat > /opt/websecmap/server/configuration/settings.yaml <<EOF
 accounts::users:
   wsm-user:
     sudo: true
@@ -70,7 +70,7 @@ EOF
 fi
 
 # bringing the system in the desired state
-if /opt/failmap/server/scripts/apply.sh; then
+if /opt/websecmap/server/scripts/apply.sh; then
   cat /etc/banner
   echo
   echo -e "${b}Confgratulations... Your Web Security Map installation is now ready.${n}"
@@ -86,7 +86,7 @@ if /opt/failmap/server/scripts/apply.sh; then
   echo "Because the domain name and HTTPS is not setup yet you will get a security warning that you need to click trough."
   echo
   echo "For further setup (domain name, https, user accounts, SSH, etc) please run the server tool:"
-  echo -e "  ${b}sudo failmap-server-tool${n}"
+  echo -e "  ${b}sudo websecmap-server-tool${n}"
 else
   echo
   echo -e "${b}We apologize for the inconvenience.${n}"
@@ -94,7 +94,7 @@ else
   echo "But something went wrong during the installation."
   echo
   echo "You can retry the last step by running: "
-  echo -e "  ${b}/opt/failmap/server/scripts/apply.sh${n}"
+  echo -e "  ${b}/opt/websecmap/server/scripts/apply.sh${n}"
   echo
   echo "If things still fail please consider opening an issue at:"
   echo "  https://gitlab.com/internet-cleanup-foundation/server/issues/new"

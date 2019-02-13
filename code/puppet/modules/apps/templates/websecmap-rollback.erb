@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -xe
+
+image="<%= @image %>"
+
+# restore rollback image as current
+/usr/bin/docker tag "${image/latest/rollback}" "${image}"
+
+# restart all related services
+systemctl restart docker-websecmap-*.service

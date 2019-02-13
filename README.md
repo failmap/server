@@ -1,6 +1,6 @@
-# Failmap server provisioning
+# WebSecMap server provisioning
 
-This repository contains server provisioning for the Failmap project (https://faalkaart.nl).
+This repository contains server provisioning for the WebSecMap project (https://faalkaart.nl).
 
 The setup is flexible and configureable to allow easy deployment and management of multiple different instances for different organisations.
 
@@ -10,17 +10,17 @@ Features include:
   - Firewall/Security/Updates
   - User accounts
   - Monitoring/Statistics
-- High performance and secure public web frontend and backend for Failmap app
+- High performance and secure public web frontend and backend for WebSecMap app
   - Automated TLS certificates
   - Caching
 - Local asynchronous task processing and secure remote worker endpoint
-- Failmap app administrative tooling
+- WebSecMap app administrative tooling
 
-This configuration is intended to create a production quality, public facing, secure server running the Failmap application stack.
+This configuration is intended to create a production quality, public facing, secure server running the WebSecMap application stack.
 
 ## Development
 
-If you just like to try out Failmap without the intent to have it publicly accessible, or you just want to develop features for the app please have a look at the [Failmap](https://gitlab.com/failmap/failmap) repository instead.
+If you just like to try out WebSecMap without the intent to have it publicly accessible, or you just want to develop features for the app please have a look at the [WebSecMap](https://gitlab.com/websecmap/websecmap) repository instead.
 
 For development or local testing of the provisioning please refer to [Development](documentation/development.md) documentation.
 
@@ -32,20 +32,20 @@ Deployment and administrator documentation can be found at [Hosting](documentati
 ![screenshot](documentation/screenshot.png)
 
 # Architecture
-A Failmap production instance consist of multiple isolated components working together to form a whole.
+A WebSecMap production instance consist of multiple isolated components working together to form a whole.
 
 ## Main application components
-Failmap main components:
+WebSecMap main components:
 
 **Frontend**
-The Frontend is the public facing HTTP website of Failmap. It runs as a restricted/read-only instance with caching enabled. It's purpose is to serve as many visitor requests as efficiently as possible.
+The Frontend is the public facing HTTP website of WebSecMap. It runs as a restricted/read-only instance with caching enabled. It's purpose is to serve as many visitor requests as efficiently as possible.
 
-It is implemented as a restricted instance of the Failmap Django App. uWSGI instance running in a Docker container with read-only Database access. In front of which the Webserver provides TLS termination and caching.
+It is implemented as a restricted instance of the WebSecMap Django App. uWSGI instance running in a Docker container with read-only Database access. In front of which the Webserver provides TLS termination and caching.
 
 **Admin**
 The Admin is a HTTP website with restricted access. It runs an read/write instance and no caching. It's purpose is to provide the administrative portal and near real-time view of the data.
 
-It is implemented as a full instance of the Failmap Django App. uWSGI instance running in a Docker container with full access to all Services (Database, Broker). In front is the Webserver providing TLS termination, client certificate validation and anti-caching.
+It is implemented as a full instance of the WebSecMap Django App. uWSGI instance running in a Docker container with full access to all Services (Database, Broker). In front is the Webserver providing TLS termination, client certificate validation and anti-caching.
 
 **Worker**
 The Worker is a asynchronous task executor. It picks up tasks for the Broker queue and accesses the Database for information query and result storing. All work (except for rendering HTTP responses) is handled by Workers.
@@ -79,4 +79,3 @@ It is implemented as a host level MySQL instance.
 The Broker provides a message bus for asynchronous task execution and distribution.
 
 A redis instance bound to each specific instance (production, staging, etc) running inside a Docker container.
-

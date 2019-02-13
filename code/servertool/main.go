@@ -85,10 +85,10 @@ func configureDomain() {
 		return
 	}
 
-	const domainNameConfigFile = "/opt/failmap/server/configuration/settings.d/domainname.yaml"
+	const domainNameConfigFile = "/opt/websecmap/server/configuration/settings.d/domainname.yaml"
 
 	domainNameConfig, _ := yaml.Marshal(struct {
-		Hostname string `yaml:"apps::failmap::hostname"`
+		Hostname string `yaml:"apps::websecmap::hostname"`
 		Email    string `yaml:"letsencrypt::email"`
 		Staging  bool   `yaml:"letsencrypt::staging"`
 	}{
@@ -116,7 +116,7 @@ func configureDomain() {
 		fmt.Printf("\nFailed to write configuration to file!\n\n")
 		return
 	}
-	run("/usr/local/bin/failmap-server-apply-configuration")
+	run("/usr/local/bin/websecmap-server-apply-configuration")
 
 	facts["Website domain name"].value = domainName
 	facts["Administrative e-mail"].value = emailAddress
@@ -279,13 +279,13 @@ func configureUsers() {
 	data, err := yaml.Marshal(struct {
 		Accounts map[string]Account `yaml:"accounts::users"`
 	}{Accounts: map[string]Account{username: account}})
-	var filename = fmt.Sprintf("/opt/failmap/server/configuration/settings.d/%s.yaml", username)
+	var filename = fmt.Sprintf("/opt/websecmap/server/configuration/settings.d/%s.yaml", username)
 	err = ioutil.WriteFile(filename, []byte(data), 0644)
 	if err != nil {
 		fmt.Printf("\nFailed to write configuration to file!\n\n")
 		return
 	}
-	run("/usr/local/bin/failmap-server-apply-configuration")
+	run("/usr/local/bin/websecmap-server-apply-configuration")
 
 	facts["Administrative users"].value = ""
 	go facts["Administrative users"].Value()
@@ -300,7 +300,7 @@ func updateServerConfig() {
 		time.Sleep(1 * time.Second)
 	}
 
-	run("/usr/local/bin/failmap-server-update")
+	run("/usr/local/bin/websecmap-server-update")
 
 	// TODO: relaunch servertool if binary was updated?
 }
@@ -338,9 +338,9 @@ var menu = []menuItem{
 	menuItem{"Manage administrative users / SSH access", configureUsers},
 	menuItem{"", func() {}},
 	menuItem{"Update server configuration", updateServerConfig},
-	menuItem{"Update Failmap application", func() { run("/usr/local/bin/failmap-deploy") }},
+	menuItem{"Update WebSecMap application", func() { run("/usr/local/bin/websecmap-deploy") }},
 	menuItem{"", func() {}},
-	menuItem{"Upgrade to Failmap PRO", func() { run("/usr/games/sl") }},
+	menuItem{"Upgrade to WebSecMap PRO", func() { run("/usr/games/sl") }},
 	menuItem{"", func() {}},
 	menuItem{"Enable/disable servertool at login", func() {
 		flagFile := "/home/" + os.Getenv("SUDO_USER") + "/.no_servertool"
@@ -363,7 +363,7 @@ func main() {
 	}
 
 	fmt.Println()
-	fmt.Println("Welcome to the Failmap server administration tool.")
+	fmt.Println("Welcome to the WebSecMap server administration tool.")
 	fmt.Println()
 	fmt.Println("This tool will help with basic configuration tasks and")
 	fmt.Println("incidental maintenance/monitoring.")

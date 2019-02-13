@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.provision "shell", inline: <<-SHELL
       # wait for everthing to be online
-      echo "Waiting up to 30 seconds for failmap to be online before starting tests."
+      echo "Waiting up to 30 seconds for websecmap to be online before starting tests."
       timeout 30 /bin/sh -c 'while sleep 1; do curl -sSvk https://faalkaart.test 2>/dev/null | grep MSPAINT >/dev/null && exit 0; done'
       SHELL
 
@@ -77,12 +77,12 @@ Vagrant.configure("2") do |config|
       base::dns::localhost_redirects: [faalkaart.test,www.faalkaart.test,admin.faalkaart.test]
       "
 
-      GIT_SOURCE=/vagrant FAILMAP_CONFIGURATION="$CONFIGURATION" /vagrant/install.sh
+      GIT_SOURCE=/vagrant WEBSECMAP_CONFIGURATION="$CONFIGURATION" /vagrant/install.sh
       SHELL
 
     config.vm.provision "shell", inline: <<-SHELL
       # wait for everthing to be online
-      echo "Waiting up to 60 seconds for failmap to be online before starting tests."
+      echo "Waiting up to 60 seconds for websecmap to be online before starting tests."
       timeout 60 /bin/sh -c 'while sleep 1; do curl -sSvk https://faalkaart.test 2>/dev/null | grep MSPAINT >/dev/null && exit 0; done'
       SHELL
 

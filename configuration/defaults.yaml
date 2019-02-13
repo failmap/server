@@ -4,10 +4,10 @@
 classes:
   - sites
   - base::docker
-  - apps::failmap
-  - apps::failmap::admin
-  - apps::failmap::frontend
-  - apps::failmap::worker
+  - apps::websecmap
+  - apps::websecmap::admin
+  - apps::websecmap::frontend
+  - apps::websecmap::worker
 
 # site config
 sites::disable_default: true

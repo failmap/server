@@ -41,30 +41,30 @@ var facts = map[string]*fact{
 	"Website domain name": &fact{
 		func() (string, error) {
 			return cmdOutput("/opt/puppetlabs/bin/puppet", "lookup",
-				"--hiera_config=/opt/failmap/server/code/puppet/hiera.yaml",
-				"--render-as=s", "apps::failmap::hostname", "--default=''")
+				"--hiera_config=/opt/websecmap/server/code/puppet/hiera.yaml",
+				"--render-as=s", "apps::websecmap::hostname", "--default=''")
 		}, "", nil,
 	},
 	"Administrative e-mail": &fact{
 		func() (string, error) {
 			return cmdOutput("/opt/puppetlabs/bin/puppet", "lookup",
-				"--hiera_config=/opt/failmap/server/code/puppet/hiera.yaml",
+				"--hiera_config=/opt/websecmap/server/code/puppet/hiera.yaml",
 				"--render-as=s", "letsencrypt::email", "--default=''")
 		}, "", nil,
 	},
 	"Server configuration version": &fact{
 		func() (string, error) {
-			return cmdOutput("git", "--git-dir=/opt/failmap/server/.git", "rev-list", "--all", "--count")
+			return cmdOutput("git", "--git-dir=/opt/websecmap/server/.git", "rev-list", "--all", "--count")
 		}, "", nil,
 	},
 	"Server configuration hash": &fact{
 		func() (string, error) {
-			return cmdOutput("git", "--git-dir=/opt/failmap/server/.git", "rev-parse", "--short", "HEAD")
+			return cmdOutput("git", "--git-dir=/opt/websecmap/server/.git", "rev-parse", "--short", "HEAD")
 		}, "", nil,
 	},
 	"Configuration release channel": &fact{
 		func() (string, error) {
-			branch, err := cmdOutput("git", "--git-dir=/opt/failmap/server/.git", "rev-parse", "--abbrev-ref", "HEAD")
+			branch, err := cmdOutput("git", "--git-dir=/opt/websecmap/server/.git", "rev-parse", "--abbrev-ref", "HEAD")
 			if err != nil {
 				return "", err
 			}
@@ -76,14 +76,14 @@ var facts = map[string]*fact{
 	},
 	"Application version": &fact{
 		func() (string, error) {
-			return cmdOutput("/usr/local/bin/failmap", "shell",
-				"-c", "import failmap; print(failmap.__version__)")
+			return cmdOutput("/usr/local/bin/websecmap", "shell",
+				"-c", "import websecmap; print(websecmap.__version__)")
 		}, "", nil,
 	},
 	"Administrative users": &fact{
 		func() (string, error) {
 			accountData, err := cmdOutput("/opt/puppetlabs/bin/puppet", "lookup",
-				"--hiera_config=/opt/failmap/server/code/puppet/hiera.yaml",
+				"--hiera_config=/opt/websecmap/server/code/puppet/hiera.yaml",
 				"--render-as=json", "--merge=deep", "accounts::users", "--default=")
 			if err != nil {
 				return "", err

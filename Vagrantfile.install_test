@@ -35,16 +35,16 @@ Vagrant.configure("2") do |config|
 
     # inject settings into installation script to allow proper testing
     CONFIGURATION="
-    apps::failmap::hostname: faalkaart.test
+    apps::websecmap::hostname: faalkaart.test
     letsencrypt::staging: true
     sites::dh_keysize: 512
     base::dns::localhost_redirects: [faalkaart.test,www.faalkaart.test,admin.faalkaart.test]
     "
 
-    GIT_SOURCE=/vagrant FAILMAP_CONFIGURATION="$CONFIGURATION" /vagrant/install.sh
+    GIT_SOURCE=/vagrant WEBSECMAP_CONFIGURATION="$CONFIGURATION" /vagrant/install.sh
 
     # wait for everthing to be online
-    echo "Waiting for failmap to be online before starting tests."
+    echo "Waiting for websecmap to be online before starting tests."
     timeout 30 /bin/sh -c 'while sleep 1; do curl -sSvk https://faalkaart.test 2>/dev/null | grep MSPAINT >/dev/null && exit 0; done'
     SHELL
 

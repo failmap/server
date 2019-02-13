@@ -1,6 +1,6 @@
 # Quickstart/local testing/development
 
-For local testing/development a Vagrant setup is provided with this repsitory. This allows to run a local instance of the entire Failmap environment in a virtual machine.
+For local testing/development a Vagrant setup is provided with this repsitory. This allows to run a local instance of the entire WebSecMap environment in a virtual machine.
 
 ## Requirements
 
@@ -35,4 +35,3 @@ And can be stopped/removed using these commands:
 To access the website point your browser to:
 
     http://faalserver.faalkaart.test
-

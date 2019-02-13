@@ -4,9 +4,9 @@
 classes:
   # required for interface hash
   - network
-  - apps::failmap::monitoring
-  - apps::failmap::monitoring::server
-  - apps::failmap::broker
+  - apps::websecmap::monitoring
+  - apps::websecmap::monitoring::server
+  - apps::websecmap::broker
 
 
 # letsencrypt account settings
@@ -26,10 +26,10 @@ network::interfaces_hash:
 
 base::docker::ipv6_ndpproxy: 2a01:7c8:aac0:56b::0/64
 base::docker::ipv6_subnet: 2a01:7c8:aac0:56b:0::0/80
-apps::failmap::ipv6_subnet: 2a01:7c8:aac0:56b:1::0/80
+apps::websecmap::ipv6_subnet: 2a01:7c8:aac0:56b:1::0/80
 
-# CA for validating access to administrative instance of Failmap application
-apps::failmap::admin::client_ca: &failmap_ca |
+# CA for validating access to administrative instance of WebSecMap application
+apps::websecmap::admin::client_ca: &websecmap_ca |
   -----BEGIN CERTIFICATE-----
   MIIEQDCCAyigAwIBAgIQEmLWz+QdooUgvAF2olReXTANBgkqhkiG9w0BAQsFADCB
   uTELMAkGA1UEBhMCTkwxDDAKBgNVBAgTA04vQTEMMAoGA1UEBxMDTi9BMQwwCgYD
@@ -57,7 +57,7 @@ apps::failmap::admin::client_ca: &failmap_ca |
   -----END CERTIFICATE-----
 
 # Set frontend hostname for this server
-apps::failmap::hostname: basisbeveiliging.nl
+apps::websecmap::hostname: basisbeveiliging.nl
 
 sites::vhost_webroot:
   faalkaart.nl: {}
@@ -67,22 +67,22 @@ base::files:
   /var/www/faalkaart.nl/html/index.html:
     require: File[/var/www/faalkaart.nl/html/]
     content: |
-      <head><meta http-equiv="refresh" content="0;URL='https://%{lookup('apps::failmap::hostname')}/'" /></head>
-      You are being redirected to <a href="https://%{lookup('apps::failmap::hostname')}/">https://%{lookup('apps::failmap::hostname')}/</a>
+      <head><meta http-equiv="refresh" content="0;URL='https://%{lookup('apps::websecmap::hostname')}/'" /></head>
+      You are being redirected to <a href="https://%{lookup('apps::websecmap::hostname')}/">https://%{lookup('apps::websecmap::hostname')}/</a>
   /var/www/admin.faalkaart.nl/html/index.html:
     require: File[/var/www/admin.faalkaart.nl/html/]
     content: |
-      <head><meta http-equiv="refresh" content="0;URL='https://admin.%{lookup('apps::failmap::hostname')}/'" /></head>
-      You are being redirected to <a href="https://admin.%{lookup('apps::failmap::hostname')}/">https://admin.%{lookup('apps::failmap::hostname')}/</a>
+      <head><meta http-equiv="refresh" content="0;URL='https://admin.%{lookup('apps::websecmap::hostname')}/'" /></head>
+      You are being redirected to <a href="https://admin.%{lookup('apps::websecmap::hostname')}/">https://admin.%{lookup('apps::websecmap::hostname')}/</a>
 
 # CA for validating access to monitoring frontends (Grafana)
-apps::failmap::monitoring::server::client_ca: *failmap_ca
+apps::websecmap::monitoring::server::client_ca: *websecmap_ca
 
 # allow external connections to broker for remote workers (scanners)
-apps::failmap::broker::enable_remote: true
+apps::websecmap::broker::enable_remote: true
 
 # CA for validating remote workers connecting with the broker
-apps::failmap::broker::client_ca: *failmap_ca
+apps::websecmap::broker::client_ca: *websecmap_ca
 
 # users & sudo permissions
 accounts::users:
@@ -112,4 +112,4 @@ accounts::users:
 # We prefer not having secrets that need to be deployed to the server and still have to think
 # of a good way to make this work for non-http TLS ports like Redis (one such solution might be
 # delagating letsencrypt dns-01 TXT records and running a DNS daemon on the server).
-apps::failmap::broker::tls_combined_path: "/etc/letsencrypt.sh/certs/%{lookup('apps::failmap::hostname')}/combined.pem"
+apps::websecmap::broker::tls_combined_path: "/etc/letsencrypt.sh/certs/%{lookup('apps::websecmap::hostname')}/combined.pem"

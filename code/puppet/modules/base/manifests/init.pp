@@ -47,29 +47,29 @@ class base (
     content => template('base/motd.erb'),
   }
 
-  file { '/usr/local/bin/failmap-server-update':
+  file { '/usr/local/bin/websecmap-server-update':
     ensure => link,
-    target => '/opt/failmap/server/scripts/update.sh',
+    target => '/opt/websecmap/server/scripts/update.sh',
   }
 
-  file { '/usr/local/bin/failmap-server-apply-configuration':
-    content => "#!/bin/bash\nset -e\ncd /opt/failmap/server\n/opt/failmap/server/scripts/apply.sh",
+  file { '/usr/local/bin/websecmap-server-apply-configuration':
+    content => "#!/bin/bash\nset -e\ncd /opt/websecmap/server\n/opt/websecmap/server/scripts/apply.sh",
     mode    => '0755',
   }
 
   # ensure source is present
-  file { '/opt/failmap/':
+  file { '/opt/websecmap/':
     ensure => directory,
     owner  => root,
     group  => root,
   }
-  -> vcsrepo { '/opt/failmap/server/':
+  -> vcsrepo { '/opt/websecmap/server/':
     ensure   => present,
     provider => git,
     source   => $source,
   }
   # prevent unauthorized access to configuration
-  -> file { '/opt/failmap/server/configuration':
+  -> file { '/opt/websecmap/server/configuration':
     ensure => directory,
     owner  => root,
     group  => sudo,

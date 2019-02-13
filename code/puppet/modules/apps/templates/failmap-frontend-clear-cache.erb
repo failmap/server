@@ -1,9 +1,0 @@
-#!/bin/bash
-
-set -xe
-
-# remove all cached files
-rm -r /var/cache/nginx/<%= @hostname %>/*
-
-# restart nginx to make it forget about previous cache
-systemctl restart nginx.service
