@@ -38,6 +38,12 @@ class apps::websecmap::admin (
 
   $secret_key = simplib::passgen('secret_key', {'length' => 32})
 
+  if $hostname == 'admin.default' {
+    $allowed_hosts = '*'
+  } else {
+    $allowed_hosts = $hostname
+  }
+
   # common options for all docker invocations (ie: cli helpers/service)
   $docker_environment = [
     # database settings
@@ -49,7 +55,8 @@ class apps::websecmap::admin (
     "DB_PASSWORD=${db_password}",
     # django generic settings
     "SECRET_KEY=${secret_key}",
-    "ALLOWED_HOSTS=*",
+    "ALLOWED_HOSTS=${allowed_hosts}",
+    "USE_REMOTE_USER=yes",
     'DEBUG=',
     # message broker settings
     "BROKER=${broker}",
