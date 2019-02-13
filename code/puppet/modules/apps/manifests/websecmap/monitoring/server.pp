@@ -37,7 +37,12 @@ class apps::websecmap::monitoring::server (
   # Grafana Graphing frontend
   $appname = grafana
 
-  docker::run { $appname:
+  file { '/srv/grafana':
+    ensure => directory,
+    # http://docs.grafana.org/installation/docker/#user-id-changes
+    owner => 472,
+  }
+  ~> docker::run { $appname:
     image   => 'grafana/grafana',
     links   => ['influxdb:influxdb'],
     volumes => ['/srv/grafana/:/var/lib/grafana/'],
