@@ -66,7 +66,7 @@ With that said please follow these instructions to get a WebSecMap instance up a
 
 1. Run the following command to start installation:
 
-        wget -q -O- https://gitlab.com/websecmap/server/raw/master/install.sh > /install.sh; /bin/bash /install.sh
+        wget -q -O- https://gitlab.com/internet-cleanup-foundation/server/raw/master/install.sh > /install.sh; /bin/bash /install.sh
 
 
 1. Grab a Club-Mate (or 2) and wait until everything completes and you are greeted by a rainbow.
@@ -83,7 +83,7 @@ With that said please follow these instructions to get a WebSecMap instance up a
 
 ## Upgrading
 
-WebSecMap server configuration is split into a _base configuration_ (maintained by Internet Cleanup Foundation at https://gitlab.com/websecmap/server/) and a _server configuration_ (with customizations for a specific installation).
+WebSecMap server configuration is split into a _base configuration_ (maintained by Internet Cleanup Foundation at https://gitlab.com/internet-cleanup-foundation/server/) and a _server configuration_ (with customizations for a specific installation).
 
 If new features or bugfixes are developed in the _base configuration_ the server can be updated on demand using the following procedure:
 

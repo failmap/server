@@ -89,7 +89,7 @@ class apps::websecmap::admin (
     systemd_restart => 'always',
   }
   # ensure containers are up before restarting nginx
-  # https://gitlab.com/websecmap/server/issues/8
+  # https://gitlab.com/internet-cleanup-foundation/server/issues/8
   Docker::Run[$appname] -> Service['nginx']
 
   # disable basic auth (user/password authentication) if client certificate authentication is enabled

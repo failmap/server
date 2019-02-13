@@ -20,7 +20,7 @@ Use the following command to run a remote worker for a WebSecMap instance:
       websecmap/websecmap:latest \
       celery worker --loglevel info --concurrency=10
 
-`WORKER_ROLE` determines the kind of tasks this worker will pick up, for reference: https://gitlab.com/websecmap/websecmap/blob/master/websecmap/celery/worker.py
+`WORKER_ROLE` determines the kind of tasks this worker will pick up, for reference: https://gitlab.com/internet-cleanup-foundation/websecmap/blob/master/websecmap/celery/worker.py
 
 `BROKER` is the URL to the Redis message broker to connect to.
 

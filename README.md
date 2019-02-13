@@ -20,7 +20,7 @@ This configuration is intended to create a production quality, public facing, se
 
 ## Development
 
-If you just like to try out WebSecMap without the intent to have it publicly accessible, or you just want to develop features for the app please have a look at the [WebSecMap](https://gitlab.com/websecmap/websecmap) repository instead.
+If you just like to try out WebSecMap without the intent to have it publicly accessible, or you just want to develop features for the app please have a look at the [WebSecMap](https://gitlab.com/internet-cleanup-foundation/websecmap) repository instead.
 
 For development or local testing of the provisioning please refer to [Development](documentation/development.md) documentation.
 

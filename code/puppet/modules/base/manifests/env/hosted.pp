@@ -32,7 +32,7 @@ class base::env::hosted (
   # remind superusers of configurationmanagement
   file {
       '/etc/sudoers.lecture':
-            content => "THIS HOST IS MANAGED BY PUPPET. Please only make permanent changes\nthrough puppet and do not expect manual changes to be maintained!\nMore info: https://gitlab.com/websecmap/server\n\n";
+            content => "THIS HOST IS MANAGED BY PUPPET. Please only make permanent changes\nthrough puppet and do not expect manual changes to be maintained!\nMore info: https://gitlab.com/internet-cleanup-foundation/server\n\n";
   }
   -> sudo::conf { 'lecture':
     priority => 10,
