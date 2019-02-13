@@ -132,7 +132,7 @@ class apps::websecmap::admin (
       ssl                  => true,
       ssl_only             => true,
       www_root             => undef,
-      proxy                => "${appname}.service.dc1.consul:8000",
+      proxy                => "http://${appname}.service.dc1.consul:8000",
       location             => '/admin/',
       auth_basic           => $auth_basic,
       auth_basic_user_file => $auth_basic_user_file,
