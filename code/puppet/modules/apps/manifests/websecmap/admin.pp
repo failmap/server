@@ -49,7 +49,7 @@ class apps::websecmap::admin (
     "DB_PASSWORD=${db_password}",
     # django generic settings
     "SECRET_KEY=${secret_key}",
-    "ALLOWED_HOSTS=${hostname}",
+    "ALLOWED_HOSTS=*",
     'DEBUG=',
     # message broker settings
     "BROKER=${broker}",
