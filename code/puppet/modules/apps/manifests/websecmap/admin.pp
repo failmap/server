@@ -115,38 +115,6 @@ class apps::websecmap::admin (
     proxy_timeout        => '90s',
   }
 
-  if $auth_basic {
-    nginx::resource::location { 'frontend-grafana':
-      server               => $apps::websecmap::hostname,
-      ssl                  => true,
-      ssl_only             => true,
-      www_root             => undef,
-      resolver             => ['127.0.0.1:8600'],
-      location_cfg_append  => {
-        'set $backend' => 'http://grafana.service.dc1.consul:3000',
-      },
-      location             => '/grafana/',
-      auth_basic           => $auth_basic,
-      auth_basic_user_file => $auth_basic_user_file,
-    }
-
-    nginx::resource::location { 'frontend-admin':
-      server               => $apps::websecmap::hostname,
-      ssl                  => true,
-      ssl_only             => true,
-      www_root             => undef,
-      proxy                => "\$backend",
-      resolver             => ['127.0.0.1:8600'],
-      location_cfg_append  => {
-        'set $backend' => "http://${appname}.service.dc1.consul:8000",
-      },
-      location             => '/admin/',
-      auth_basic           => $auth_basic,
-      auth_basic_user_file => $auth_basic_user_file,
-    }
-
-  }
-
   # add convenience command to run admin actions via container
   $docker_environment_args = join(prefix($docker_environment, '-e'), ' ')
   file { '/usr/local/bin/websecmap':
