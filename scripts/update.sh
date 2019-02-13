@@ -13,13 +13,14 @@ cd /opt/websecmap/server
 # pull in latest changed from upstream
 git remote update
 
+branch=$(git rev-parse --abbrev-ref HEAD)
+
 echo
 echo "The following changes will be applied"
 git log --pretty=oneline "$branch...origin/$branch"
 echo
 
 # force update current working directory to upstream
-branch=$(git rev-parse --abbrev-ref HEAD)
 git reset --hard "origin/$branch"
 
 # make sure puppet correct modules are installed
