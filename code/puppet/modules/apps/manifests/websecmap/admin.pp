@@ -126,6 +126,20 @@ class apps::websecmap::admin (
       auth_basic           => $auth_basic,
       auth_basic_user_file => $auth_basic_user_file,
     }
+
+    nginx::resource::location { 'frontend-admin':
+      server               => $apps::websecmap::hostname,
+      ssl                  => true,
+      ssl_only             => true,
+      www_root             => undef,
+      proxy                => "${appname}.service.dc1.consul:8000",
+      location             => '/admin/',
+      auth_basic           => $auth_basic,
+      auth_basic_user_file => $auth_basic_user_file,
+      caching              => disabled,
+      proxy_timeout        => '90s',
+    }
+
   }
 
   # add convenience command to run admin actions via container
