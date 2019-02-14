@@ -50,6 +50,7 @@ class apps::websecmap::monitoring::server (
       "GF_SERVER_ROOT_URL=https://admin.${apps::websecmap::hostname}/grafana/",
       "GF_SERVER_DOMAIN=admin.${apps::websecmap::hostname}",
       'GF_INSTALL_PLUGINS=grafana-piechart-panel',
+      'GF_AUTH_BASIC_ENABLED=false',
       'GF_AUTH_ANONYMOUS_ENABLED=true',
       'GF_AUTH_ANONYMOUS_ORG_ROLE=Editor',
     ],
