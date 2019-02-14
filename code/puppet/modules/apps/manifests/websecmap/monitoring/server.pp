@@ -47,8 +47,6 @@ class apps::websecmap::monitoring::server (
     links   => ['influxdb:influxdb'],
     volumes => ['/srv/grafana/:/var/lib/grafana/'],
     env     => [
-      "GF_SERVER_ROOT_URL=https://admin.${apps::websecmap::hostname}/grafana/",
-      "GF_SERVER_DOMAIN=admin.${apps::websecmap::hostname}",
       'GF_INSTALL_PLUGINS=grafana-piechart-panel',
       'GF_AUTH_BASIC_ENABLED=false',
       'GF_AUTH_ANONYMOUS_ENABLED=true',
