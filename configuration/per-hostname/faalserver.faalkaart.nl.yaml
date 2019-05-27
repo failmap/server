@@ -4,10 +4,6 @@
 classes:
   # required for interface hash
   - network
-  - apps::websecmap::monitoring
-  - apps::websecmap::monitoring::server
-  - apps::websecmap::broker
-
 
 # letsencrypt account settings
 letsencrypt::email: info@faalkaart.nl

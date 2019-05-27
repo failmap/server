@@ -7,6 +7,7 @@ classes:
   - apps::websecmap
   - apps::websecmap::admin
   - apps::websecmap::frontend
+  - apps::websecmap::broker
   - apps::websecmap::worker
   - apps::websecmap::monitoring
   - apps::websecmap::monitoring::server
