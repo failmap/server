@@ -40,7 +40,7 @@ class apps::websecmap::monitoring::server (
   file { '/srv/grafana':
     ensure => directory,
     # http://docs.grafana.org/installation/docker/#user-id-changes
-    owner => 472,
+    owner  => 472,
   }
   ~> docker::run { $appname:
     image   => 'grafana/grafana',
@@ -55,14 +55,14 @@ class apps::websecmap::monitoring::server (
   }
 
   nginx::resource::location { 'admin-grafana':
-    server   => "admin.${apps::websecmap::hostname}",
-    ssl      => true,
-    ssl_only => true,
-    www_root => undef,
-    proxy                => "\$backend",
-    location_cfg_append  => {
+    server              => "admin.${apps::websecmap::hostname}",
+    ssl                 => true,
+    ssl_only            => true,
+    www_root            => undef,
+    proxy               => "\$backend",
+    location_cfg_append => {
       'set $backend' => 'http://grafana.service.dc1.consul:3000',
     },
-    location => '/grafana/',
+    location            => '/grafana/',
   }
 }

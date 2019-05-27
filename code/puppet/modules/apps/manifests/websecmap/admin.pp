@@ -56,7 +56,7 @@ class apps::websecmap::admin (
     # django generic settings
     "SECRET_KEY=${secret_key}",
     "ALLOWED_HOSTS=${allowed_hosts}",
-    "USE_REMOTE_USER=yes",
+    'USE_REMOTE_USER=yes',
     'DEBUG=',
     # message broker settings
     "BROKER=${broker}",

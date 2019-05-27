@@ -164,7 +164,7 @@ class apps::websecmap::frontend (
     www_root             => undef,
     proxy                => "\$backend",
     location_cfg_append  => {
-      'set $backend' => "http://websecmap-admin.service.dc1.consul:8000",
+      'set $backend' => 'http://websecmap-admin.service.dc1.consul:8000',
     },
     location             => '/admin/',
     auth_basic           => $auth_basic,
