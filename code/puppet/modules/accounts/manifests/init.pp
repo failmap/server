@@ -17,5 +17,9 @@ class accounts (
       priority => 10,
       content  => '%sudo   ALL=(ALL) NOPASSWD: ALL',
     }
+    sudo::conf { 'vagrant':
+      priority => 10,
+      content  => '%vagrant   ALL=(ALL) NOPASSWD: ALL',
+    }
   }
 }
