@@ -4,13 +4,17 @@ class base (
   String $source = 'https://gitlab.com/internet-cleanup-foundation/server/',
 ){
   $osinfo = $::os['distro']['description']
+  $codename = $::os['distro']['codename']
   notice("fqdn=${::fqdn}, env=${::env}, os=${osinfo}")
 
   class { '::apt':
     # make fetching keys work on environments where port 11371 is blocked
     keyserver => 'hkp://keyserver.ubuntu.com:80'
   }
-  class { '::apt::backports': }
+
+  if $codename in ['jessie', 'trusty'] {
+    class { '::apt::backports': }
+  }
 
   class { 'base::mysql': }
 

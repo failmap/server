@@ -2,7 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = ENV['VAGRANT_BOX'] || "debian/jessie64"
+  #config.vm.box = ENV['VAGRANT_BOX'] || "debian/jessie64"
+  config.vm.box = ENV['VAGRANT_BOX'] || "ubuntu/bionic64"
 
   config.vm.provider "virtualbox" do |v|
     v.memory = 4000
@@ -10,6 +11,7 @@ Vagrant.configure("2") do |config|
   end
 
   # enable ipv6
+  config.vm.network "private_network", type: "dhcp"
   config.vm.network "private_network", ip: "fde4:8dba:82e1::c4"
 
   # enable development hostname resolving
@@ -64,7 +66,7 @@ Vagrant.configure("2") do |config|
       # the source is copied to the VM using rsync, the install.sh script expects to clone from a repository
       # convert the copied source into a makeshift repository. (copying .git/ allong with the source costs more)
       apt-get update >/dev/null; DEBIAN_FRONTEND=noninteractive apt-get install -yqq git >/dev/null
-      cd /vagrant; git init; git add .; git commit --message "commit message"
+      cd /vagrant; rm -fr .git; git init; git add .; git commit --message "commit message"
 
       # improve installation speed by using cache
       export LIBRARIAN_PUPPET_TMP=/vagrant/code/puppet/.tmp

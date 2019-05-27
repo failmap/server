@@ -120,7 +120,8 @@ class apps::websecmap::broker (
     mode    => '0644',
   }
   ~> service {'redis-queue-monitor.timer':
-    ensure => running,
-    enable => true,
+    ensure   => running,
+    enable   => true,
+    provider => systemd,
   }
 }
