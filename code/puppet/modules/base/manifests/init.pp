@@ -6,7 +6,10 @@ class base (
   $osinfo = $::os['distro']['description']
   notice("fqdn=${::fqdn}, env=${::env}, os=${osinfo}")
 
-  class { '::apt': }
+  class { '::apt':
+    # make fetching keys work on environments where port 11371 is blocked
+    keyserver => 'hkp://keyserver.ubuntu.com:80'
+  }
   class { '::apt::backports': }
 
   class { 'base::mysql': }
