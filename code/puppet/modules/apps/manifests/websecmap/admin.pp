@@ -103,9 +103,11 @@ class apps::websecmap::admin (
   if $client_ca {
     $auth_basic = undef
     $auth_basic_user_file = undef
+    $location_cfg_append = undef
   } else {
     $auth_basic = 'Admin login'
     $auth_basic_user_file = '/etc/nginx/admin.htpasswd'
+    $location_cfg_append = {"proxy_set_header" => "REMOTE_USER \$remote_user"}
   }
 
   sites::vhosts::proxy { $hostname:
@@ -116,6 +118,7 @@ class apps::websecmap::admin (
     client_ca            => $client_ca,
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,
+    location_cfg_append  => $location_cfg_append,
     # admin is accessible for authenticated users only that need to see a live view
     # of changes, do not cache anything
     caching              => disabled,
