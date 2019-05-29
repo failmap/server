@@ -286,6 +286,7 @@ func configureUsers() {
 		fmt.Printf("\nFailed to write configuration to file!\n\n")
 		return
 	}
+	fmt.Printf("\nConfiguring changes in user accounts.\n\n")
 	run("/usr/local/bin/websecmap-server-apply-configuration")
 
 	facts["Administrative users"].value = ""
