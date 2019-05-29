@@ -142,6 +142,7 @@ class apps::websecmap::frontend (
 
   $auth_basic = 'Admin login'
   $auth_basic_user_file = '/etc/nginx/admin.htpasswd'
+  $remote_user_header = {"proxy_set_header" => "REMOTE_USER \$remote_user"}
 
   nginx::resource::location { 'frontend-grafana':
     server               => $apps::websecmap::hostname,
@@ -149,9 +150,9 @@ class apps::websecmap::frontend (
     ssl_only             => true,
     www_root             => undef,
     proxy                => "\$backend",
-    location_cfg_append  => {
+    location_cfg_append  => merge({
       'set $backend' => 'http://grafana.service.dc1.consul:3000',
-    },
+    }, $remote_user_header),
     location             => '/grafana/',
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,
@@ -163,9 +164,9 @@ class apps::websecmap::frontend (
     ssl_only             => true,
     www_root             => undef,
     proxy                => "\$backend",
-    location_cfg_append  => {
+    location_cfg_append  => merge({
       'set $backend' => 'http://websecmap-admin.service.dc1.consul:8000',
-    },
+    }, $remote_user_header),
     location             => '/admin/',
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,
