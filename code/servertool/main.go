@@ -353,8 +353,7 @@ var menu = []menuItem{
 			fmt.Println("Enabling servertool at login")
 		}
 	}},
-	menuItem{"Escape to shell", func() { run(os.Getenv("SHELL")) }},
-	menuItem{"Exit/Logout", func() { os.Exit(0) }},
+	menuItem{"Exit/Shell (ctrl-c)", func() { os.Exit(0) }},
 }
 
 func main() {

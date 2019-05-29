@@ -13,6 +13,6 @@ class base::servertool {
 
   file {'/etc/profile.d/servertool.sh':
     content => '! test "$(whoami)" == "root" && [[ $- == *i* ]] && \
-                ! test -f $HOME/.no_servertool && sudo /usr/local/bin/websecmap-server-tool && exit'
+                ! test -f $HOME/.no_servertool && sudo /usr/local/bin/websecmap-server-tool'
   }
 }
