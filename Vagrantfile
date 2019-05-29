@@ -77,6 +77,10 @@ Vagrant.configure("2") do |config|
       letsencrypt::staging: true
       sites::dh_keysize: 512
       base::dns::localhost_redirects: [faalkaart.test,www.faalkaart.test,admin.faalkaart.test]
+      accounts::users:
+        wsm-user:
+          sudo: true
+          webpassword: wsm-user
       "
 
       GIT_SOURCE=/vagrant WEBSECMAP_CONFIGURATION="$CONFIGURATION" /vagrant/install.sh
@@ -91,7 +95,7 @@ Vagrant.configure("2") do |config|
     # run serverspec as a provisioner to test the previously provisioned machine
     config.vm.provision :serverspec do |spec|
       # pattern for specfiles to search
-      spec.pattern = 'tests/serverspec/{base,frontend}.rb'
+      spec.pattern = 'tests/serverspec/{base,frontend,remote-user}.rb'
     end
 
   end
