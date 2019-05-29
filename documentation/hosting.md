@@ -45,7 +45,7 @@ When using this installation method you will end up with a fully featured WebSec
 To install the fully featured WebSecMap server the following is required:
 
 - Dedicated bare-metal or virtual host with:
-  - Debian based Linux (Debian 8/9 or Ubuntu 18.04) clean installed
+  - Debian based Linux (Debian 9 or Ubuntu 18.04) clean installed
   - 1-2 CPU
   - 2-8GB RAM
   - 50-100GB disks

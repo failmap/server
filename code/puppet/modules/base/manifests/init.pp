@@ -12,8 +12,14 @@ class base (
     keyserver => 'hkp://keyserver.ubuntu.com:80'
   }
 
-  if $codename in ['jessie', 'trusty'] {
-    class { '::apt::backports': }
+  # still supporting jessie until faalserver is updated
+  if $codename == 'jessie' {
+    class { '::apt::backports':
+      location => 'http://archive.debian.org/debian',
+    }
+    apt::conf { 'allow-legacy-repos':
+      content => 'Acquire::Check-Valid-Until "0";',
+    }
   }
 
   class { 'base::mysql': }
