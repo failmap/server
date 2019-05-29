@@ -128,7 +128,7 @@ class apps::websecmap::admin (
   # add convenience command to run admin actions via container
   $docker_environment_args = join(prefix($docker_environment, '-e'), ' ')
   file { '/usr/local/bin/websecmap':
-    content => "#!/bin/bash\n/usr/bin/docker run --network ${pod} -ti ${docker_environment_args} \
+    content => "#!/bin/bash\n/usr/bin/docker run --network ${pod} \$(tty -s && echo '-ti') ${docker_environment_args} \
                 -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
                 --name ${pod}-\$(logname)-\$1-\$(date +%s) \
                 -e TERM=\$TERM --rm --user nobody ${image} \"\$@\"",
