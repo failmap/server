@@ -107,7 +107,7 @@ class apps::websecmap::admin (
   } else {
     $auth_basic = 'Admin login'
     $auth_basic_user_file = '/etc/nginx/admin.htpasswd'
-    $location_cfg_append = {"proxy_set_header" => "REMOTE_USER \$remote_user"}
+    $location_cfg_append = {'proxy_set_header' => "REMOTE_USER \$remote_user"}
   }
 
   sites::vhosts::proxy { $hostname:

@@ -142,7 +142,7 @@ class apps::websecmap::frontend (
 
   $auth_basic = 'Admin login'
   $auth_basic_user_file = '/etc/nginx/admin.htpasswd'
-  $remote_user_header = {"proxy_set_header" => "REMOTE_USER \$remote_user"}
+  $remote_user_header = {'proxy_set_header' => "REMOTE_USER \$remote_user"}
 
   nginx::resource::location { 'frontend-grafana':
     server               => $apps::websecmap::hostname,
