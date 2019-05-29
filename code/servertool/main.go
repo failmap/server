@@ -130,9 +130,10 @@ func configureUsers() {
 		}
 	}()
 	accountslist := facts["Administrative users"].Value()
-	accounts := strings.Split(accountslist, ",")
-	if accountslist == "-error retrieving value-" {
-		accounts = []string{}
+	accounts := []string{}
+
+	if !(accountslist == "-error retrieving value-" || accountslist == "") {
+		accounts = strings.Split(accountslist, ",")
 	}
 	prompt := promptui.Select{
 		Label: "Modify/delete existing administrative user, or add new one",
@@ -184,7 +185,7 @@ func configureUsers() {
 				}
 				for _, u := range forbiddenUsers {
 					if input == u {
-						return errors.New("This username is not allowed")
+						return errors.New("This username is not allowed, it either already exists, is a system user or reserved username.")
 					}
 				}
 
