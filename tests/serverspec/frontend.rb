@@ -30,9 +30,8 @@ end
 
 # stats have explicit cache which is different from the webserver 10 minute default
 # implicitly tests database migrations as it will return 500 if they are not applied
-describe command('curl -sSvk "https://faalkaart.test/data/terrible_urls/NL/municipality/0"') do
-  # should redirect www to no-www
-  its(:stderr) {should match /Cache-Control: max-age=86400/i}
+describe command('curl -sSvk "https://faalkaart.test/data/topwin/NL/municipality/0"') do
+  its(:stderr) {should match /Cache-Control: max-age=3600/i}
 end
 
 # all responses should be compressed
@@ -41,7 +40,7 @@ describe command('curl --compressed -sSvk "https://faalkaart.test/"') do
   its(:stderr) {should match /Content-Encoding: gzip/i}
 end
 # proxied JSON
-describe command('curl --compressed -sSvk "https://faalkaart.test/data/stats/NL/municipality/0"') do
+describe command('curl --compressed -sSvk "https://faalkaart.test/data/topwin/NL/municipality/0"') do
   its(:stderr) {should match /Content-Encoding: gzip/i}
 end
 # proxied static files
