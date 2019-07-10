@@ -44,6 +44,19 @@ class apps::websecmap::admin (
     $allowed_hosts = $hostname
   }
 
+  # disable basic auth (user/password authentication) if client certificate authentication is enabled
+  if $client_ca {
+    $auth_basic = undef
+    $auth_basic_user_file = undef
+    $location_cfg_append = undef
+    $use_remote_user = ''
+  } else {
+    $auth_basic = 'Admin login'
+    $auth_basic_user_file = '/etc/nginx/admin.htpasswd'
+    $location_cfg_append = {'proxy_set_header' => "REMOTE_USER \$remote_user"}
+    $use_remote_user = 'yes'
+  }
+
   # common options for all docker invocations (ie: cli helpers/service)
   $docker_environment = [
     # database settings
@@ -56,7 +69,7 @@ class apps::websecmap::admin (
     # django generic settings
     "SECRET_KEY=${secret_key}",
     "ALLOWED_HOSTS=${allowed_hosts}",
-    'USE_REMOTE_USER=yes',
+    "USE_REMOTE_USER=${use_remote_user}",
     'DEBUG=',
     # message broker settings
     "BROKER=${broker}",
@@ -98,17 +111,6 @@ class apps::websecmap::admin (
   # ensure containers are up before restarting nginx
   # https://gitlab.com/internet-cleanup-foundation/server/issues/8
   Docker::Run[$appname] -> Service['nginx']
-
-  # disable basic auth (user/password authentication) if client certificate authentication is enabled
-  if $client_ca {
-    $auth_basic = undef
-    $auth_basic_user_file = undef
-    $location_cfg_append = undef
-  } else {
-    $auth_basic = 'Admin login'
-    $auth_basic_user_file = '/etc/nginx/admin.htpasswd'
-    $location_cfg_append = {'proxy_set_header' => "REMOTE_USER \$remote_user"}
-  }
 
   sites::vhosts::proxy { $hostname:
     proxy                => "${appname}.service.dc1.consul:8000",
