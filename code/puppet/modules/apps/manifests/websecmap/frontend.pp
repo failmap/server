@@ -66,7 +66,7 @@ class apps::websecmap::frontend (
     command         => 'runuwsgi',
     volumes         => [
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
-      '/srv/failmap-frontend/uploads:/source/websecmap/uploads',
+      '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
       # temporary solution to allow screenshots to be hosted for live release
       '/srv/websecmap/images/screenshots/:/srv/websecmap/static/images/screenshots/',
     ],
@@ -100,7 +100,7 @@ class apps::websecmap::frontend (
     command         => 'runuwsgi',
     volumes         => [
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
-      '/srv/failmap-frontend/uploads:/source/websecmap/uploads',
+      '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
       # temporary solution to allow screenshots to be hosted for live release
       '/srv/websecmap/images/screenshots/:/srv/websecmap/static/images/screenshots/',
     ],
