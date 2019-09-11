@@ -59,6 +59,7 @@ class apps::websecmap::worker (
       # be informative and run memory efficient worker pool
       command         => "celery worker --loglevel=info ${worker_args}",
       volumes         => [
+        '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
         # make mysql accesible from within container
         '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       ],
@@ -84,6 +85,7 @@ class apps::websecmap::worker (
     image           => $image,
     command         => 'celery beat -linfo --pidfile=/var/tmp/celerybeat.pid',
     volumes         => [
+      '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
       # make mysql accesible from within container
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
     ],
