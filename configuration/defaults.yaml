@@ -25,6 +25,8 @@ letsencrypt::post_command: '/bin/systemctl reload nginx; which haproxy && /bin/s
 # See also base/mysql.pp
 mysql::server::package_name: "mysql-community-server"
 mysql::client::package_name: "mysql-community-client"
+# force mysql as mariadb on debian 9 is not yet tested
+mysql::server::service_name: mysql
 
 nginx::gzip: "on"
 

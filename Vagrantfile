@@ -2,8 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  #config.vm.box = ENV['VAGRANT_BOX'] || "debian/jessie64"
-  config.vm.box = ENV['VAGRANT_BOX'] || "ubuntu/bionic64"
+  config.vm.box = ENV['VAGRANT_BOX'] || "debian/stretch64"
+  # config.vm.box = ENV['VAGRANT_BOX'] || "ubuntu/bionic64"
 
   config.vm.provider "virtualbox" do |v|
     v.memory = 4000
