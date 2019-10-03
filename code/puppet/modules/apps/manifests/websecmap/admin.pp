@@ -83,6 +83,10 @@ class apps::websecmap::admin (
       mode   => '0700';
     "/srv/${appname}/env.file":
       ensure => present;
+    '/srv/websecmap-frontend/uploads':
+      ensure => directory,
+      owner  => nobody,
+      group  => nogroup;
   } -> Docker::Run[$appname]
 
   Docker::Image[$image]
