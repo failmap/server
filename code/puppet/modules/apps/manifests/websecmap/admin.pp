@@ -135,20 +135,12 @@ class apps::websecmap::admin (
   # add convenience command to run admin actions via container
   $docker_environment_args = join(prefix($docker_environment, '-e'), ' ')
   file { '/usr/local/bin/websecmap':
-    content => "#!/bin/bash\n/usr/bin/docker run --network ${pod} \$(tty -s && echo '-ti') ${docker_environment_args} \
-                -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
-                --name ${pod}-\$(logname)-\$1-\$(date +%s) \
-                -e TERM=\$TERM --rm --user nobody ${image} \"\$@\"",
-    # this file contains secrets, don't expose to non-root
-    mode    => '0700',
+    content => "#!/bin/bash\n/usr/bin/docker exec -ti -e TERM=\$TERM ${appname} /usr/local/bin/websecmap \"\$@\"",
+    mode    => '0744',
   }
   file { '/usr/local/bin/websecmap-background':
-    content => "#!/bin/bash\n/usr/bin/docker run -d --network ${pod} -i ${docker_environment_args} \
-                -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
-                --name ${pod}-\$(logname)-\$1-\$(date +%s) \
-                -e TERM=\$TERM --rm --user nobody ${image} \"\$@\"",
-    # this file contains secrets, don't expose to non-root
-    mode    => '0700',
+    content => "#!/bin/bash\n/usr/bin/docker exec -ti -d -e TERM=\$TERM ${appname} /usr/local/bin/websecmap \"\$@\"",
+    mode    => '0744',
   }
   file { '/usr/local/bin/websecmap-shell':
     content => "#!/bin/bash\n/usr/bin/docker exec -ti -e TERM=\$TERM ${appname} /bin/sh",
