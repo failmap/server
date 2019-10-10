@@ -13,6 +13,7 @@ class base::consul (
       bootstrap_expect => 1,
     },
     extra_options => '--advertise 127.0.0.1 -enable-script-checks',
+    init_style    => systemd,
   }
 
   # make consul DNS entries resolvable on host system
