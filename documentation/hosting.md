@@ -73,13 +73,38 @@ With that said please follow these instructions to get a WebSecMap instance up a
 
 1. You WebSecMap server is now ready, you can visit the frontend at it's public IP address or the domain name (if you have already configured a DNS record).
 
-1. HTTPS is enabled by default but with a **insecure** self-signed certificate. To properly configure automatic HTTPS using Letsencrypt please refer to [Configuring HTTPS](#Configuring HTTPS) or simply run the following command on the server:
+1. HTTPS is enabled by default but with a **insecure** self-signed certificate. To properly configure automatic HTTPS using Letsencrypt please use the server tool:
 
-        websecmap-server-setup-https
+        sudo websecmap-server-tool
 
-1. For visiting the administrative backend (https://example.com/admin/) or monitoring (https://example.com/grafana), credentials are required. Run the following command or refer to the [Admin Access](#Admin Access) section below for advanced configuration using client certificates:
+        > Configure domain name / Setup HTTPS
 
-        websecmap-server-setup-admin
+1. For visiting the administrative backend (https://example.com/admin/) or monitoring (https://example.com/grafana), credentials are required. You can create and manage admin user acces using the server tool:
+
+        sudo websecmap-server-tool
+
+        > Manage administrative users / SSH access
+
+## Troubleshooting
+
+If after the installation things don't work as expected please first try the following steps:
+
+Run server provisioning and verify configuration is complete:
+
+1. Open a terminal (eg: SSH) on the server and become root user (`sudo su -`)
+
+2. Run provisioning step:
+
+        sudo websecmap-server-apply-configuration
+
+3.    This command should provide output similar to this:
+
+        Starting server provisioning (showing Puppet catalog compiler warnings (deprecations, etc))
+        Notice: Scope(Class[Base]): fqdn=faalserver.faalkaart.test, env=hosted, os=Ubuntu 18.04.2 LTS
+        Notice: Compiled catalog for faalserver.faalkaart.test in environment production in 4.49 seconds
+        Notice: Applied catalog in 20.51 seconds
+
+      Any lines between `Notice: Compiled catalog for...` and `Notice: Applied catalog in...` indicate changes made to the system. If repeated apply commands still keep showing changes made this indicates a problem with provisioning. Please contact the Internet Cleanup Foundation team for further assistance (https://gitlab.com/internet-cleanup-foundation/web-security-map#get-involved).
 
 ## Upgrading
 
@@ -91,24 +116,7 @@ If new features or bugfixes are developed in the _base configuration_ the server
 
 1. Run the following command to pull in new changes and apply the configuration:
 
-        websecmap-server-update
-
-## Configuring HTTPS
-
-The server is configured with a default self-signed **insecure** certificate. But it is easy to configure automated certificates using Letsencrypt.
-
-Before enabling Letsencrypt make sure you have a DNS A record configured for the public IP address of the server. Next, run the following command to verify the DNS configuration and enable Letsencrypt:
-
-        websecmap-server-setup-https
-
-## Admin Access
-
-For visiting the administrative backend (https://admin.faalkaart.nl) a client certificate is required to authenticate the visitor.
-This certificate needs to be installed in your OS/browser. Without this certificate installed any attempt to access the administrative backend is probhibited.
-
-The certificate itself can be found on the server in `/opt/websecmap/ca/certs/client.p12` and it will be emailed to the address provided as administrator address during the installation. For information on how to install this on your system please refer to: https://www.google.com/search?q=install+p12+certificate
-
-### Multiple administrative user
+        sudo websecmap-server-update
 
 ## Configuration (advanced)
 
@@ -118,7 +126,7 @@ Aspects of the server can be customized in this file. All available settings and
 
 After the configuration file has changed, the following command has to be run to apply the new configuration:
 
-        websecmap-server-apply-configuration
+        sudo websecmap-server-apply-configuration
 
 ## Customization (advanced)
 

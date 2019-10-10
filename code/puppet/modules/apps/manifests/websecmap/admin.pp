@@ -138,6 +138,10 @@ class apps::websecmap::admin (
     content => "#!/bin/bash\n/usr/bin/docker exec -ti -e TERM=\$TERM ${appname} /usr/local/bin/websecmap \"\$@\"",
     mode    => '0744',
   }
+  file { '/usr/local/bin/websecmap-no-tty':
+    content => "#!/bin/bash\n/usr/bin/docker exec -i -e TERM=\$TERM ${appname} /usr/local/bin/websecmap \"\$@\"",
+    mode    => '0744',
+  }
   file { '/usr/local/bin/websecmap-background':
     content => "#!/bin/bash\n/usr/bin/docker exec -ti -d -e TERM=\$TERM ${appname} /usr/local/bin/websecmap \"\$@\"",
     mode    => '0744',
@@ -207,10 +211,14 @@ class apps::websecmap::admin (
     image           => $image,
     command         => 'celery flower --broker=redis://broker:6379/0 --port=8000',
     # combine specific and generic docker environment options
-    env             => [
+    env             => concat($docker_environment,[
       # name by which service is known to service discovery (consul)
       'SERVICE_NAME=websecmap-flower',
       'SERVICE_CHECK_HTTP=/',
+    ]),
+    volumes         => [
+      # make mysql accesible from within container
+      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
     ],
     net             => $pod,
     username        => 'nobody:nogroup',

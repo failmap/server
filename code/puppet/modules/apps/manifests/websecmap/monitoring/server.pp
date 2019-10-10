@@ -4,6 +4,10 @@ class apps::websecmap::monitoring::server (
 ){
   include ::apps::websecmap
 
+  docker_network { 'monitoring':
+    ensure   => present,
+  }
+
   # Influx Time-series database
   Class['docker']
   -> docker::run { 'influxdb':
@@ -12,6 +16,7 @@ class apps::websecmap::monitoring::server (
       '/srv/influxdb/data/:/var/lib/influxdb',
       '/srv/influxdb/config.toml:/etc/influxdb/influxdb.conf:ro',
     ],
+    net     => monitoring,
     env     => [
       'INFLUXDB_GRAPHITE_ENABLED=true',
     ]
@@ -46,6 +51,7 @@ class apps::websecmap::monitoring::server (
     image   => 'grafana/grafana',
     links   => ['influxdb:influxdb'],
     volumes => ['/srv/grafana/:/var/lib/grafana/'],
+    net     => monitoring,
     env     => [
       'GF_INSTALL_PLUGINS=grafana-piechart-panel',
       'GF_AUTH_BASIC_ENABLED=false',

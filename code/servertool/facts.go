@@ -76,7 +76,7 @@ var facts = map[string]*fact{
 	},
 	"Application version": &fact{
 		func() (string, error) {
-			return cmdOutput("/usr/local/bin/websecmap", "shell",
+			return cmdOutput("/usr/local/bin/websecmap-no-tty", "shell",
 				"-c", "import websecmap; print(websecmap.__version__)")
 		}, "", nil,
 	},
