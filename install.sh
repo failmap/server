@@ -24,8 +24,8 @@ if ! test "$(whoami)" == "root";then
 fi
 
 if ! grep -E 'Debian GNU/Linux 9|Ubuntu 18.04' /etc/os-release >/dev/null;then
-  echo "Error: this OS/release is not support!"
-  cat /etc/os-release
+  . /etc/os-release
+  echo "Error: the OS/release '$PRETTY_NAME' is not supported!"
   exit 1
 fi
 
