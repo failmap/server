@@ -42,10 +42,7 @@ systemctl stop apt-daily.service
 systemctl kill --kill-who=all apt-daily.service 2>/dev/null || true
 
 # wait until `apt-get updated` has been killed
-while ! (systemctl status apt-daily.service | grep -F -q dead)
-do
-  sleep 1;
-done
+timeout 10 /bin/bash -c "while ! (systemctl status apt-daily.service | grep -F -q dead); do sleep 1; done"
 
 # installing dependencies
 apt-get update -qq >/dev/null

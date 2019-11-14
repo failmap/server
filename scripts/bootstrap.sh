@@ -48,7 +48,7 @@ apt-get-install puppet-agent rsync apt-transport-https git ruby pwgen
 # used to install puppet modules using Puppetfile
 gem install -q librarian-puppet
 # dependencies for some puppet modules (telegraf, consul), TODO: find out why they are not installed automatically
-/opt/puppetlabs/puppet/bin/gem install -q toml-rb curl
+/opt/puppetlabs/puppet/bin/gem install -q toml-rb:1.1.2 curl
 rm -f "puppetlabs-release-pc1-${release}.deb"
 
 # remember bootstrap has run
