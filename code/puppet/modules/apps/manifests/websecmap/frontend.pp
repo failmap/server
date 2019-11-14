@@ -128,18 +128,24 @@ class apps::websecmap::frontend (
   }
 
   sites::vhosts::proxy { $hostname:
-    proxy            => "${appname}.service.dc1.consul:8000",
+    proxy                      => "${appname}.service.dc1.consul:8000",
     # use consul as proxy resolver
-    resolver         => ['127.0.0.1:8600'],
+    resolver                   => ['127.0.0.1:8600'],
     # allow upstream to set caching headers, cache upstream responses
     # and serve stale results if backend is unavailable or broken
-    caching          => upstream,
-    proxy_timeout    => '60s',
+    caching                    => upstream,
+    proxy_timeout              => '60s',
     # default timeout if not provided by upstream, make odd number to easily identify in web inspecter.
-    expires          => 599,
+    expires                    => 599,
     # if no explicit domainname is set fall back to listening on everything
-    default_vhost    => $default_vhost,
-    nowww_compliance => $nowww_compliance,
+    default_vhost              => $default_vhost,
+    nowww_compliance           => $nowww_compliance,
+    location_custom_cfg_append => {
+      # disable cache if visitor carries authentication cookie
+      'proxy_no_cache'     => "\$cookie_sessionid;",
+      'proxy_cache_bypass' =>  "\$cookie_sessionid;",
+    },
+
   }
 
   $auth_basic = 'Admin login'
