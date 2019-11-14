@@ -19,12 +19,25 @@ class base::env::hosted (
       ],
   }
 
+  # pam sudo ssh agent auth and user accounts
+  class { 'accounts': }
+
+  # disable password login if at least one user with ssh key is configured
+  $ssh_key_accounts = $::accounts::users.filter | $name, $account | {
+    ! empty($account.keys)
+  }
+  if empty($ssh_key_accounts) {
+    $password_authentication = yes
+  } else {
+    $password_authentication = no
+  }
+
   # enable ssh server
   class { '::ssh':
     storeconfigs_enabled => false,
     server_options       => {
       # improve ssh server security
-      'PasswordAuthentication' => no,
+      'PasswordAuthentication' => $password_authentication,
       'PermitRootLogin'        => no,
     }
   }
@@ -42,7 +55,4 @@ class base::env::hosted (
   swap_file::files { 'default':
       ensure   => present,
   }
-
-  # pam sudo ssh agent auth and user accounts
-  class { 'accounts': }
 }
