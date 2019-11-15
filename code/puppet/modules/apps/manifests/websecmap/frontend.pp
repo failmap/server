@@ -132,8 +132,8 @@ class apps::websecmap::frontend (
   } else {
     $cache_bypass = {
       # disable cache if visitor carries authentication cookie
-      'proxy_no_cache'     => "\$cookie_sessionid;",
-      'proxy_cache_bypass' =>  "\$cookie_sessionid;",
+      'proxy_no_cache'     => "\$cookie_sessionid",
+      'proxy_cache_bypass' =>  "\$cookie_sessionid",
     }
   }
 
