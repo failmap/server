@@ -24,7 +24,7 @@ class base::env::hosted (
 
   # disable password login if at least one user with ssh key is configured
   $ssh_key_accounts = $::accounts::users.filter | $name, $account | {
-    ! empty($account.keys)
+    ! empty($account[keys])
   }
   if empty($ssh_key_accounts) {
     $password_authentication = yes
