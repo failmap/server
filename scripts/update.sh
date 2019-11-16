@@ -21,7 +21,7 @@ git log --pretty="format: - %s" "$branch...origin/$branch"
 echo
 
 # force update current working directory to upstream
-git reset --hard "origin/$branch"
+git reset --hard "origin/$branch" >/dev/null
 
 # make sure puppet correct modules are installed
 (cd code/puppet/; librarian-puppet install)
