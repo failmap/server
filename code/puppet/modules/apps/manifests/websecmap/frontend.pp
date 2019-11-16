@@ -4,6 +4,8 @@ class apps::websecmap::frontend (
   $hostname = $apps::websecmap::hostname,
   $pod = $apps::websecmap::pod,
   $image = $apps::websecmap::image,
+  # by default assume www. is not configured
+  $default_nowww_compliance = class_c,
 ){
   $appname = "${pod}-frontend"
 
@@ -16,7 +18,7 @@ class apps::websecmap::frontend (
     $default_vhost = true
     $allowed_hosts = '*'
   } else {
-    $nowww_compliance = 'class_b'
+    $nowww_compliance = $default_nowww_compliance
     $default_vhost = false
     $allowed_hosts = $hostname
   }

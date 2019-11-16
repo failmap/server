@@ -54,6 +54,8 @@ apps::websecmap::admin::client_ca: &websecmap_ca |
 
 # Set frontend hostname for this server
 apps::websecmap::hostname: basisbeveiliging.nl
+# redirect www to non-www
+apps::websecmap::frontend::default_nowww_compliance: class_b
 
 sites::vhost_webroot:
   faalkaart.nl: {}
