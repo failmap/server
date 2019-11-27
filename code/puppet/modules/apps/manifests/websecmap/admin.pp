@@ -41,7 +41,7 @@ class apps::websecmap::admin (
   if $hostname == 'admin.default' {
     $allowed_hosts = '*'
   } else {
-    $allowed_hosts = $hostname
+    $allowed_hosts = join([$hostname, $apps::websecmap::hostname], ",")
   }
 
   # disable basic auth (user/password authentication) if client certificate authentication is enabled
