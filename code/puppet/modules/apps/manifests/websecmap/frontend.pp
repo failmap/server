@@ -129,31 +129,19 @@ class apps::websecmap::frontend (
     systemd_restart => 'always',
   }
 
-  if $apps::websecmap::admin::client_ca {
-    $cache_bypass = {}
-  } else {
-    $cache_bypass = {
-      # disable cache if visitor carries authentication cookie
-      'proxy_no_cache'     => "\$cookie_sessionid",
-      'proxy_cache_bypass' =>  "\$cookie_sessionid",
-    }
-  }
-
-
   sites::vhosts::proxy { $hostname:
-    proxy               => "${appname}.service.dc1.consul:8000",
+    proxy            => "${appname}.service.dc1.consul:8000",
     # use consul as proxy resolver
-    resolver            => ['127.0.0.1:8600'],
+    resolver         => ['127.0.0.1:8600'],
     # allow upstream to set caching headers, cache upstream responses
     # and serve stale results if backend is unavailable or broken
-    caching             => upstream,
-    proxy_timeout       => '60s',
+    caching          => upstream,
+    proxy_timeout    => '60s',
     # default timeout if not provided by upstream, make odd number to easily identify in web inspecter.
-    expires             => 599,
+    expires          => 599,
     # if no explicit domainname is set fall back to listening on everything
-    default_vhost       => $default_vhost,
-    nowww_compliance    => $nowww_compliance,
-    location_cfg_append => $cache_bypass,
+    default_vhost    => $default_vhost,
+    nowww_compliance => $nowww_compliance,
   }
 
   $auth_basic = 'Admin login'
@@ -184,6 +172,19 @@ class apps::websecmap::frontend (
       'set $backend' => 'http://websecmap-admin.service.dc1.consul:8000',
     }, $remote_user_header),
     location             => '/admin/',
+    auth_basic           => $auth_basic,
+    auth_basic_user_file => $auth_basic_user_file,
+  }
+
+  nginx::resource::location { '/manage/':
+    server               => $apps::websecmap::hostname,
+    ssl                  => true,
+    ssl_only             => true,
+    www_root             => undef,
+    proxy                => "\$backend",
+    location_cfg_append  => merge({
+      'set $backend' => 'http://websecmap-admin.service.dc1.consul:8000/',
+    }, $remote_user_header),
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,
   }
