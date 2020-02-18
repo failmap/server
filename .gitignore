@@ -7,3 +7,5 @@ configuration/settings.yaml
 configuration/settings.d/*.yaml
 code/servertool/main
 *.log
+
+.idea

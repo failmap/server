@@ -189,6 +189,19 @@ class apps::websecmap::frontend (
     auth_basic_user_file => $auth_basic_user_file,
   }
 
+  # the API is available after authentication, and has their own authentication routines.
+  # Functionality of the API is only available after authentication.
+  nginx::resource::location { "/api/":
+    server                     => $apps::websecmap::hostname,
+    ssl                        => true,
+    ssl_only                   => true,
+    www_root                   => undef,
+    proxy                      => "\$backend",
+    location_custom_cfg_append => {
+      'set'                => "\$backend http://${pod}-interactive.service.dc1.consul:8000;",
+    },
+  }
+
   file { "/etc/nginx/conf.d/${hostname}.rate_limit.conf":
     ensure  => present,
     content => "limit_req_zone \$binary_remote_addr zone=authentication:10m rate=3r/s;"
