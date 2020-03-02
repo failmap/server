@@ -1,11 +1,15 @@
 # monitoring collection and visualization server
 class apps::websecmap::monitoring::server (
   $client_ca=undef,
+  $docker_subnet=undef,
+  $docker_ip_range=undef,
 ){
   include ::apps::websecmap
 
   docker_network { 'monitoring':
     ensure   => present,
+    subnet => $docker_subnet,
+    ip_range => $docker_ip_range,
   }
 
   # Influx Time-series database
@@ -22,7 +26,8 @@ class apps::websecmap::monitoring::server (
     net     => monitoring,
     env     => [
       'INFLUXDB_GRAPHITE_ENABLED=true',
-    ]
+    ],
+    extra_parameters => "--ip=${apps::websecmap::docker_ip_addresses['influxdb']}",
   }
 
   $templates = join(prefix(suffix([
@@ -64,6 +69,7 @@ class apps::websecmap::monitoring::server (
       'GF_AUTH_ANONYMOUS_ENABLED=true',
       'GF_AUTH_ANONYMOUS_ORG_ROLE=Editor',
     ],
+    extra_parameters => "--ip=${apps::websecmap::docker_ip_addresses[$appname]}",
   }
 
   nginx::resource::location { 'admin-grafana':

@@ -51,13 +51,17 @@ apps::websecmap::docker_ip_addresses:
         172.17.0.12
     broker:
         172.17.0.20
-    grafana:
-        172.17.0.30
     flower:
         172.17.0.31
+    grafana:
+        172.18.0.30
     influxdb:
-        172.17.0.32
+        172.18.0.32
 
 apps::websecmap::docker_subnet: 172.17.0.0/24
 # prevent dynamic ip's to conflict with static ip's
 apps::websecmap::docker_ip_range: 172.17.0.128/25
+
+apps::websecmap::monitoring::server::docker_subnet: 172.18.0.0/24
+# prevent dynamic ip's to conflict with static ip's
+apps::websecmap::monitoring::server::docker_ip_range: 172.18.0.128/25
