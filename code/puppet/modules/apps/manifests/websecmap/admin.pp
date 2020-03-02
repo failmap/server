@@ -101,9 +101,9 @@ class apps::websecmap::admin (
 
   Docker::Image[$image]
   ~> docker::run { $appname:
-    image           => $image,
-    command         => 'runuwsgi',
-    volumes         => [
+    image            => $image,
+    command          => 'runuwsgi',
+    volumes          => [
       # make mysql accesible from within container
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
@@ -111,24 +111,25 @@ class apps::websecmap::admin (
       '/srv/websecmap/images/screenshots/:/srv/websecmap/static/images/screenshots/',
     ],
     # combine specific and generic docker environment options
-    env             => concat($docker_environment,[
+    env              => concat($docker_environment,[
       # name by which service is known to service discovery (consul)
       "SERVICE_NAME=${appname}",
       # standard consul HTTP check won't do because of Django ALLOWED_HOSTS
       'SERVICE_CHECK_TCP=true',
     ]),
-    env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
-    net             => $pod,
-    username        => 'nobody:nogroup',
-    tty             => true,
-    systemd_restart => 'always',
+    env_file         => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
+    net              => $pod,
+    username         => 'nobody:nogroup',
+    tty              => true,
+    systemd_restart  => 'always',
+    extra_parameters => "--ip=${apps::websecmap::docker_ip_addresses[$appname]}",
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/internet-cleanup-foundation/server/issues/8
   Docker::Run[$appname] -> Service['nginx']
 
   sites::vhosts::proxy { $hostname:
-    proxy                => "${appname}.service.dc1.consul:8000",
+    proxy                => "${apps::websecmap::docker_ip_addresses[$appname]}:8000",
     nowww_compliance     => class_c,
     # use consul as proxy resolver
     resolver             => ['127.0.0.1:8600'],

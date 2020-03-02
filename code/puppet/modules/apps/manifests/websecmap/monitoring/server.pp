@@ -73,7 +73,7 @@ class apps::websecmap::monitoring::server (
     www_root            => undef,
     proxy               => "\$backend",
     location_cfg_append => {
-      'set $backend' => 'http://grafana.service.dc1.consul:3000',
+      'set $backend' => "http://${apps::websecmap::docker_ip_addresses['grafana']}:3000",
     },
     location            => '/grafana/',
   }

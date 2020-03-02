@@ -1,4 +1,3 @@
-
 # Configure the websecmap frontend
 class apps::websecmap::frontend (
   $hostname = $apps::websecmap::hostname,
@@ -65,15 +64,15 @@ class apps::websecmap::frontend (
   # frontend instance, used for serving readonly content to high traffic public
   Docker::Image[$image]
   ~> docker::run { $appname:
-    image           => $image,
-    command         => 'runuwsgi',
-    volumes         => [
+    image            => $image,
+    command          => 'runuwsgi',
+    volumes          => [
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
       # temporary solution to allow screenshots to be hosted for live release
       '/srv/websecmap/images/screenshots/:/srv/websecmap/static/images/screenshots/',
     ],
-    env             => [
+    env              => [
       # database settings
       'APPLICATION_MODE=frontend',
       'DJANGO_LOG_LEVEL=INFO',
@@ -100,24 +99,25 @@ class apps::websecmap::frontend (
       # TODO: needs more tweakers for performance
       'UWSGI_WORKERS=2',
     ],
-    env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
-    net             => $pod,
-    tty             => true,
-    systemd_restart => 'always',
+    env_file         => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
+    net              => $pod,
+    tty              => true,
+    systemd_restart  => 'always',
+    extra_parameters => "--ip=${apps::websecmap::docker_ip_addresses[$appname]}"
   }
 
   # interactive instance, used for serving interactive parts (not admin) to authenticated/limited audience
   Docker::Image[$image]
   ~> docker::run { "${pod}-interactive":
-    image           => $image,
-    command         => 'runuwsgi',
-    volumes         => [
+    image            => $image,
+    command          => 'runuwsgi',
+    volumes          => [
       '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
       # temporary solution to allow screenshots to be hosted for live release
       '/srv/websecmap/images/screenshots/:/srv/websecmap/static/images/screenshots/',
     ],
-    env             => [
+    env              => [
       # database settings
       'APPLICATION_MODE=interactive',
       'DJANGO_DATABASE=production',
@@ -136,14 +136,15 @@ class apps::websecmap::frontend (
       # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
       'COLUMNS=80',
     ],
-    env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
-    net             => $pod,
-    tty             => true,
-    systemd_restart => 'always',
+    env_file         => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
+    net              => $pod,
+    tty              => true,
+    systemd_restart  => 'always',
+    extra_parameters => "--ip=${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}"
   }
 
   sites::vhosts::proxy { $hostname:
-    proxy            => "${appname}.service.dc1.consul:8000",
+    proxy            => "${apps::websecmap::docker_ip_addresses[$appname]}:8000",
     # use consul as proxy resolver
     resolver         => ['127.0.0.1:8600'],
     # allow upstream to set caching headers, cache upstream responses
@@ -169,7 +170,7 @@ class apps::websecmap::frontend (
     www_root             => undef,
     proxy                => "\$backend",
     location_cfg_append  => merge({
-      'set $backend' => 'http://grafana.service.dc1.consul:3000',
+      'set $backend' => "http://${apps::websecmap::docker_ip_addresses['grafana']}:3000",
     }, $remote_user_header),
     location             => '/grafana/',
     auth_basic           => $auth_basic,
@@ -183,7 +184,7 @@ class apps::websecmap::frontend (
     www_root             => undef,
     proxy                => "\$backend",
     location_cfg_append  => merge({
-      'set $backend' => 'http://websecmap-admin.service.dc1.consul:8000',
+      'set $backend' => "http://${apps::websecmap::docker_ip_addresses["${pod}-admin"]}:8000",
     }, $remote_user_header),
     location             => '/admin/',
     auth_basic           => $auth_basic,
@@ -197,7 +198,7 @@ class apps::websecmap::frontend (
     www_root             => undef,
     proxy                => "\$backend",
     location_cfg_append  => merge({
-      'set $backend' => 'http://websecmap-admin.service.dc1.consul:8000/',
+        'set $backend' => "http://${apps::websecmap::docker_ip_addresses["${pod}-admin"]}:8000",
     }, $remote_user_header),
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,
@@ -212,7 +213,7 @@ class apps::websecmap::frontend (
     www_root                   => undef,
     proxy                      => "\$backend",
     location_custom_cfg_append => {
-      'set'                => "\$backend http://${pod}-interactive.service.dc1.consul:8000;",
+      'set'                => "\$backend http://${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}:8000;",
     },
   }
 
@@ -247,7 +248,7 @@ class apps::websecmap::frontend (
     location                   => '/authentication/',
     proxy                      => "\$backend",
     location_custom_cfg_append => {
-      'set'       => "\$backend http://${pod}-interactive.service.dc1.consul:8000;",
+      'set'       => "\$backend http://${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}:8000;",
       'limit_req' => 'zone=authentication;',
     }
   }
@@ -260,7 +261,7 @@ class apps::websecmap::frontend (
     location                   => '/game/',
     proxy                      => "\$backend",
     location_custom_cfg_append => {
-      'set'                => "\$backend http://${pod}-interactive.service.dc1.consul:8000;",
+      'set'                => "\$backend http://${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}:8000;",
       # if not authenticated this endpoint is not visible
       'if'                 => "(\$cookie_sessionid = \"\") { return 404; }",
       'proxy_no_cache'     => "\$cookie_sessionid;",
@@ -276,7 +277,7 @@ class apps::websecmap::frontend (
     location                   => '/game/scores/',
     proxy                      => "\$backend",
     location_custom_cfg_append => {
-      'set'                => "\$backend http://${pod}-frontend.service.dc1.consul:8000;",
+      'set'                => "\$backend http://${apps::websecmap::docker_ip_addresses[$appname]}:8000;",
       'limit_req'          => 'zone=game;',
       'proxy_no_cache'     =>'yes;',
       'proxy_cache_bypass' =>'yes;',
@@ -292,7 +293,7 @@ class apps::websecmap::frontend (
     proxy                      => "\$backend",
     expires                    => '7d',
     location_custom_cfg_append => {
-      'set'                  => "\$backend http://${pod}-frontend.service.dc1.consul:8000;",
+      'set'                  => "\$backend http://${apps::websecmap::docker_ip_addresses[$appname]}:8000;",
     },
   }
 

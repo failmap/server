@@ -36,3 +36,28 @@ nginx::gzip: "on"
 lookup_options:
   accounts::users:
     merge: deep
+
+# Dynamic container ip's was deemed to unpredictable (in some edge cases) so
+# settings fixed container ip's since we will be moving away from consul/registry
+# toward a kubernets lite like k3s in the future and not be building on the current
+# broken en unused dynamic container system.
+# Only contains addresses for containers requiring fixed ip
+apps::websecmap::docker_ip_addresses:
+    websecmap-frontend:
+        172.17.0.10
+    websecmap-admin:
+        172.17.0.11
+    websecmap-interactive:
+        172.17.0.12
+    broker:
+        172.17.0.20
+    grafana:
+        172.17.0.30
+    flower:
+        172.17.0.31
+    influxdb:
+        172.17.0.32
+
+apps::websecmap::docker_subnet: 172.17.0.0/24
+# prevent dynamic ip's to conflict with static ip's
+apps::websecmap::docker_ip_range: 172.17.0.128/25

@@ -5,7 +5,11 @@ class apps::websecmap (
   $ipv6_subnet=undef,
   $image='websecmap/websecmap:latest',
   $broker='redis://broker:6379/0',
-  $db_name='websecmap'
+  $db_name='websecmap',
+  # lookup table of internal container ip addresses for nginx
+  $docker_ip_addresses=undef,
+  $docker_subnet=undef,
+  $docker_ip_range=undef,
 ){
   docker::image { $image:
     ensure    => present,
@@ -14,8 +18,10 @@ class apps::websecmap (
   }
 
   if $ipv6_subnet {
-    $network_opts = "--ipv6 --subnet=${ipv6_subnet}"
-  } else { $network_opts = ''}
+    $network_opts = "--subnet=${docker_subnet} --ip-range=${docker_ip_range} --ipv6 --subnet=${ipv6_subnet}"
+  } else {
+    $network_opts = "--subnet=${docker_subnet} --ip-range=${docker_ip_range}"
+  }
 
   # create application group network before starting containers
   Service['docker']

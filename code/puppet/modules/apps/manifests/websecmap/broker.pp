@@ -92,7 +92,7 @@ class apps::websecmap::broker (
       listening_service => 'broker',
       ports             => $internal_port,
       server_names      => $appname,
-      ipaddresses       => "${appname}.service.dc1.consul",
+      ipaddresses       => $apps::websecmap::docker_ip_addresses[$appname],
       options           => 'check resolvers default resolve-prefer ipv4 init-addr last,libc,none',
     }
 
