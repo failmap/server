@@ -16,12 +16,16 @@ git remote update
 branch=$(git rev-parse --abbrev-ref HEAD)
 
 echo
-echo "The following changes will be applied:"
-git log --pretty="format: - %s" "$branch...origin/$branch"
-echo
+if ! test -z "$(git log --pretty="format: - %s" "$branch...origin/$branch")";then
+  echo "The following new upstream changes will be applied:"
+  git log --pretty="format: - %s" "$branch...origin/$branch"
 
-# force update current working directory to upstream
-git reset --hard "origin/$branch" >/dev/null
+  # force update current working directory to upstream
+  git reset --hard "origin/$branch" >/dev/null
+else
+  echo "No new upstream changes, existing configuration will be re-applied."
+fi
+echo
 
 # make sure puppet correct modules are installed
 (cd code/puppet/; librarian-puppet install)
