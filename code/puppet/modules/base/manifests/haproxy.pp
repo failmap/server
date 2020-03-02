@@ -1,4 +1,4 @@
-# configure recent HAproxy service with support for consul service resolving
+# configure recent HAproxy service 
 class base::haproxy {
 
   class { 'haproxy':
@@ -19,21 +19,4 @@ class base::haproxy {
   -> Package['haproxy']
 
   package {'hatop': }
-
-  # configure haproxy to use dnsmasq resolver which allow querying consul service records
-  haproxy::resolver { 'default':
-    nameservers      => {
-      'dns1' => '127.0.0.1:53',
-    },
-    hold             => {
-      'nx'    => '30s',
-      'valid' => '10s'
-    },
-    resolve_retries  => 3,
-    timeout          => {
-      'retry' => '1s'
-    },
-    # silence warning about exported resources not being available
-    collect_exported => false,
-  }
 }

@@ -85,10 +85,6 @@ class apps::websecmap::frontend (
       "SECRET_KEY=${secret_key}",
       "ALLOWED_HOSTS=${allowed_hosts}",
       'DEBUG=',
-      # name by which service is known to service discovery (consul)
-      "SERVICE_NAME=${appname}",
-      # standard consul HTTP check won't do because of Django ALLOWED_HOSTS
-      'SERVICE_CHECK_TCP=true',
       # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
       'COLUMNS=80',
       # mitigate issue with where on production the value of 'cheaper' is above the value of 'workers'
@@ -129,12 +125,6 @@ class apps::websecmap::frontend (
       "SECRET_KEY=${secret_key}",
       "ALLOWED_HOSTS=${allowed_hosts}",
       'DEBUG=',
-      # name by which service is known to service discovery (consul)
-      "SERVICE_NAME=${pod}-interactive",
-      # standard consul HTTP check won't do because of Django ALLOWED_HOSTS
-      'SERVICE_CHECK_TCP=true',
-      # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
-      'COLUMNS=80',
     ],
     env_file         => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net              => $pod,
@@ -145,8 +135,6 @@ class apps::websecmap::frontend (
 
   sites::vhosts::proxy { $hostname:
     proxy            => "${apps::websecmap::docker_ip_addresses[$appname]}:8000",
-    # use consul as proxy resolver
-    resolver         => ['127.0.0.1:8600'],
     # allow upstream to set caching headers, cache upstream responses
     # and serve stale results if backend is unavailable or broken
     caching          => upstream,

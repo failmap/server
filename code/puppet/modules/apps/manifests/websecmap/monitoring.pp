@@ -26,7 +26,6 @@ class apps::websecmap::monitoring {
           '*.view.*.*.* prefix.measurement.app.module.measurement',
         ]
       }],
-      consul        => [{}],
       system        => [{}],
       net           => [{}],
       netstat       => [{}],

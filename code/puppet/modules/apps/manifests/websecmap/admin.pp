@@ -111,12 +111,7 @@ class apps::websecmap::admin (
       '/srv/websecmap/images/screenshots/:/srv/websecmap/static/images/screenshots/',
     ],
     # combine specific and generic docker environment options
-    env              => concat($docker_environment,[
-      # name by which service is known to service discovery (consul)
-      "SERVICE_NAME=${appname}",
-      # standard consul HTTP check won't do because of Django ALLOWED_HOSTS
-      'SERVICE_CHECK_TCP=true',
-    ]),
+    env              => concat($docker_environment,[]),
     env_file         => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net              => $pod,
     username         => 'nobody:nogroup',
@@ -131,8 +126,6 @@ class apps::websecmap::admin (
   sites::vhosts::proxy { $hostname:
     proxy                => "${apps::websecmap::docker_ip_addresses[$appname]}:8000",
     nowww_compliance     => class_c,
-    # use consul as proxy resolver
-    resolver             => ['127.0.0.1:8600'],
     client_ca            => $client_ca,
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,

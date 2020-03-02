@@ -28,18 +28,8 @@ class base::docker (
     }],
   }
 
-  # use consul to provide service discovery and host->container DNS
+  # include cleanup of old consul configuration
   include base::consul
-
-  # register docker container with consul for service discovery
-  docker::run {'register':
-    image   => 'gliderlabs/registrator:latest',
-    net     => host,
-    volumes => [
-    '/var/run/docker.sock:/tmp/docker.sock',
-    ],
-    command => '-internal consul://localhost:8500',
-  }
 
   # enable memory accounting for `docker stats`
   # http://awhitehatter.me/debian-jessie-wdocker/

@@ -41,3 +41,15 @@ test:
 
 test_inspect:
 	docker run -p 80:80 -p 443:443 -ti faalkaart /bin/bash
+
+# macOS virtualisation test
+
+multipass: | /usr/local/bin/multipasss
+	multipass launch -c 2 -d 20G -m 4G -n failmap ubuntu
+	multipass mount . failmap:/opt/websecmap/server
+	multipass exec failmap sudo /opt/websecmap/server/scripts/bootstrap.sh
+	multipass exec failmap sudo /opt/websecmap/server/scripts/apply.sh
+
+
+/usr/local/bin/multipass:
+	brew cask install multipass
