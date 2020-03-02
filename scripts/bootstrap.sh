@@ -52,5 +52,8 @@ gem install -q librarian-puppet
 /opt/puppetlabs/puppet/bin/gem install -q toml-rb:1.1.2 curl
 rm -f "puppetlabs-release-pc1-${release}.deb"
 
+# remove 'WARN: Unresolved specs during Gem::Specification.reset:' on future puppet invocations
+/opt/puppetlabs/puppet/bin/gem cleanup
+
 # remember bootstrap has run
 touch "$bootstrap_hash_file"
