@@ -44,12 +44,22 @@ test_inspect:
 
 # macOS virtualisation test
 
-multipass: | /usr/local/bin/multipasss
+multipass: multipass_apply multipass_bootstrap
+
+multipass_bootstrap: | /usr/local/bin/multipass
 	multipass launch -c 2 -d 20G -m 4G -n failmap ubuntu
 	multipass mount . failmap:/opt/websecmap/server
 	multipass exec failmap sudo /opt/websecmap/server/scripts/bootstrap.sh
+
+multipass_apply: | /usr/local/bin/multipass
 	multipass exec failmap sudo /opt/websecmap/server/scripts/apply.sh
 
+multipass_test: | /usr/local/bin/inspec
+	inspec exec tests/ --target ssh://
 
-/usr/local/bin/multipass:
-	brew cask install multipass
+multipass_delete: | /usr/local/bin/multipass
+	multipass delete failmap
+	multipass purge
+
+/usr/local/bin/multipass /usr/local/bin/inspec: /usr/local/bin/%
+	brew cask install $^
