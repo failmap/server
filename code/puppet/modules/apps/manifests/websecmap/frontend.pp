@@ -156,10 +156,8 @@ class apps::websecmap::frontend (
     ssl                  => true,
     ssl_only             => true,
     www_root             => undef,
-    proxy                => "\$backend",
-    location_cfg_append  => merge({
-      'set $backend' => "http://${apps::websecmap::docker_ip_addresses['grafana']}:3000",
-    }, $remote_user_header),
+    proxy                => "http://${apps::websecmap::docker_ip_addresses['grafana']}:3000",
+    location_cfg_append  => merge({}, $remote_user_header),
     location             => '/grafana/',
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,
@@ -170,10 +168,8 @@ class apps::websecmap::frontend (
     ssl                  => true,
     ssl_only             => true,
     www_root             => undef,
-    proxy                => "\$backend",
-    location_cfg_append  => merge({
-      'set $backend' => "http://${apps::websecmap::docker_ip_addresses["${pod}-admin"]}:8000",
-    }, $remote_user_header),
+    proxy                => "http://${apps::websecmap::docker_ip_addresses["${pod}-admin"]}:8000",
+    location_cfg_append  => merge({}, $remote_user_header),
     location             => '/admin/',
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,
@@ -184,10 +180,8 @@ class apps::websecmap::frontend (
     ssl                  => true,
     ssl_only             => true,
     www_root             => undef,
-    proxy                => "\$backend",
-    location_cfg_append  => merge({
-        'set $backend' => "http://${apps::websecmap::docker_ip_addresses["${pod}-admin"]}:8000",
-    }, $remote_user_header),
+    proxy                => "http://${apps::websecmap::docker_ip_addresses["${pod}-admin"]}:8000",
+    location_cfg_append  => merge({}, $remote_user_header),
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,
   }
@@ -199,10 +193,7 @@ class apps::websecmap::frontend (
     ssl                        => true,
     ssl_only                   => true,
     www_root                   => undef,
-    proxy                      => "\$backend",
-    location_custom_cfg_append => {
-      'set'                => "\$backend http://${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}:8000;",
-    },
+    proxy                      => "http://${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}:8000",
   }
 
   nginx::resource::location { '/metrics/':
@@ -234,9 +225,8 @@ class apps::websecmap::frontend (
     ssl_only                   => true,
     www_root                   => undef,
     location                   => '/authentication/',
-    proxy                      => "\$backend",
+    proxy                      => "http://${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}:8000",
     location_custom_cfg_append => {
-      'set'       => "\$backend http://${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}:8000;",
       'limit_req' => 'zone=authentication;',
     }
   }
@@ -247,9 +237,8 @@ class apps::websecmap::frontend (
     ssl_only                   => true,
     www_root                   => undef,
     location                   => '/game/',
-    proxy                      => "\$backend",
+    proxy                      => "http://${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}:8000",
     location_custom_cfg_append => {
-      'set'                => "\$backend http://${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}:8000;",
       # if not authenticated this endpoint is not visible
       'if'                 => "(\$cookie_sessionid = \"\") { return 404; }",
       'proxy_no_cache'     => "\$cookie_sessionid;",
@@ -263,9 +252,8 @@ class apps::websecmap::frontend (
     ssl_only                   => true,
     www_root                   => undef,
     location                   => '/game/scores/',
-    proxy                      => "\$backend",
+    proxy                      => "http://${apps::websecmap::docker_ip_addresses[$appname]}:8000",
     location_custom_cfg_append => {
-      'set'                => "\$backend http://${apps::websecmap::docker_ip_addresses[$appname]}:8000;",
       'limit_req'          => 'zone=game;',
       'proxy_no_cache'     =>'yes;',
       'proxy_cache_bypass' =>'yes;',
@@ -278,11 +266,8 @@ class apps::websecmap::frontend (
     ssl_only                   => true,
     www_root                   => undef,
     location                   => '/proxy/',
-    proxy                      => "\$backend",
+    proxy                      => "http://${apps::websecmap::docker_ip_addresses[$appname]}:8000",
     expires                    => '7d',
-    location_custom_cfg_append => {
-      'set'                  => "\$backend http://${apps::websecmap::docker_ip_addresses[$appname]}:8000;",
-    },
   }
 
   file { '/usr/local/bin/websecmap-frontend-clear-cache':
