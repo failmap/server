@@ -68,17 +68,8 @@ class apps::websecmap::monitoring::server (
       'GF_AUTH_BASIC_ENABLED=false',
       'GF_AUTH_ANONYMOUS_ENABLED=true',
       'GF_AUTH_ANONYMOUS_ORG_ROLE=Editor',
-      "GF_SERVER_ROOT_URL=https://admin.${apps::websecmap::hostname}/grafana/",
+      "GF_SERVER_ROOT_URL=https://${apps::websecmap::hostname}/grafana/",
     ],
     extra_parameters => "--ip=${apps::websecmap::docker_ip_addresses[$appname]}",
-  }
-
-  nginx::resource::location { 'admin-grafana':
-    server              => "admin.${apps::websecmap::hostname}",
-    ssl                 => true,
-    ssl_only            => true,
-    www_root            => undef,
-    proxy               => "http://${apps::websecmap::docker_ip_addresses['grafana']}:3000/",
-    location            => '/grafana/',
   }
 }

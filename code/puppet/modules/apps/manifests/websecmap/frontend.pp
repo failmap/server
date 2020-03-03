@@ -156,7 +156,7 @@ class apps::websecmap::frontend (
     ssl                  => true,
     ssl_only             => true,
     www_root             => undef,
-    proxy                => "http://${apps::websecmap::docker_ip_addresses['grafana']}:3000",
+    proxy                => "http://${apps::websecmap::docker_ip_addresses['grafana']}:3000/",
     location_cfg_append  => merge({}, $remote_user_header),
     location             => '/grafana/',
     auth_basic           => $auth_basic,
