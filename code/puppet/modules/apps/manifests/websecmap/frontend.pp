@@ -191,7 +191,7 @@ class apps::websecmap::frontend (
 
   # the API is available after authentication, and has their own authentication routines.
   # Functionality of the API is only available after authentication.
-  nginx::resource::location { "/api/":
+  nginx::resource::location { '/api/':
     server                     => $apps::websecmap::hostname,
     ssl                        => true,
     ssl_only                   => true,

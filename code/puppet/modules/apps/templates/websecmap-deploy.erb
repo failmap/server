@@ -35,11 +35,11 @@ version=$(/usr/local/bin/websecmap shell -c 'import websecmap; print(websecmap._
 # push the event to monitoring
 curl -s -XPOST influxdb:8086/write?db=events --data-binary "deploy,user=$user version=\"$version\"" || true
 
-# migrate database
-/usr/local/bin/websecmap migrate
-
 # restart admin
 systemctl restart docker-websecmap-admin.service
+
+# migrate database
+/usr/local/bin/websecmap migrate
 
 # wait for admin backend to be available
 timeout 30 /bin/sh -c 'while ! curl -s websecmap-admin:8000 -H host:<%= @hostname %> >/dev/null ;do sleep 1; done'
