@@ -5,15 +5,50 @@ class apps::websecmap::broker (
   $external_port='1337',
   $internal_port='6379',
   Boolean $enable_remote=false,
+  Boolean $enable_insecure_remote=false,
 ){
   include ::apps::websecmap
   $pod = $apps::websecmap::pod
   $appname = 'broker'
 
+  # expose redis broker container port to external network
+  if $enable_insecure_remote {
+    $ports = ["${internal_port}:${internal_port}"]
+
+    @firewall { '300 broker incoming insecure external workers (redis)':
+      proto  => tcp,
+      dport  => $internal_port,
+      action => accept,
+    }
+    @firewall { '300 v6 broker incoming insecure external workers (redis)':
+      proto    => tcp,
+      dport    => $internal_port,
+      action   => accept,
+      provider => ip6tables,
+    }
+  } else {
+    $ports = []
+
+    @firewall { '300 broker incoming insecure external workers (redis)':
+      ensure => absent,
+      proto  => tcp,
+      dport  => $internal_port,
+      action => accept,
+    }
+    @firewall { '300 v6 broker incoming insecure external workers (redis)':
+      ensure   => absent,
+      proto    => tcp,
+      dport    => $internal_port,
+      action   => accept,
+      provider => ip6tables,
+    }
+  }
+
   docker::run { $appname:
     image => redis,
     tag   => latest,
     net   => $pod,
+    ports => $ports,
     env   => ["SERVICE_NAME=${appname}"]
   }
 

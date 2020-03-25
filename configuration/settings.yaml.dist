@@ -37,8 +37,11 @@ letsencrypt::email: $admin_email
 # # CA for validating access to monitoring frontends (eg: Grafana)
 # ::apps::websecmap::monitoring::server::client_ca: *websecmap_ca
 #
-# # allow external connections to broker for remote workers (scanners)
+# # allow external connections to broker for remote workers (scanners) via TLS
 # apps::websecmap::broker::enable_remote: true
+#
+# # allow external connections to broker for remote workers (scanners) without TLS
+# apps::websecmap::broker::enable_insecure_remote: true
 #
 # # CA for validating remote workers connecting with the broker
 # apps::websecmap::broker::client_ca: *websecmap_ca
