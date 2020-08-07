@@ -45,7 +45,7 @@ class apps::websecmap::worker (
 
   # Several worker instances are created, one for generic administrative tasks (storage),
   # one for rate limited qualys scans, one for v6, v4 and one for both
-  $worker_roles = ['storage', 'qualys', 'v6_internet', 'v4_internet', 'all_internet', 'claim_proxy']
+  $worker_roles = ['storage', 'reporting', 'qualys', 'v6_internet', 'v4_internet', 'all_internet', 'claim_proxy']
   $worker_roles.each | $role | {
     if $workers_configuration[$role] {
       $worker_args = join($workers_configuration[$role], ' ')

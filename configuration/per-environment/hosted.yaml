@@ -107,6 +107,7 @@ base::firewall::rules:
 apps::websecmap::worker::workers_configuration:
   # no eventlet on storage due to simultaneous write errors
   storage: [--concurrency=6]
+  reporting: [--concurrency=6]
   v6_internet: [--pool=eventlet --concurrency=20]
   v4_internet: [--pool=eventlet --concurrency=20]
   all_internet: [--pool=eventlet --concurrency=20]
