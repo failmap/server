@@ -46,6 +46,7 @@ apt-get -qq update
 # install puppet and some dependencies
 apt-get-install puppet-agent rsync apt-transport-https git ruby pwgen
 # used to install puppet modules using Puppetfile
+gem install -q librarianp -v 0.6.4  # more recent version requires ruby2.4, breaking debian 9.
 gem install -q librarian-puppet
 # dependencies for some puppet modules (telegraf, consul), TODO: find out why they are not installed automatically
 /opt/puppetlabs/puppet/bin/gem install -q toml-rb:1.1.2 curl
