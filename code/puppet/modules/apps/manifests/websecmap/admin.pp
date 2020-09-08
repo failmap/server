@@ -61,6 +61,7 @@ class apps::websecmap::admin (
   $docker_environment = [
     # database settings
     'APPLICATION_MODE=admin',
+    'DJANGO_LOG_LEVEL=INFO',
     'DJANGO_DATABASE=production',
     'DB_HOST=/var/run/mysqld/mysqld.sock',
     "DB_NAME=${db_name}",

@@ -75,6 +75,7 @@ class apps::websecmap::frontend (
     env             => [
       # database settings
       'APPLICATION_MODE=frontend',
+      'DJANGO_LOG_LEVEL=INFO',
       'DJANGO_DATABASE=production',
       'DB_HOST=/var/run/mysqld/mysqld.sock',
       "DB_NAME=${db_name}",

@@ -25,6 +25,7 @@ class apps::websecmap::worker (
     "BROKER=${broker}",
     # worker required db access for non-scanner tasks (eg: rating rebuild)
     'DJANGO_DATABASE=production',
+    'DJANGO_LOG_LEVEL=INFO',
     'DB_HOST=/var/run/mysqld/mysqld.sock',
     "DB_NAME=${db_name}",
     "DB_USER=${db_user}",
