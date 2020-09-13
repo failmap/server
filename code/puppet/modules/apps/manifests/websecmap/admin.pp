@@ -182,6 +182,10 @@ class apps::websecmap::admin (
       | EOL
     mode    => '0744',
   }
+  file { '/usr/local/bin/websecmap-restart-workers':
+    content => template('apps/websecmap-restart-workers.erb'),
+    mode    => '0744',
+  }
 
   # run migration in a separate container
   [Docker::Image[$image], Mysql::Db[$db_name],]
@@ -198,13 +202,23 @@ class apps::websecmap::admin (
   # create a compressed rotating dataset backup every day/week
   cron { "${appname} daily dataset backup":
     command => '/usr/local/bin/websecmap create-dataset -o - | gzip > /var/backups/websecmap_dataset_day_$(date +%u).json.gz',
+    minute  => 0,
     hour    => 6,
   }
 
   cron { "${appname} weekly dataset backup":
     command => '/usr/local/bin/websecmap create-dataset -o - | gzip > /var/backups/websecmap_dataset_week_$(date +%U).json.gz',
+    minute  => 0,
     hour    => 5,
-    weekday => 1
+    weekday => 1,
+  }
+
+  # mitigate issues with workers stopping picking up tasks after a while
+  # TODO: needs investigation and a proper solution
+  cron { 'daily worker restart':
+    command => '/usr/local/bin/websecmap-restart-workers',
+    minute  => 0,
+    hour    => 21,
   }
 
   Docker::Image[$image]
