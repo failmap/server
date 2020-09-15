@@ -15,8 +15,7 @@ class base::docker (
 
   cron { 'docker garbage collection':
     # TODO: investigate bug in docker that removes tags on running container images
-    # command => '/usr/bin/docker system prune --all -f',
-    command => '/usr/bin/docker system prune -f',
+    command => '/usr/bin/docker system prune  --force --all --volumes',
     hour    => 18,
     minute  => 0,
     weekday => 0,
