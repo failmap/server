@@ -89,6 +89,8 @@ class apps::websecmap::frontend (
       "SERVICE_NAME=${appname}",
       # standard consul HTTP check won't do because of Django ALLOWED_HOSTS
       'SERVICE_CHECK_TCP=true',
+      # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
+      "COLUMNS=80",
     ],
     env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net             => $pod,
@@ -123,6 +125,8 @@ class apps::websecmap::frontend (
       "SERVICE_NAME=${pod}-interactive",
       # standard consul HTTP check won't do because of Django ALLOWED_HOSTS
       'SERVICE_CHECK_TCP=true',
+      # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
+      "COLUMNS=80",
     ],
     env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net             => $pod,

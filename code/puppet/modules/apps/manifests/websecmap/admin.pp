@@ -75,6 +75,8 @@ class apps::websecmap::admin (
     # message broker settings
     "BROKER=${broker}",
     'STATSD_HOST=172.20.0.1',
+    # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
+    "COLUMNS=80",
   ]
 
   # stateful configuration (credentials for external parties, eg: Sentry)
