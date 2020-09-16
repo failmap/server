@@ -34,7 +34,7 @@ class apps::websecmap::worker (
     # indicate if this host is capable of running ipv6 tasks.
     "NETWORK_SUPPORTS_IPV6=${ipv6_support}",
     # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
-    "COLUMNS=80",
+    'COLUMNS=80',
   ]
 
   # stateful configuration (credentials for external parties, eg: Sentry)
@@ -71,7 +71,7 @@ class apps::websecmap::worker (
         "WORKER_ROLE=${role}",
         "HOST_HOSTNAME=${::fqdn}",
         # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
-        "COLUMNS=80",
+        'COLUMNS=80',
       ],
       env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
       net             => $pod,

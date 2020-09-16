@@ -76,7 +76,7 @@ class apps::websecmap::admin (
     "BROKER=${broker}",
     'STATSD_HOST=172.20.0.1',
     # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
-    "COLUMNS=80",
+    'COLUMNS=80',
   ]
 
   # stateful configuration (credentials for external parties, eg: Sentry)
@@ -184,10 +184,6 @@ class apps::websecmap::admin (
       | EOL
     mode    => '0744',
   }
-  file { '/usr/local/bin/websecmap-restart-workers':
-    content => template('apps/websecmap-restart-workers.erb'),
-    mode    => '0744',
-  }
 
   # run migration in a separate container
   [Docker::Image[$image], Mysql::Db[$db_name],]
@@ -213,14 +209,6 @@ class apps::websecmap::admin (
     minute  => 0,
     hour    => 5,
     weekday => 1,
-  }
-
-  # mitigate issues with workers stopping picking up tasks after a while
-  # TODO: needs investigation and a proper solution
-  cron { 'daily worker restart':
-    command => '/usr/local/bin/websecmap-restart-workers',
-    minute  => 0,
-    hour    => 21,
   }
 
   Docker::Image[$image]
@@ -267,5 +255,16 @@ class apps::websecmap::admin (
     target  => '/etc/nginx/admin.htpasswd',
     content => "# managed by puppet\n",
     order   => 0,
+  }
+
+  # cleanup
+  file { '/usr/local/bin/websecmap-restart-workers':
+    ensure => absent,
+  }
+  cron { 'daily worker restart':
+    ensure  => absent,
+    command => '/usr/local/bin/websecmap-restart-workers',
+    minute  => 0,
+    hour    => 21,
   }
 }
