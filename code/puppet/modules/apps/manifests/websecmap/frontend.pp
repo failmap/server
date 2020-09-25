@@ -189,11 +189,11 @@ class apps::websecmap::frontend (
   # the API is available after authentication, and has their own authentication routines.
   # Functionality of the API is only available after authentication.
   nginx::resource::location { '/api/':
-    server                     => $apps::websecmap::hostname,
-    ssl                        => true,
-    ssl_only                   => true,
-    www_root                   => undef,
-    proxy                      => "http://${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}:8000",
+    server   => $apps::websecmap::hostname,
+    ssl      => true,
+    ssl_only => true,
+    www_root => undef,
+    proxy    => "http://${apps::websecmap::docker_ip_addresses["${pod}-interactive"]}:8000",
   }
 
   nginx::resource::location { '/metrics/':
@@ -261,13 +261,13 @@ class apps::websecmap::frontend (
   }
 
   nginx::resource::location { "${hostname}-maptile-proxy":
-    server                     => $hostname,
-    ssl                        => true,
-    ssl_only                   => true,
-    www_root                   => undef,
-    location                   => '/proxy/',
-    proxy                      => "http://${apps::websecmap::docker_ip_addresses[$appname]}:8000",
-    expires                    => '7d',
+    server   => $hostname,
+    ssl      => true,
+    ssl_only => true,
+    www_root => undef,
+    location => '/proxy/',
+    proxy    => "http://${apps::websecmap::docker_ip_addresses[$appname]}:8000",
+    expires  => '7d',
   }
 
   file { '/usr/local/bin/websecmap-frontend-clear-cache':

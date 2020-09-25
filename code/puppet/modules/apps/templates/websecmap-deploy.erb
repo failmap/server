@@ -12,7 +12,7 @@ function rollback {
   systemctl restart docker-websecmap-admin.service
 
   # wait for admin backend to be available
-  timeout 30 /bin/sh -c 'while ! curl -s websecmap-admin:8000 -H host:<%= @hostname %> >/dev/null ;do sleep 1; done'
+  timeout 30 /bin/sh -c 'while ! curl -s <%= @admin_ip %>:8000 -H host:<%= @hostname %> >/dev/null ;do sleep 1; done'
   echo
   echo "Rollback complete!"
   echo
@@ -42,7 +42,7 @@ curl -s -XPOST influxdb:8086/write?db=events --data-binary "deploy,user=$user ve
 systemctl restart docker-websecmap-admin.service
 
 # wait for admin backend to be available
-timeout 30 /bin/sh -c 'while ! curl -s websecmap-admin:8000 -H host:<%= @hostname %> >/dev/null ;do sleep 1; done'
+timeout 30 /bin/sh -c 'while ! curl -s <%= @admin_ip %>:8000 -H host:<%= @hostname %> >/dev/null ;do sleep 1; done'
 
 set +x
 echo
@@ -62,7 +62,7 @@ systemctl stop docker-websecmap-\*.service
 systemctl start docker-websecmap-\*.service
 
 # wait for admin backend to be available
-timeout 30 /bin/sh -c 'while ! curl -s websecmap-admin:8000 -H host:<%= @hostname %> >/dev/null ;do sleep 1; done'
+timeout 30 /bin/sh -c 'while ! curl -s <%= @admin_ip %>:8000 -H host:<%= @hostname %> >/dev/null ;do sleep 1; done'
 
 # show container startus after deploy
 docker ps

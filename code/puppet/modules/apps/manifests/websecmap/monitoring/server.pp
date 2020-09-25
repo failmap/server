@@ -8,7 +8,7 @@ class apps::websecmap::monitoring::server (
 
   docker_network { 'monitoring':
     ensure   => present,
-    subnet => $docker_subnet,
+    subnet   => $docker_subnet,
     ip_range => $docker_ip_range,
   }
 
@@ -16,15 +16,15 @@ class apps::websecmap::monitoring::server (
   Class['docker']
   -> docker::run { 'influxdb':
     # currently disable, not used much and consumes to much resources occasionally
-    ensure  => absent,
-    running => false,
-    image   => influxdb,
-    volumes => [
+    ensure           => absent,
+    running          => false,
+    image            => influxdb,
+    volumes          => [
       '/srv/influxdb/data/:/var/lib/influxdb',
       '/srv/influxdb/config.toml:/etc/influxdb/influxdb.conf:ro',
     ],
-    net     => monitoring,
-    env     => [
+    net              => monitoring,
+    env              => [
       'INFLUXDB_GRAPHITE_ENABLED=true',
     ],
     extra_parameters => "--ip=${apps::websecmap::docker_ip_addresses['influxdb']}",
@@ -57,13 +57,13 @@ class apps::websecmap::monitoring::server (
   }
   ~> docker::run { $appname:
     # currently disable, due to not useful without influxdb or other monitoring on server
-    ensure  => absent,
-    running => false,
-    image   => 'grafana/grafana',
-    links   => ['influxdb:influxdb'],
-    volumes => ['/srv/grafana/:/var/lib/grafana/'],
-    net     => monitoring,
-    env     => [
+    ensure           => absent,
+    running          => false,
+    image            => 'grafana/grafana',
+    links            => ['influxdb:influxdb'],
+    volumes          => ['/srv/grafana/:/var/lib/grafana/'],
+    net              => monitoring,
+    env              => [
       'GF_INSTALL_PLUGINS=grafana-piechart-panel',
       'GF_AUTH_BASIC_ENABLED=false',
       'GF_AUTH_ANONYMOUS_ENABLED=true',

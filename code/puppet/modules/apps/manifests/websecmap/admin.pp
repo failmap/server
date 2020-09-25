@@ -155,6 +155,7 @@ class apps::websecmap::admin (
     mode    => '0744',
   }
 
+  $admin_ip = $apps::websecmap::docker_ip_addresses["websecmap-admin"]
   file { '/usr/local/bin/websecmap-deploy':
     content => template('apps/websecmap-deploy.erb'),
     mode    => '0744',
