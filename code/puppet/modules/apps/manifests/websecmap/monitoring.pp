@@ -3,6 +3,9 @@ class apps::websecmap::monitoring {
   include ::apps::websecmap
 
   class { '::collectd':
+    # disabled due to influxdb being disabled
+    service_enable  => false,
+    service_ensure  => stopped,
     purge           => true,
     recurse         => true,
     purge_config    => true,
@@ -49,8 +52,11 @@ class apps::websecmap::monitoring {
   Collectd::Plugin::Tail::File <| |>
 
   class { '::telegraf':
-    hostname => $::hostname,
-    outputs  => {
+    # disabled due to influxdb being disabled
+    service_enable     => false,
+        service_ensure => stopped,
+    hostname           => $::hostname,
+    outputs            => {
       influxdb => [
         {
           urls     => [ 'http://influxdb.service.dc1.consul:8086' ],
@@ -58,7 +64,7 @@ class apps::websecmap::monitoring {
         }
       ]
     },
-    inputs   => {
+    inputs             => {
       statsd        => [{
         templates => [
           # websecmap.celery.websecmap.scanners.scanner_security_headers.get_headers.sent

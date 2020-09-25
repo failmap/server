@@ -211,38 +211,40 @@ class apps::websecmap::admin (
     weekday => 1,
   }
 
-  # Disable flower due to memory leak. It eats up 1.5 gigabytes and on doing virtually nothing.
-  # This might be re-enabled at a later time.
-  #  Docker::Image[$image]
-  #  ~> docker::run { 'websecmap-flower':
-  #    image           => $image,
-  #    command         => 'celery flower --broker=redis://broker:6379/0 --port=8000',
-  #    # combine specific and generic docker environment options
-  #    env             => concat($docker_environment,[
-  #      # name by which service is known to service discovery (consul)
-  #      'SERVICE_NAME=websecmap-flower',
-  #      'SERVICE_CHECK_HTTP=/',
-  #    ]),
-  #    volumes         => [
-  #      # make mysql accesible from within container
-  #      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
-  #    ],
-  #    net             => $pod,
-  #    username        => 'nobody:nogroup',
-  #    tty             => true,
-  #    systemd_restart => 'always',
-  #  }
-  #  -> sites::vhosts::proxy { "flower.${apps::websecmap::hostname}":
-  #    proxy            => 'websecmap-flower.service.dc1.consul:8000',
-  #    nowww_compliance => class_c,
-  #    # use consul as proxy resolver
-  #    resolver         => ['127.0.0.1:8600'],
-  #    client_ca        => $client_ca,
-  #    # admin is accessible for authenticated users only that need to see a live view
-  #    # of changes, do not cache anything
-  #    caching          => disabled,
-  #    proxy_timeout    => '90s',
-  #  }
+  Docker::Image[$image]
+  ~> docker::run { 'websecmap-flower':
+    # Disable flower due to memory leak. It eats up 1.5 gigabytes and on doing virtually nothing.
+    # This might be re-enabled at a later time.
+    ensure          => absent,
+    running         => false,
+    image           => $image,
+    command         => 'celery flower --broker=redis://broker:6379/0 --port=8000',
+    # combine specific and generic docker environment options
+    env             => concat($docker_environment,[
+      # name by which service is known to service discovery (consul)
+      'SERVICE_NAME=websecmap-flower',
+      'SERVICE_CHECK_HTTP=/',
+    ]),
+    volumes         => [
+      # make mysql accesible from within container
+      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
+    ],
+    net             => $pod,
+    username        => 'nobody:nogroup',
+    tty             => true,
+    systemd_restart => 'always',
+  }
+  -> sites::vhosts::proxy { "flower.${apps::websecmap::hostname}":
+    proxy            => 'websecmap-flower.service.dc1.consul:8000',
+    nowww_compliance => class_c,
+    # use consul as proxy resolver
+    resolver         => ['127.0.0.1:8600'],
+    client_ca        => $client_ca,
+    # admin is accessible for authenticated users only that need to see a live view
+    # of changes, do not cache anything
+    caching          => disabled,
+    proxy_timeout    => '90s',
+  }
 
   # file to store users allowed to authenticate to the admin backend
   concat { '/etc/nginx/admin.htpasswd':

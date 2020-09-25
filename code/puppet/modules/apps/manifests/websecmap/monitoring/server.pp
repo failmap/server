@@ -11,6 +11,9 @@ class apps::websecmap::monitoring::server (
   # Influx Time-series database
   Class['docker']
   -> docker::run { 'influxdb':
+    # currently disable, not used much and consumes to much resources occasionally
+    ensure  => absent,
+    running => false,
     image   => influxdb,
     volumes => [
       '/srv/influxdb/data/:/var/lib/influxdb',
@@ -48,6 +51,9 @@ class apps::websecmap::monitoring::server (
     owner  => 472,
   }
   ~> docker::run { $appname:
+    # currently disable, due to not useful without influxdb or other monitoring on server
+    ensure  => absent,
+    running => false,
     image   => 'grafana/grafana',
     links   => ['influxdb:influxdb'],
     volumes => ['/srv/grafana/:/var/lib/grafana/'],
