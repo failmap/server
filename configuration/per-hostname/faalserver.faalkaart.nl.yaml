@@ -57,9 +57,11 @@ apps::websecmap::hostname: basisbeveiliging.nl
 # redirect www to non-www
 apps::websecmap::frontend::default_nowww_compliance: class_b
 
+apps::websecmap::frontend::subdomains:
+  - ipv6.basisbeveiliging.nl
+
 sites::vhost_webroot:
   faalkaart.nl: {}
-  admin.faalkaart.nl: {}
 
 base::files:
   /var/www/faalkaart.nl/html/index.html:
@@ -67,11 +69,6 @@ base::files:
     content: |
       <head><meta http-equiv="refresh" content="0;URL='https://%{lookup('apps::websecmap::hostname')}/'" /></head>
       You are being redirected to <a href="https://%{lookup('apps::websecmap::hostname')}/">https://%{lookup('apps::websecmap::hostname')}/</a>
-  /var/www/admin.faalkaart.nl/html/index.html:
-    require: File[/var/www/admin.faalkaart.nl/html/]
-    content: |
-      <head><meta http-equiv="refresh" content="0;URL='https://admin.%{lookup('apps::websecmap::hostname')}/'" /></head>
-      You are being redirected to <a href="https://admin.%{lookup('apps::websecmap::hostname')}/">https://admin.%{lookup('apps::websecmap::hostname')}/</a>
 
 # CA for validating access to monitoring frontends (Grafana)
 apps::websecmap::monitoring::server::client_ca: *websecmap_ca

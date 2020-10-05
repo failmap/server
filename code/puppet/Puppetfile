@@ -37,7 +37,7 @@ mod 'aequitas/letsencrypt',
   :ref => '052151e64f068a30c0c43df1e563e1bc69a34975'
 mod 'aequitas/sites',
   :git => 'https://github.com/aequitas/puppet-sites.git',
-  :ref => '68e12999464a3e376c5b0c8e19d3ba45db043895'
+  :ref => 'af2ba9ef0c4bf2ac25f8858b64303523a676d3f9'
 
 mod 'simp/simplib'
 mod 'leinaddm/htpasswd'

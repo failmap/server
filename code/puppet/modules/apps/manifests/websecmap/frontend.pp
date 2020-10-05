@@ -6,6 +6,7 @@ class apps::websecmap::frontend (
   $image = $apps::websecmap::image,
   # by default assume www. is not configured
   $default_nowww_compliance = class_c,
+  $subdomains = [],
 ){
   $appname = "${pod}-frontend"
 
@@ -147,6 +148,7 @@ class apps::websecmap::frontend (
     # if no explicit domainname is set fall back to listening on everything
     default_vhost    => $default_vhost,
     nowww_compliance => $nowww_compliance,
+    subdomains       => $subdomains,
   }
 
   $auth_basic = 'Admin login'
