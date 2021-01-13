@@ -30,7 +30,7 @@ class apps::websecmap::frontend (
 
   $db_password = simplib::passgen($db_user, {'length' => 32})
   mysql_user { "${db_user}@localhost":
-    password_hash => mysql_password($db_password),
+    password_hash => mysql::password($db_password),
   }
   -> mysql_grant { "${db_user}@localhost/${db_name}.*":
     user       => "${db_user}@localhost",
@@ -43,7 +43,7 @@ class apps::websecmap::frontend (
   # has write access to the database content
   $interactive_db_password = simplib::passgen($interactive_db_user, {'length' => 32})
   mysql_user { "${interactive_db_user}@localhost":
-    password_hash => mysql_password($interactive_db_password),
+    password_hash => mysql::password($interactive_db_password),
   }
   -> mysql_grant { "${interactive_db_user}@localhost/${db_name}.*":
     user       => "${interactive_db_user}@localhost",
