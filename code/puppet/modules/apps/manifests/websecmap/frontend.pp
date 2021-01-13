@@ -92,6 +92,10 @@ class apps::websecmap::frontend (
       'SERVICE_CHECK_TCP=true',
       # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
       'COLUMNS=80',
+      # mitigate issue with where on production the value of 'cheaper' is above the value of 'workers'
+      # TODO: needs more investigation
+      # https://uwsgi-docs.readthedocs.io/en/latest/Cheaper.html
+      'UWSGI_CHEAPER=0',
     ],
     env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net             => $pod,
