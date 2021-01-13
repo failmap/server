@@ -32,13 +32,20 @@ class base::env::hosted (
     $password_authentication = no
   }
 
+  # disable root login if at least one account is configured
+  if empty($::accounts::users) {
+    $permit_root_login = yes
+  } else {
+    $permit_root_login = no
+  }
+
   # enable ssh server
   class { '::ssh':
     storeconfigs_enabled => false,
     server_options       => {
       # improve ssh server security
       'PasswordAuthentication' => $password_authentication,
-      'PermitRootLogin'        => no,
+      'PermitRootLogin'        => $permit_root_login,
     }
   }
 
