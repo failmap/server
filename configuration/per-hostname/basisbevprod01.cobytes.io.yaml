@@ -1,6 +1,9 @@
 # Set frontend hostname for this server
 apps::websecmap::hostname: internetcleanup.foundation
 
+# letsencrypt account settings
+letsencrypt::email: info@faalkaart.nl
+
 # users & sudo permissions
 accounts::users:
   test:
