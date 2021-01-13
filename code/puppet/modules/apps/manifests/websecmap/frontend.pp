@@ -96,6 +96,9 @@ class apps::websecmap::frontend (
       # TODO: needs more investigation
       # https://uwsgi-docs.readthedocs.io/en/latest/Cheaper.html
       'UWSGI_CHEAPER=0',
+      # reduce the number of default frontend uwsgi workers for memory reasons
+      # TODO: needs more tweakers for performance
+      'UWSGI_WORKERS=2',
     ],
     env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net             => $pod,
