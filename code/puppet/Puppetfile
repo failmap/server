@@ -18,7 +18,8 @@ mod 'puppetlabs-vcsrepo'
 mod 'thias-php'
 mod 'puppetlabs-mysql'
 mod 'example42-network'
-mod 'puppetlabs-docker'
+# pin for https://github.com/puppetlabs/puppetlabs-docker/issues/689
+mod 'puppetlabs-docker', '>=3.13.0'
 # pin for puppet4+ compat
 mod 'KyleAnderson/consul', '>=3.0.0'
 mod 'puppet/collectd'
