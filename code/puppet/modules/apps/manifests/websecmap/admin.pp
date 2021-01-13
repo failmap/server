@@ -77,6 +77,13 @@ class apps::websecmap::admin (
     'STATSD_HOST=172.20.0.1',
     # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
     'COLUMNS=80',
+    # mitigate issue with where on production the value of 'cheaper' is above the value of 'workers'
+    # TODO: needs more investigation
+    # https://uwsgi-docs.readthedocs.io/en/latest/Cheaper.html
+    'UWSGI_CHEAPER=0',
+    # reduce the number of default frontend uwsgi workers for memory reasons
+    # TODO: needs more tweakers for performance
+    'UWSGI_WORKERS=2',
   ]
 
   # stateful configuration (credentials for external parties, eg: Sentry)
