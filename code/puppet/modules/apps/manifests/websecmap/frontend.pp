@@ -216,6 +216,19 @@ class apps::websecmap::frontend (
     },
   }
 
+  nginx::resource::location { '/metrics/':
+    server               => $apps::websecmap::hostname,
+    ssl                  => true,
+    ssl_only             => true,
+    www_root             => undef,
+    proxy                => "\$backend",
+    location_cfg_append  => {
+      'set $backend' => 'http://127.0.0.1:9273/metrics',
+    },
+    auth_basic           => $auth_basic,
+    auth_basic_user_file => $auth_basic_user_file,
+  }
+
   file { "/etc/nginx/conf.d/${hostname}.rate_limit.conf":
     ensure  => present,
     content => "limit_req_zone \$binary_remote_addr zone=authentication:10m rate=3r/s;"

@@ -9,6 +9,7 @@ classes:
   - apps::websecmap::frontend
   - apps::websecmap::broker
   - apps::websecmap::worker
+  - apps::websecmap::monitoring
 
 # site config
 sites::disable_default: true
