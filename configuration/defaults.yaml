@@ -26,6 +26,10 @@ mysql::server::package_name: "mysql-community-server"
 mysql::client::package_name: "mysql-community-client"
 # force mysql as mariadb on debian 9 is not yet tested
 mysql::server::service_name: mysql
+mysql::server::override_options:
+  mysqld:
+    # keep 1 days worth of binlogs
+    expire_logs_days: 1
 
 nginx::gzip: "on"
 
