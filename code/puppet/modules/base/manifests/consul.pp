@@ -3,6 +3,7 @@ class base::consul (){
   service{'consul':
     ensure => stopped,
     enable => false,
+    provider => systemd,
   }
   -> file{'/opt/consul':
     ensure => absent,
