@@ -60,6 +60,6 @@ class base::env::hosted (
   }
 
   swap_file::files { 'default':
-      ensure   => present,
+      ensure   => absent,
   }
 }
