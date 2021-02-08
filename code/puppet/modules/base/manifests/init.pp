@@ -25,7 +25,7 @@ class base (
   class { 'base::mysql': }
 
   # utility packages
-  package { ['sl', 'atop', 'htop', 'unzip', 'jq', 'cron']:
+  package { ['sl', 'atop', 'htop', 'unzip', 'jq', 'cron', 'iotop']:
     ensure => latest,
   }
 
