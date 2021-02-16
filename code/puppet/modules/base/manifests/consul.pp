@@ -1,8 +1,8 @@
 # cleanup remnants of consul configuration
 class base::consul (){
   service{'consul':
-    ensure => stopped,
-    enable => false,
+    ensure   => stopped,
+    enable   => false,
     provider => systemd,
   }
   -> file{'/opt/consul':

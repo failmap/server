@@ -134,17 +134,19 @@ class apps::websecmap::frontend (
   }
 
   sites::vhosts::proxy { $hostname:
-    proxy            => "${apps::websecmap::docker_ip_addresses[$appname]}:8000",
+    proxy               => "${apps::websecmap::docker_ip_addresses[$appname]}:8000",
     # allow upstream to set caching headers, cache upstream responses
     # and serve stale results if backend is unavailable or broken
-    caching          => upstream,
-    proxy_timeout    => '60s',
+    caching             => upstream,
+    proxy_timeout       => '60s',
     # default timeout if not provided by upstream, make odd number to easily identify in web inspecter.
-    expires          => 599,
+    expires             => 599,
     # if no explicit domainname is set fall back to listening on everything
-    default_vhost    => $default_vhost,
-    nowww_compliance => $nowww_compliance,
-    subdomains       => $subdomains,
+    default_vhost       => $default_vhost,
+    nowww_compliance    => $nowww_compliance,
+    subdomains          => $subdomains,
+    # prevent cookies from disabling caching on frontpage
+    location_cfg_append => {'proxy_ignore_headers' => 'Set-Cookie'},
   }
 
   $auth_basic = 'Admin login'
