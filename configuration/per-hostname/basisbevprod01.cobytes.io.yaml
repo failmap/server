@@ -1,5 +1,5 @@
 # Set frontend hostname for this server
-apps::websecmap::hostname: internetcleanup.foundation
+apps::websecmap::hostname: basisbeveiliging.nl
 
 # letsencrypt account settings
 letsencrypt::email: info@faalkaart.nl
