@@ -80,15 +80,17 @@ base::firewall::rules:
       - ESTABLISHED
     action: accept
     provider: ip6tables
-  100 v6 allow icmp forward:
+  100 v6 allow icmp forward docker in :
     chain: FORWARD
     proto: ipv6-icmp
     action: accept
+    destination: 2a01:7c8:aac0:56b:0::0/64
     provider: ip6tables
   100 v6 traffic out forward:
     chain: FORWARD
     proto: all
     action: accept
+    iniface: docker0
     outiface: eth0
     provider: ip6tables
   100 v6 websecmap docker intercontainer:
