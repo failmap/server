@@ -4,6 +4,16 @@ apps::websecmap::hostname: basisbeveiliging.nl
 # letsencrypt account settings
 letsencrypt::email: info@faalkaart.nl
 
+sites::vhost_webroot:
+  faalkaart.nl: {}
+
+base::files:
+  /var/www/faalkaart.nl/html/index.html:
+    require: File[/var/www/faalkaart.nl/html/]
+    content: |
+      <head><meta http-equiv="refresh" content="0;URL='https://%{lookup('apps::websecmap::hostname')}/'" /></head>
+      You are being redirected to <a href="https://%{lookup('apps::websecmap::hostname')}/">https://%{lookup('apps::websecmap::hostname')}/</a>
+
 # users & sudo permissions
 accounts::users:
   test:

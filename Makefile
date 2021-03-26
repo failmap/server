@@ -1,6 +1,6 @@
 .PHONY: deploy
 
-host ?= faalkaart.nl
+host ?= basisbeveiliging.nl
 
 all: code/puppet/vendor/modules
 
