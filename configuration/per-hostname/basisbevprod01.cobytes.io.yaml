@@ -1,5 +1,10 @@
 # Set frontend hostname for this server
 apps::websecmap::hostname: basisbeveiliging.nl
+# redirect www to non-www
+apps::websecmap::frontend::default_nowww_compliance: class_b
+
+apps::websecmap::frontend::subdomains:
+  - ipv6.basisbeveiliging.nl
 
 # letsencrypt account settings
 letsencrypt::email: info@faalkaart.nl
