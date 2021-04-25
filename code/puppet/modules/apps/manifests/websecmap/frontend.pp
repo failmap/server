@@ -125,6 +125,9 @@ class apps::websecmap::frontend (
       "SECRET_KEY=${secret_key}",
       "ALLOWED_HOSTS=${allowed_hosts}",
       'DEBUG=',
+      # TODO: needs more investigation
+      # https://uwsgi-docs.readthedocs.io/en/latest/Cheaper.html
+      'UWSGI_CHEAPER=0',
     ],
     env_file         => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
     net              => $pod,
