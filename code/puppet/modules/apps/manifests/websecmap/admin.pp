@@ -74,7 +74,7 @@ class apps::websecmap::admin (
     'DEBUG=',
     # message broker settings
     "BROKER=${broker}",
-    'STATSD_HOST=${apps::websecmap::docker_ip_addresses['statsd']}',
+    "STATSD_HOST=${apps::websecmap::docker_ip_addresses['statsd']}",
     # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
     'COLUMNS=80',
     # mitigate issue with where on production the value of 'cheaper' is above the value of 'workers'
