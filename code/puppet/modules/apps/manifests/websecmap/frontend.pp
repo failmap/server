@@ -209,8 +209,8 @@ class apps::websecmap::frontend (
     proxy                => "\$backend",
     location_cfg_append  => {
       'set $backend'       => 'http://127.0.0.1:9273/metrics',
-      'proxy_no_cache'     =>'yes;',
-      'proxy_cache_bypass' =>'yes;',
+      'proxy_no_cache'     =>'yes',
+      'proxy_cache_bypass' =>'yes',
     },
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,
