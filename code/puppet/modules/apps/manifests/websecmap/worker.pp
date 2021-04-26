@@ -30,7 +30,7 @@ class apps::websecmap::worker (
     "DB_NAME=${db_name}",
     "DB_USER=${db_user}",
     "DB_PASSWORD=${db_password}",
-    'STATSD_HOST=172.20.0.1',
+    'STATSD_HOST=${apps::websecmap::docker_ip_addresses['statsd']}',
     # indicate if this host is capable of running ipv6 tasks.
     "NETWORK_SUPPORTS_IPV6=${ipv6_support}",
     # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761

@@ -43,20 +43,22 @@ lookup_options:
 # broken en unused dynamic container system.
 # Only contains addresses for containers requiring fixed ip
 apps::websecmap::docker_ip_addresses:
-    websecmap-frontend:
-        172.17.0.10
-    websecmap-admin:
-        172.17.0.11
-    websecmap-interactive:
-        172.17.0.12
-    broker:
-        172.17.0.20
-    flower:
-        172.17.0.31
-    grafana:
-        172.18.0.30
-    influxdb:
-        172.18.0.32
+  websecmap-frontend:
+    172.17.0.10
+  websecmap-admin:
+    172.17.0.11
+  websecmap-interactive:
+    172.17.0.12
+  broker:
+    172.17.0.20
+  flower:
+    172.17.0.31
+  grafana:
+    172.18.0.30
+  influxdb:
+    172.18.0.32
+  statsd:
+    172.18.0.1
 
 apps::websecmap::docker_subnet: 172.17.0.0/24
 # prevent dynamic ip's to conflict with static ip's
