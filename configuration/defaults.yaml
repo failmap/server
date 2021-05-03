@@ -61,6 +61,8 @@ hosts:
     ip: 172.18.0.1
   mysql:
     ip: 172.18.0.1
+  monitoring:
+    ip: 172.18.0.1
 
 apps::websecmap::docker_subnet: 172.17.0.0/24
 # prevent dynamic ip's to conflict with static ip's

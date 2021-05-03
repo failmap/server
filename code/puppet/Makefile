@@ -23,11 +23,11 @@ Puppetfile.lock: Puppetfile | ${librarian-puppet} ${puppet}
 	${env} ${librarian-puppet} update
 
 fix: | ${puppet-lint}
-	${env} ${puppet-lint} --fix modules
+	${env} ${puppet-lint} --no-140chars-check --fix modules
 
 check: | ${puppet-lint}
 	${env} ${puppet} parser validate modules
-	${env} ${puppet-lint} modules
+	${env} ${puppet-lint} --no-140chars-check modules
 
 clean:
 	rm -rf vendor

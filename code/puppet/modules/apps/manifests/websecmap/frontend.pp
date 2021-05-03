@@ -222,7 +222,7 @@ class apps::websecmap::frontend (
     www_root             => undef,
     proxy                => "\$backend",
     location_cfg_append  => {
-      'set $backend'       => 'http://127.0.0.1:9273/metrics',
+      'set $backend'       => 'http://127.0.0.1:9100/metrics',
       'proxy_no_cache'     =>'yes',
       'proxy_cache_bypass' =>'yes',
     },

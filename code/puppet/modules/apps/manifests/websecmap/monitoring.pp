@@ -3,8 +3,8 @@ class apps::websecmap::monitoring {
   include ::apps::websecmap
 
   class { '::telegraf':
-  service_enable   => true,
-    service_ensure => running,
+    service_enable => false,
+    service_ensure => stopped,
     hostname       => $::hostname,
     outputs        => {
       prometheus_client => [{}],
@@ -44,6 +44,29 @@ class apps::websecmap::monitoring {
     command => '/usr/sbin/usermod -aG docker telegraf',
   }
 
+  Service {
+    provider => systemd,
+  }
+
   # collect and instantiate telegraf inputs defined elsewhere with @telegraf::input
   Telegraf::Input <| |>
+
+  docker::run {'monitoring':
+    image            => 'quay.io/prometheus/node-exporter',
+    tag              => latest,
+    command          => join([
+      '--path.rootfs=/host',
+      '--collector.textfile.directory=/host/var/tmp/node-exporter-textfiles',
+      '--collector.systemd',
+      # disable metrics about the exporter itself
+      '--web.disable-exporter-metrics',
+    ],' '),
+    net              => host,
+    privileged       => true,
+    extra_parameters => '--pid=host --user=root',
+    volumes          => [
+      '/:/host:ro,rslave',
+      '/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket',
+    ],
+  }
 }

@@ -130,7 +130,11 @@ class apps::websecmap::broker (
     mode    => '0755',
   }
 
-  file { '/etc/systemd/system/redis-queue-monitor.service':
+  package { 'moreutils': }
+  -> file {'/var/tmp/node-exporter-textfiles':
+  ensure => directory,
+  }
+  -> file { '/etc/systemd/system/redis-queue-monitor.service':
     content => @("END")
     [Unit]
     Description=Monitor celery redis queue size
@@ -138,7 +142,7 @@ class apps::websecmap::broker (
     Requires=systemd-networkd.service
     [Service]
     Type=oneshot
-    ExecStart=/usr/bin/python3 /usr/local/bin/redis-queues.py
+    ExecStart=/bin/sh -c '/usr/bin/python3 /usr/local/bin/redis-queues.py|/usr/bin/sponge >/var/tmp/node-exporter-textfiles/redis-queues.prom'
     TimeoutStartSec=1m
     Environment=BROKER=${appname}
     |END
@@ -151,8 +155,8 @@ class apps::websecmap::broker (
     [Unit]
     Description=Trigger celery redis queue monitor every half minute
     [Timer]
-    OnBootSec=30s
-    OnUnitActiveSec=30s
+    OnBootSec=1m
+    OnUnitActiveSec=1m
     [Install]
     WantedBy=timers.target
     |END

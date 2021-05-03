@@ -7,10 +7,8 @@ import redis
 import statsd
 
 BROKER = os.environ.get('BROKER', 'localhost')
-STATSD = os.environ.get('STATSD', 'localhost')
 
 r = redis.StrictRedis(host=BROKER, port=6379, db=0)
-s = statsd.StatsClient(STATSD, 8125)
 
 keys = 0
 for key in r.scan_iter("*"):
@@ -20,6 +18,7 @@ for key in r.scan_iter("*"):
         continue
     if r.type(key) != b'list':
         continue
-    # print(name, r.llen(key))
-    s.gauge("celery_queue_stats,queue=%s" % name, r.llen(key))
-s.gauge("redis_keys", keys)
+
+    print('celery_queue_stats{queue="%s"} %s' % (name, r.llen(key)))
+
+print('redis_keys %s' % keys)
