@@ -30,6 +30,8 @@ mysql::server::override_options:
   mysqld:
     # keep 1 days worth of binlogs
     expire_logs_days: 1
+# bind to lo and adress reachable within docker
+mysql::bind_address: "127.0.0.1,172.18.0.1"
 
 nginx::gzip: "on"
 
@@ -37,28 +39,28 @@ lookup_options:
   accounts::users:
     merge: deep
 
-# Dynamic container ip's was deemed to unpredictable (in some edge cases) so
-# settings fixed container ip's since we will be moving away from consul/registry
-# toward a kubernets lite like k3s in the future and not be building on the current
-# broken en unused dynamic container system.
-# Only contains addresses for containers requiring fixed ip
-apps::websecmap::docker_ip_addresses:
+# Fixed IP addresses for docker containers and internal services
+hosts:
+  # container mappings
   websecmap-frontend:
-    172.17.0.10
+    ip: 172.17.0.10
   websecmap-admin:
-    172.17.0.11
+    ip: 172.17.0.11
   websecmap-interactive:
-    172.17.0.12
+    ip: 172.17.0.12
   broker:
-    172.17.0.20
+    ip: 172.17.0.20
   flower:
-    172.17.0.31
+    ip: 172.17.0.31
   grafana:
-    172.18.0.30
+    ip: 172.18.0.30
   influxdb:
-    172.18.0.32
+    ip: 172.18.0.32
+  # services on host system
   statsd:
-    172.18.0.1
+    ip: 172.18.0.1
+  mysql:
+    ip: 172.18.0.1
 
 apps::websecmap::docker_subnet: 172.17.0.0/24
 # prevent dynamic ip's to conflict with static ip's

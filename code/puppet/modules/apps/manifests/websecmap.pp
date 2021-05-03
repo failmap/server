@@ -7,7 +7,6 @@ class apps::websecmap (
   $broker='redis://broker:6379/0',
   $db_name='websecmap',
   # lookup table of internal container ip addresses for nginx
-  $docker_ip_addresses=undef,
   $docker_subnet=undef,
   $docker_ip_range=undef,
 ){

@@ -27,7 +27,7 @@ class apps::websecmap::monitoring::server (
     env              => [
       'INFLUXDB_GRAPHITE_ENABLED=true',
     ],
-    extra_parameters => "--ip=${apps::websecmap::docker_ip_addresses['influxdb']}",
+    extra_parameters => "--ip=${apps::websecmap::hosts['influxdb'][ip]}",
   }
 
   $templates = join(prefix(suffix([
@@ -70,6 +70,6 @@ class apps::websecmap::monitoring::server (
       'GF_AUTH_ANONYMOUS_ORG_ROLE=Editor',
       "GF_SERVER_ROOT_URL=https://${apps::websecmap::hostname}/grafana/",
     ],
-    extra_parameters => "--ip=${apps::websecmap::docker_ip_addresses[$appname]}",
+    extra_parameters => "--ip=${apps::websecmap::hosts[$appname][ip]}",
   }
 }

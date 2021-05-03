@@ -74,7 +74,7 @@ class apps::websecmap::admin (
     'DEBUG=',
     # message broker settings
     "BROKER=${broker}",
-    "STATSD_HOST=${apps::websecmap::docker_ip_addresses['statsd']}",
+    "STATSD_HOST=${apps::websecmap::hosts['statsd'][ip]}",
     # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
     'COLUMNS=80',
     # mitigate issue with where on production the value of 'cheaper' is above the value of 'workers'
@@ -116,14 +116,14 @@ class apps::websecmap::admin (
     username         => 'nobody:nogroup',
     tty              => true,
     systemd_restart  => 'always',
-    extra_parameters => "--ip=${apps::websecmap::docker_ip_addresses[$appname]}",
+    extra_parameters => "--ip=${apps::websecmap::hosts[$appname][ip]}",
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/internet-cleanup-foundation/server/issues/8
   Docker::Run[$appname] -> Service['nginx']
 
   sites::vhosts::proxy { $hostname:
-    proxy                => "${apps::websecmap::docker_ip_addresses[$appname]}:8000",
+    proxy                => "${apps::websecmap::hosts[$appname][ip]}:8000",
     nowww_compliance     => class_c,
     client_ca            => $client_ca,
     auth_basic           => $auth_basic,
@@ -154,7 +154,7 @@ class apps::websecmap::admin (
     mode    => '0744',
   }
 
-  $admin_ip = $apps::websecmap::docker_ip_addresses["websecmap-admin"]
+  $admin_ip = $apps::websecmap::hosts["websecmap-admin"][ip]
   file { '/usr/local/bin/websecmap-deploy':
     content => template('apps/websecmap-deploy.erb'),
     mode    => '0744',
