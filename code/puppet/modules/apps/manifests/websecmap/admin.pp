@@ -188,7 +188,7 @@ class apps::websecmap::admin (
     content => @("EOL"),
       #!/bin/bash
       set -e
-      /usr/bin/docker run ${docker_environment_args} ${docker_args} \
+      /usr/bin/docker run --network=websecmap ${docker_environment_args} ${docker_args} \
         ${image} migrate --noinput
       | EOL
     mode    => '0744',
@@ -221,34 +221,17 @@ class apps::websecmap::admin (
   }
 
   docker::run { 'websecmap-flower':
-    # Disable flower due to memory leak. It eats up 1.5 gigabytes and on doing virtually nothing.
-    # This might be re-enabled at a later time.
-    ensure          => absent,
-    running         => false,
-    image           => $image,
-    command         => 'celery flower --broker=redis://broker:6379/0 --port=8000',
+  image              => $image,
+    command          => 'celery flower --broker=redis://broker:6379/0 --port=8000 --url_prefix=flower',
     # combine specific and generic docker environment options
-    env             => concat($docker_environment,[
-      # name by which service is known to service discovery (consul)
-      'SERVICE_NAME=websecmap-flower',
-      'SERVICE_CHECK_HTTP=/',
-    ]),
-    net             => $pod,
-    username        => 'nobody:nogroup',
-    tty             => true,
-    systemd_restart => 'always',
-    hostentries     => $apps::websecmap::hostentries,
-  }
-  -> sites::vhosts::proxy { "flower.${apps::websecmap::hostname}":
-    proxy            => 'websecmap-flower.service.dc1.consul:8000',
-    nowww_compliance => class_c,
-    # use consul as proxy resolver
-    resolver         => ['127.0.0.1:8600'],
-    client_ca        => $client_ca,
-    # admin is accessible for authenticated users only that need to see a live view
-    # of changes, do not cache anything
-    caching          => disabled,
-    proxy_timeout    => '90s',
+    env              => $docker_environment,
+    net              => $pod,
+    username         => 'nobody:nogroup',
+    tty              => true,
+    systemd_restart  => 'always',
+    extra_parameters => "--ip=${apps::websecmap::hosts[flower][ip]}",
+    hostentries      => $apps::websecmap::hostentries,
+    memory_limit     => '500m',
   }
 
   # file to store users allowed to authenticate to the admin backend

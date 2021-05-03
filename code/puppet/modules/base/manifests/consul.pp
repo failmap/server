@@ -24,7 +24,7 @@ class base::consul (){
 
   service {'dnsmasq':
     ensure => stopped,
-    enable => false
+    enable => false,
   }
 
   docker::run {'register':

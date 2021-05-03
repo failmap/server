@@ -15,7 +15,7 @@ class base::env::hosted (
   class { '::ntp':
       servers => [
           '0.pool.ntp.org', '1.pool.ntp.org',
-          '2.pool.ntp.org', '3.pool.ntp.org'
+          '2.pool.ntp.org', '3.pool.ntp.org',
       ],
   }
 
@@ -46,7 +46,7 @@ class base::env::hosted (
       # improve ssh server security
       'PasswordAuthentication' => $password_authentication,
       'PermitRootLogin'        => $permit_root_login,
-    }
+    },
   }
 
   # remind superusers of configurationmanagement

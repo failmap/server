@@ -230,14 +230,26 @@ class apps::websecmap::frontend (
     auth_basic_user_file => $auth_basic_user_file,
   }
 
+
+  nginx::resource::location { '/flower/':
+    server               => $apps::websecmap::hostname,
+    ssl                  => true,
+    ssl_only             => true,
+    www_root             => undef,
+    proxy                => 'http://flower:8000',
+    location_cfg_append  => merge({}, $remote_user_header),
+    auth_basic           => $auth_basic,
+    auth_basic_user_file => $auth_basic_user_file,
+  }
+
   file { "/etc/nginx/conf.d/${hostname}.rate_limit.conf":
     ensure  => present,
-    content => "limit_req_zone \$binary_remote_addr zone=authentication:10m rate=3r/s;"
+    content => "limit_req_zone \$binary_remote_addr zone=authentication:10m rate=3r/s;",
   } ~> Nginx::Resource::Server[$hostname]
 
   file { "/etc/nginx/conf.d/${hostname}.game.rate_limit.conf":
     ensure  => present,
-    content => "limit_req_zone \$binary_remote_addr zone=game:10m rate=10r/s;"
+    content => "limit_req_zone \$binary_remote_addr zone=game:10m rate=10r/s;",
   } ~> Nginx::Resource::Server[$hostname]
 
   nginx::resource::location { "${hostname}-authentication":
@@ -249,7 +261,7 @@ class apps::websecmap::frontend (
     proxy                      => "http://${apps::websecmap::hosts["${pod}-interactive"][ip]}:8000",
     location_custom_cfg_append => {
       'limit_req' => 'zone=authentication;',
-    }
+    },
   }
 
   nginx::resource::location { "${hostname}-game":

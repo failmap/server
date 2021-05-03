@@ -9,7 +9,7 @@ class base (
 
   class { '::apt':
     # make fetching keys work on environments where port 11371 is blocked
-    keyserver => 'hkp://keyserver.ubuntu.com:80'
+    keyserver => 'hkp://keyserver.ubuntu.com:80',
   }
 
   # still supporting jessie until faalserver is updated
@@ -53,7 +53,7 @@ class base (
   concat::fragment { 'motd banner':
     target  => '/etc/motd',
     content => template('base/motd.erb'),
-    order   => '0'
+    order   => '0',
   }
 
   file {'/etc/banner':
@@ -87,5 +87,11 @@ class base (
     owner  => root,
     group  => sudo,
     mode   => '0750',
+  }
+
+  service {'puppet':
+    ensure   => stopped,
+    enable   => false,
+    provider => systemd,
   }
 }

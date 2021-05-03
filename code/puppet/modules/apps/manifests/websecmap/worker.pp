@@ -59,7 +59,7 @@ class apps::websecmap::worker (
     docker::run { "${appname}-${role}":
       image           => $image,
       # be informative and run memory efficient worker pool
-      command         => "celery worker --loglevel=info ${worker_args}",
+      command         => "celery worker --without-gossip --loglevel=info ${worker_args}",
       volumes         => [
         '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
       ],

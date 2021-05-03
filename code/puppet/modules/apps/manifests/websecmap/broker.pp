@@ -50,7 +50,10 @@ class apps::websecmap::broker (
     net              => $pod,
     ports            => $ports,
     extra_parameters => "--ip=${apps::websecmap::hosts[$appname][ip]}",
-    env              => ["SERVICE_NAME=${appname}"]
+    env              => ["SERVICE_NAME=${appname}"],
+    volumes          => [
+      '/srv/broker/data:/data',
+    ],
   }
 
   @telegraf::input { 'broker-redis':
@@ -86,7 +89,7 @@ class apps::websecmap::broker (
           'ssl', 'crt', $tls_combined_path,
           # require client certificate
           'verify', 'required', 'ca-file', $client_ca_path,
-        ]
+        ],
       },
     }
     haproxy::balancermember { 'broker':
