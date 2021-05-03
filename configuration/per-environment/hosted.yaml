@@ -33,7 +33,12 @@ base::firewall::rules:
   400 docker container statsd:
     proto: udp
     dport: 8125
-    source: 172.16.0.0/12
+    source: 172.18.0.0/12
+    action: accept
+  400 docker container mysql:
+    proto: tcp
+    dport: 3306
+    source: 172.18.0.0/12
     action: accept
   999 drop the rest:
     proto: all

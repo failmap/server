@@ -36,6 +36,14 @@ class apps::websecmap::frontend (
     table      => "${db_name}.*",
     privileges => ['SELECT'],
   }
+  mysql_user { "${db_user}@172.17.0.%":
+    password_hash => mysql::password($db_password),
+  }
+  -> mysql_grant { "${db_user}@172.17.0.%/${db_name}.*":
+    user       => "${db_user}@172.17.0.%",
+    table      => "${db_name}.*",
+    privileges => ['SELECT'],
+  }
 
   # database interactive user
   # used for interactive components (eg: login (non-admin), url/org submit)
@@ -46,6 +54,14 @@ class apps::websecmap::frontend (
   }
   -> mysql_grant { "${interactive_db_user}@localhost/${db_name}.*":
     user       => "${interactive_db_user}@localhost",
+    table      => "${db_name}.*",
+    privileges => ['SELECT', 'UPDATE', 'INSERT', 'DELETE'],
+  }
+  mysql_user { "${interactive_db_user}@172.17.0.%":
+    password_hash => mysql::password($interactive_db_password),
+  }
+  -> mysql_grant { "${interactive_db_user}@172.17.0.%/${db_name}.*":
+    user       => "${interactive_db_user}@172.17.0.%",
     table      => "${db_name}.*",
     privileges => ['SELECT', 'UPDATE', 'INSERT', 'DELETE'],
   }
@@ -66,7 +82,6 @@ class apps::websecmap::frontend (
     image            => $image,
     command          => 'runuwsgi',
     volumes          => [
-      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
       # temporary solution to allow screenshots to be hosted for live release
       '/srv/websecmap/images/screenshots/:/srv/websecmap/static/images/screenshots/',
@@ -76,7 +91,7 @@ class apps::websecmap::frontend (
       'APPLICATION_MODE=frontend',
       'DJANGO_LOG_LEVEL=INFO',
       'DJANGO_DATABASE=production',
-      'DB_HOST=/var/run/mysqld/mysqld.sock',
+      'DB_HOST=mysql',
       "DB_NAME=${db_name}",
       "DB_USER=${db_user}",
       "DB_PASSWORD=${db_password}",
@@ -99,7 +114,7 @@ class apps::websecmap::frontend (
     tty              => true,
     systemd_restart  => 'always',
     extra_parameters => "--ip=${apps::websecmap::hosts[$appname][ip]}",
-    hostentries      => $websecmap::hostentries,
+    hostentries      => $apps::websecmap::hostentries,
   }
 
   # interactive instance, used for serving interactive parts (not admin) to authenticated/limited audience
@@ -107,7 +122,6 @@ class apps::websecmap::frontend (
     image            => $image,
     command          => 'runuwsgi',
     volumes          => [
-      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
       # temporary solution to allow screenshots to be hosted for live release
       '/srv/websecmap/images/screenshots/:/srv/websecmap/static/images/screenshots/',
@@ -116,7 +130,7 @@ class apps::websecmap::frontend (
       # database settings
       'APPLICATION_MODE=interactive',
       'DJANGO_DATABASE=production',
-      'DB_HOST=/var/run/mysqld/mysqld.sock',
+      'DB_HOST=mysql',
       "DB_NAME=${db_name}",
       "DB_USER=${interactive_db_user}",
       "DB_PASSWORD=${interactive_db_password}",
@@ -133,11 +147,11 @@ class apps::websecmap::frontend (
     tty              => true,
     systemd_restart  => 'always',
     extra_parameters => "--ip=${apps::websecmap::hosts["${pod}-interactive"][ip]}",
-    hostentries      => $websecmap::hostentries,
+    hostentries      => $apps::websecmap::hostentries,
   }
 
   sites::vhosts::proxy { $hostname:
-    proxy               => "${apps::websecmap::hosts[$appname][ip]}:8000",
+    proxy               => "${appname}:8000",
     # allow upstream to set caching headers, cache upstream responses
     # and serve stale results if backend is unavailable or broken
     caching             => upstream,
@@ -161,7 +175,7 @@ class apps::websecmap::frontend (
     ssl                  => true,
     ssl_only             => true,
     www_root             => undef,
-    proxy                => "http://${apps::websecmap::hosts['grafana'][ip]}:3000/",
+    proxy                => 'http://grafana:3000/',
     location_cfg_append  => merge({}, $remote_user_header),
     location             => '/grafana/',
     auth_basic           => $auth_basic,
@@ -259,7 +273,7 @@ class apps::websecmap::frontend (
     ssl_only                   => true,
     www_root                   => undef,
     location                   => '/game/scores/',
-    proxy                      => "http://${apps::websecmap::hosts[$appname][ip]}:8000",
+    proxy                      => "http://${appname}:8000",
     location_custom_cfg_append => {
       'limit_req'          => 'zone=game;',
       'proxy_no_cache'     =>'yes;',
@@ -273,7 +287,7 @@ class apps::websecmap::frontend (
     ssl_only => true,
     www_root => undef,
     location => '/proxy/',
-    proxy    => "http://${apps::websecmap::hosts[$appname][ip]}:8000",
+    proxy    => "http://${appname}:8000",
     expires  => '7d',
   }
 

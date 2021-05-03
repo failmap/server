@@ -45,11 +45,12 @@ class apps::websecmap::broker (
   }
 
   docker::run { $appname:
-    image => redis,
-    tag   => latest,
-    net   => $pod,
-    ports => $ports,
-    env   => ["SERVICE_NAME=${appname}"]
+    image            => redis,
+    tag              => latest,
+    net              => $pod,
+    ports            => $ports,
+    extra_parameters => "--ip=${apps::websecmap::hosts[$appname][ip]}",
+    env              => ["SERVICE_NAME=${appname}"]
   }
 
   @telegraf::input { 'broker-redis':
@@ -122,7 +123,8 @@ class apps::websecmap::broker (
   ensure_packages(['python3-redis','python3-statsd'], {ensure => latest})
   Exec['apt_update'] -> Package['python3-statsd'] # prevent race condition on vanilla run
   file {'/usr/local/bin/redis-queues.py':
-    content => template('apps/redis-queues.py.erb')
+    content => template('apps/redis-queues.py.erb'),
+    mode    => '0755',
   }
 
   file { '/etc/systemd/system/redis-queue-monitor.service':
@@ -144,10 +146,10 @@ class apps::websecmap::broker (
   file { '/etc/systemd/system/redis-queue-monitor.timer':
     content => @(END)
     [Unit]
-    Description=Trigger celery redis queue monitor every minute
+    Description=Trigger celery redis queue monitor every half minute
     [Timer]
-    OnBootSec=1m
-    OnUnitActiveSec=1m
+    OnBootSec=30s
+    OnUnitActiveSec=30s
     [Install]
     WantedBy=timers.target
     |END

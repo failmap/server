@@ -19,6 +19,7 @@ rsync -v -a --delete --no-motd \
   --include 'code/puppet/vendor/modules/*/types/' \
   --include 'code/puppet/vendor/modules/*/manifests/' \
   --include 'code/puppet/vendor/modules/*/templates/' \
+  --include 'code/puppet/vendor/modules/*/functions/' \
   --exclude 'code/puppet/vendor/*/*/*' \
   --exclude 'code/servertool/*' \
   "$host:provision/"

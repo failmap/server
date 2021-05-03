@@ -27,7 +27,7 @@ class apps::websecmap::monitoring::server (
     env              => [
       'INFLUXDB_GRAPHITE_ENABLED=true',
     ],
-    extra_parameters => "--ip=${apps::websecmap::hosts['influxdb'][ip]}",
+    extra_parameters => '--ip=influxdb',
   }
 
   $templates = join(prefix(suffix([

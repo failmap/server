@@ -26,12 +26,21 @@ class apps::websecmap::admin (
     # admin requires all permissions to manage database (and migrations)
     grant    => ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'CREATE', 'INDEX', 'DROP', 'ALTER', 'REFERENCES'],
   }
+  # allow containers to connect to mysql
+  mysql_user { "${db_user}@172.17.0.%":
+    password_hash => mysql::password($db_password),
+  }
+  -> mysql_grant { "${db_user}@172.17.0.%/${db_name}.*":
+    user       => "${db_user}@172.17.0.%",
+    table      => "${db_name}.*",
+    privileges => ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'CREATE', 'INDEX', 'DROP', 'ALTER', 'REFERENCES'],
+  }
 
   @telegraf::input { "mysql-${db_name}":
     plugin_type => mysql,
     options     => [
       {
-        servers => ["${db_user}:${db_password}@unix(/var/run/mysqld/mysqld.sock)/${db_name}"],
+        servers => ["${db_user}:${db_password}@tcp(localhost:3306)/${db_name}"],
       },
     ],
   }
@@ -63,7 +72,7 @@ class apps::websecmap::admin (
     'APPLICATION_MODE=admin',
     'DJANGO_LOG_LEVEL=INFO',
     'DJANGO_DATABASE=production',
-    'DB_HOST=/var/run/mysqld/mysqld.sock',
+    'DB_HOST=mysql',
     "DB_NAME=${db_name}",
     "DB_USER=${db_user}",
     "DB_PASSWORD=${db_password}",
@@ -74,7 +83,7 @@ class apps::websecmap::admin (
     'DEBUG=',
     # message broker settings
     "BROKER=${broker}",
-    "STATSD_HOST=${apps::websecmap::hosts['statsd'][ip]}",
+    'STATSD_HOST=statsd',
     # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
     'COLUMNS=80',
     # mitigate issue with where on production the value of 'cheaper' is above the value of 'workers'
@@ -103,8 +112,6 @@ class apps::websecmap::admin (
     image            => $image,
     command          => 'runuwsgi',
     volumes          => [
-      # make mysql accesible from within container
-      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
       # temporary solution to allow screenshots to be hosted for live release
       '/srv/websecmap/images/screenshots/:/srv/websecmap/static/images/screenshots/',
@@ -117,14 +124,14 @@ class apps::websecmap::admin (
     tty              => true,
     systemd_restart  => 'always',
     extra_parameters => "--ip=${apps::websecmap::hosts[$appname][ip]}",
-    hostentries      => $websecmap::hostentries,
+    hostentries      => $apps::websecmap::hostentries,
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/internet-cleanup-foundation/server/issues/8
   Docker::Run[$appname] -> Service['nginx']
 
   sites::vhosts::proxy { $hostname:
-    proxy                => "${apps::websecmap::hosts[$appname][ip]}:8000",
+    proxy                => "${appname}:8000",
     nowww_compliance     => class_c,
     client_ca            => $client_ca,
     auth_basic           => $auth_basic,
@@ -137,7 +144,7 @@ class apps::websecmap::admin (
   }
 
   # add convenience command to run admin actions via container
-  $docker_environment_args = join(prefix($docker_environment, '-e'), ' ')
+  $docker_environment_args = join(prefix($docker_environment, '--env='), ' ')
   file { '/usr/local/bin/websecmap':
     content => "#!/bin/bash\n/usr/bin/docker exec -ti -e TERM=\$TERM ${appname} /usr/local/bin/websecmap \"\$@\"",
     mode    => '0744',
@@ -176,12 +183,12 @@ class apps::websecmap::admin (
     content => '/bin/journalctl -f -u docker-websecmap-*',
     mode    => '0744',
   }
+  $docker_args = join(prefix($apps::websecmap::hostentries, '--add-host='), ' ')
   file { '/usr/local/bin/websecmap-db-migrate':
     content => @("EOL"),
       #!/bin/bash
       set -e
-      /usr/bin/docker run ${docker_environment_args} \
-        -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
+      /usr/bin/docker run ${docker_environment_args} ${docker_args} \
         ${image} migrate --noinput
       | EOL
     mode    => '0744',
@@ -226,15 +233,11 @@ class apps::websecmap::admin (
       'SERVICE_NAME=websecmap-flower',
       'SERVICE_CHECK_HTTP=/',
     ]),
-    volumes         => [
-      # make mysql accesible from within container
-      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
-    ],
     net             => $pod,
     username        => 'nobody:nogroup',
     tty             => true,
     systemd_restart => 'always',
-    hostentries     => $websecmap::hostentries,
+    hostentries     => $apps::websecmap::hostentries,
   }
   -> sites::vhosts::proxy { "flower.${apps::websecmap::hostname}":
     proxy            => 'websecmap-flower.service.dc1.consul:8000',

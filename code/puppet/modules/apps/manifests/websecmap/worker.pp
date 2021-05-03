@@ -26,11 +26,11 @@ class apps::websecmap::worker (
     # worker required db access for non-scanner tasks (eg: rating rebuild)
     'DJANGO_DATABASE=production',
     'DJANGO_LOG_LEVEL=INFO',
-    'DB_HOST=/var/run/mysqld/mysqld.sock',
+    'DB_HOST=mysql',
     "DB_NAME=${db_name}",
     "DB_USER=${db_user}",
     "DB_PASSWORD=${db_password}",
-    "STATSD_HOST=${apps::websecmap::hosts['statsd'][ip]}",
+    'STATSD_HOST=statsd',
     # indicate if this host is capable of running ipv6 tasks.
     "NETWORK_SUPPORTS_IPV6=${ipv6_support}",
     # Fix Celery issue under Python 3.8, See: https://github.com/celery/celery/issues/5761
@@ -62,8 +62,6 @@ class apps::websecmap::worker (
       command         => "celery worker --loglevel=info ${worker_args}",
       volumes         => [
         '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
-        # make mysql accesible from within container
-        '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
       ],
       env             => $docker_environment + [
         # what tasks this worker should execute
@@ -80,7 +78,7 @@ class apps::websecmap::worker (
       # give tasks 5 minutes to finish cleanly
       stop_wait_time  => 300,
       systemd_restart => 'always',
-      hostentries     => $websecmap::hostentries,
+      hostentries     => $apps::websecmap::hostentries,
     }
     File["/srv/${appname}/"] -> Docker::Run["${appname}-${role}"]
   }
@@ -90,8 +88,6 @@ class apps::websecmap::worker (
     command         => 'celery beat -linfo --pidfile=/var/tmp/celerybeat.pid',
     volumes         => [
       '/srv/websecmap-frontend/uploads:/source/websecmap/uploads',
-      # make mysql accesible from within container
-      '/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock',
     ],
     env             => $docker_environment,
     env_file        => ["/srv/${appname}/env.file", "/srv/${pod}/env.file"],
@@ -99,6 +95,6 @@ class apps::websecmap::worker (
     username        => 'nobody:nogroup',
     tty             => true,
     systemd_restart => 'always',
-    hostentries     => $websecmap::hostentries,
+    hostentries     => $apps::websecmap::hostentries,
   }
 }

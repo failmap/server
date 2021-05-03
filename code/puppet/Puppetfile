@@ -5,7 +5,7 @@ forge "https://forgeapi.puppetlabs.com"
 
 mod 'saz-ssh', '>=4'
 mod 'puppet-unattended_upgrades'
-mod 'puppetlabs-firewall'
+mod 'puppetlabs-firewall', '2.8.0'
 mod 'puppetlabs-ntp'
 # Resolve deprecation warnings; https://github.com/petems/petems-swap_file/pull/81
 mod 'petems/swap_file',
@@ -16,10 +16,10 @@ mod 'puppetlabs-stdlib'
 mod 'puppet-nginx', '0.15.0'
 mod 'puppetlabs-vcsrepo'
 mod 'thias-php'
-mod 'puppetlabs-mysql'
+mod 'puppetlabs-mysql', '<10.10.0'
 mod 'example42-network'
 # pin for https://github.com/puppetlabs/puppetlabs-docker/issues/689
-mod 'puppetlabs-docker', '>=3.13.0'
+mod 'puppetlabs-docker', '3.13.0'
 # pin for puppet4+ compat
 mod 'KyleAnderson/consul', '>=3.0.0'
 mod 'puppet/collectd'
@@ -42,3 +42,4 @@ mod 'aequitas/sites',
 
 mod 'simp/simplib'
 mod 'leinaddm/htpasswd'
+mod 'camptocamp/systemd'

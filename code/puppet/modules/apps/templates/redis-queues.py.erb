@@ -22,4 +22,4 @@ for key in r.scan_iter("*"):
         continue
     # print(name, r.llen(key))
     s.gauge("celery_queue_stats,queue=%s" % name, r.llen(key))
-    s.gauge("redis_keys", keys)
+s.gauge("redis_keys", keys)
