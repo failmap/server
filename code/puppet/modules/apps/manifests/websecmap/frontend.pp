@@ -62,8 +62,7 @@ class apps::websecmap::frontend (
   $secret_key = simplib::passgen('secret_key', {'length' => 32})
 
   # frontend instance, used for serving readonly content to high traffic public
-  Docker::Image[$image]
-  ~> docker::run { $appname:
+  docker::run { $appname:
     image            => $image,
     command          => 'runuwsgi',
     volumes          => [
@@ -103,8 +102,7 @@ class apps::websecmap::frontend (
   }
 
   # interactive instance, used for serving interactive parts (not admin) to authenticated/limited audience
-  Docker::Image[$image]
-  ~> docker::run { "${pod}-interactive":
+  docker::run { "${pod}-interactive":
     image            => $image,
     command          => 'runuwsgi',
     volumes          => [

@@ -56,8 +56,7 @@ class apps::websecmap::worker (
       $worker_args = ''
     }
 
-    Docker::Image[$image]
-    ~> docker::run { "${appname}-${role}":
+    docker::run { "${appname}-${role}":
       image           => $image,
       # be informative and run memory efficient worker pool
       command         => "celery worker --loglevel=info ${worker_args}",
@@ -85,8 +84,7 @@ class apps::websecmap::worker (
     File["/srv/${appname}/"] -> Docker::Run["${appname}-${role}"]
   }
 
-  Docker::Image[$image]
-  ~> docker::run { 'websecmap-scheduler':
+  docker::run { 'websecmap-scheduler':
     image           => $image,
     command         => 'celery beat -linfo --pidfile=/var/tmp/celerybeat.pid',
     volumes         => [

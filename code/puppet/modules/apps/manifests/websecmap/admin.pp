@@ -99,8 +99,7 @@ class apps::websecmap::admin (
       group  => nogroup;
   } -> Docker::Run[$appname]
 
-  Docker::Image[$image]
-  ~> docker::run { $appname:
+  docker::run { $appname:
     image            => $image,
     command          => 'runuwsgi',
     volumes          => [
@@ -188,7 +187,7 @@ class apps::websecmap::admin (
   }
 
   # run migration in a separate container
-  [Docker::Image[$image], Mysql::Db[$db_name],]
+  Mysql::Db[$db_name]
   ~> exec {"${appname}-migrate":
     command     => '/usr/local/bin/websecmap-db-migrate',
     refreshonly => true,
@@ -213,8 +212,7 @@ class apps::websecmap::admin (
     weekday => 1,
   }
 
-  Docker::Image[$image]
-  ~> docker::run { 'websecmap-flower':
+  docker::run { 'websecmap-flower':
     # Disable flower due to memory leak. It eats up 1.5 gigabytes and on doing virtually nothing.
     # This might be re-enabled at a later time.
     ensure          => absent,
