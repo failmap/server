@@ -36,4 +36,7 @@ mrproper: clean
 	rm -rf .gem
 
 ${librarian-puppet} ${puppet-lint} ${puppet}:
-	${env} gem install librarian-puppet puppet-lint puppet
+	${env} gem install librarianp -v '<1.0.0'
+	${env} gem install librarian-puppet -v '<3.0.0'
+	${env} gem install puppet-lint
+	${env} gem install puppet -v '<5'

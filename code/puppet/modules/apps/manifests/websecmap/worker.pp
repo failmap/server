@@ -80,6 +80,7 @@ class apps::websecmap::worker (
       # give tasks 5 minutes to finish cleanly
       stop_wait_time  => 300,
       systemd_restart => 'always',
+      hostentries     => $websecmap::hostentries,
     }
     File["/srv/${appname}/"] -> Docker::Run["${appname}-${role}"]
   }
@@ -98,5 +99,6 @@ class apps::websecmap::worker (
     username        => 'nobody:nogroup',
     tty             => true,
     systemd_restart => 'always',
+    hostentries     => $websecmap::hostentries,
   }
 }

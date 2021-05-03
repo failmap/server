@@ -10,6 +10,9 @@ class apps::websecmap (
   $docker_subnet=undef,
   $docker_ip_range=undef,
 ){
+  $hosts = lookup(hosts, Hash, hash, {})
+  $hostentries = $hosts.map | $index,$value | { "${index}:${value[ip]}"}
+
   docker::image { $image:
     ensure    => present,
     image     => 'websecmap/websecmap',

@@ -117,6 +117,7 @@ class apps::websecmap::admin (
     tty              => true,
     systemd_restart  => 'always',
     extra_parameters => "--ip=${apps::websecmap::hosts[$appname][ip]}",
+    hostentries      => $websecmap::hostentries,
   }
   # ensure containers are up before restarting nginx
   # https://gitlab.com/internet-cleanup-foundation/server/issues/8
@@ -233,6 +234,7 @@ class apps::websecmap::admin (
     username        => 'nobody:nogroup',
     tty             => true,
     systemd_restart => 'always',
+    hostentries     => $websecmap::hostentries,
   }
   -> sites::vhosts::proxy { "flower.${apps::websecmap::hostname}":
     proxy            => 'websecmap-flower.service.dc1.consul:8000',

@@ -98,7 +98,8 @@ class apps::websecmap::frontend (
     net              => $pod,
     tty              => true,
     systemd_restart  => 'always',
-    extra_parameters => "--ip=${apps::websecmap::hosts[$appname][ip]}"
+    extra_parameters => "--ip=${apps::websecmap::hosts[$appname][ip]}",
+    hostentries      => $websecmap::hostentries,
   }
 
   # interactive instance, used for serving interactive parts (not admin) to authenticated/limited audience
@@ -131,7 +132,8 @@ class apps::websecmap::frontend (
     net              => $pod,
     tty              => true,
     systemd_restart  => 'always',
-    extra_parameters => "--ip=${apps::websecmap::hosts["${pod}-interactive"][ip]}"
+    extra_parameters => "--ip=${apps::websecmap::hosts["${pod}-interactive"][ip]}",
+    hostentries      => $websecmap::hostentries,
   }
 
   sites::vhosts::proxy { $hostname:
