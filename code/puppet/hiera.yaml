@@ -10,7 +10,7 @@ hierarchy:
     glob: "/opt/websecmap/server/configuration/settings.d/*.yaml"
   - name: "per-host configuration settings"
     paths:
-      - "settings.yaml"
+      - "/opt/websecmap/server/configuration/settings.yaml"
   - name: "internet cleanup foundation settings"
     paths:
       - "per-hostname/%{::fqdn}.yaml"
