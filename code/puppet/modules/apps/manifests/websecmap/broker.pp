@@ -56,15 +56,6 @@ class apps::websecmap::broker (
     ],
   }
 
-  @telegraf::input { 'broker-redis':
-    plugin_type => redis,
-    options     => [
-      {
-        servers => ["tcp://${appname}:6379"]
-      },
-    ],
-  }
-
   if $client_ca != undef {
     $client_ca_path = "/etc/ssl/certs/haproxy-client-ca-${appname}.pem"
     file { $client_ca_path:

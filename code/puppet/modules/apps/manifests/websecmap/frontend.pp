@@ -170,18 +170,6 @@ class apps::websecmap::frontend (
   $auth_basic_user_file = '/etc/nginx/admin.htpasswd'
   $remote_user_header = {'proxy_set_header' => "REMOTE_USER \$remote_user"}
 
-  nginx::resource::location { 'frontend-grafana':
-    server               => $apps::websecmap::hostname,
-    ssl                  => true,
-    ssl_only             => true,
-    www_root             => undef,
-    proxy                => 'http://grafana:3000/',
-    location_cfg_append  => merge({}, $remote_user_header),
-    location             => '/grafana/',
-    auth_basic           => $auth_basic,
-    auth_basic_user_file => $auth_basic_user_file,
-  }
-
   nginx::resource::location { 'frontend-admin':
     server               => $apps::websecmap::hostname,
     ssl                  => true,
@@ -223,6 +211,20 @@ class apps::websecmap::frontend (
     proxy                => "\$backend",
     location_cfg_append  => {
       'set $backend'       => 'http://127.0.0.1:9100/metrics',
+      'proxy_no_cache'     =>'yes',
+      'proxy_cache_bypass' =>'yes',
+    },
+    auth_basic           => $auth_basic,
+    auth_basic_user_file => $auth_basic_user_file,
+  }
+
+  nginx::resource::location { '/statsd/':
+    server               => $apps::websecmap::hostname,
+    ssl                  => true,
+    ssl_only             => true,
+    www_root             => undef,
+    proxy                => 'http://statsd:9102/metrics',
+    location_cfg_append  => {
       'proxy_no_cache'     =>'yes',
       'proxy_cache_bypass' =>'yes',
     },

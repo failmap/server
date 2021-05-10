@@ -21,13 +21,6 @@ class base::docker (
     weekday => 0,
   }
 
-  @telegraf::input { 'docker':
-    plugin_type => docker,
-    options     => [{
-      endpoint => 'unix:///var/run/docker.sock',
-    }],
-  }
-
   # include cleanup of old consul configuration
   include base::consul
 

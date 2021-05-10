@@ -52,13 +52,9 @@ hosts:
     ip: 172.17.0.20
   flower:
     ip: 172.17.0.31
-  grafana:
-    ip: 172.18.0.30
-  influxdb:
-    ip: 172.18.0.32
-  # services on host system
   statsd:
-    ip: 172.18.0.1
+    ip: 172.17.0.33
+  # services on host system
   mysql:
     ip: 172.18.0.1
   monitoring:

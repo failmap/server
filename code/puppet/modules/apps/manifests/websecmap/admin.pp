@@ -36,15 +36,6 @@ class apps::websecmap::admin (
     privileges => ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'CREATE', 'INDEX', 'DROP', 'ALTER', 'REFERENCES'],
   }
 
-  @telegraf::input { "mysql-${db_name}":
-    plugin_type => mysql,
-    options     => [
-      {
-        servers => ["${db_user}:${db_password}@tcp(localhost:3306)/${db_name}"],
-      },
-    ],
-  }
-
   $secret_key = simplib::passgen('secret_key', {'length' => 32})
 
   if $hostname == 'admin.default' {
