@@ -6,6 +6,7 @@ class apps::websecmap::frontend (
   # by default assume www. is not configured
   $default_nowww_compliance = class_c,
   $subdomains = [],
+  $broker    = $apps::websecmap::broker,
 ){
   $appname = "${pod}-frontend"
 
@@ -137,6 +138,8 @@ class apps::websecmap::frontend (
       # django generic settings
       "SECRET_KEY=${secret_key}",
       "ALLOWED_HOSTS=${allowed_hosts}",
+      'USE_REMOTE_USER=yes',
+      "BROKER=${broker}",
       'DEBUG=',
       # TODO: needs more investigation
       # https://uwsgi-docs.readthedocs.io/en/latest/Cheaper.html
@@ -170,7 +173,7 @@ class apps::websecmap::frontend (
   $auth_basic_user_file = '/etc/nginx/admin.htpasswd'
   $remote_user_header = {'proxy_set_header' => "REMOTE_USER \$remote_user"}
 
-  nginx::resource::location { 'frontend-admin':
+  nginx::resource::location { '/admin/':
     server               => $apps::websecmap::hostname,
     ssl                  => true,
     ssl_only             => true,
@@ -187,8 +190,11 @@ class apps::websecmap::frontend (
     ssl                  => true,
     ssl_only             => true,
     www_root             => undef,
-    proxy                => "http://${apps::websecmap::hosts["${pod}-admin"][ip]}:8000",
-    location_cfg_append  => merge({}, $remote_user_header),
+    proxy                => "http://${apps::websecmap::hosts["${pod}-admin"][ip]}:8000/",
+    location_cfg_append  => merge({
+      'proxy_no_cache'     =>'yes',
+      'proxy_cache_bypass' =>'yes',
+    }, $remote_user_header),
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,
   }
@@ -196,11 +202,14 @@ class apps::websecmap::frontend (
   # the API is available after authentication, and has their own authentication routines.
   # Functionality of the API is only available after authentication.
   nginx::resource::location { '/api/':
-    server   => $apps::websecmap::hostname,
-    ssl      => true,
-    ssl_only => true,
-    www_root => undef,
-    proxy    => "http://${apps::websecmap::hosts["${pod}-interactive"][ip]}:8000",
+    server               => $apps::websecmap::hostname,
+    ssl                  => true,
+    ssl_only             => true,
+    www_root             => undef,
+    proxy                => "http://${apps::websecmap::hosts["${pod}-interactive"][ip]}:8000",
+    location_cfg_append  => merge({}, $remote_user_header),
+    auth_basic           => $auth_basic,
+    auth_basic_user_file => $auth_basic_user_file,
   }
 
   nginx::resource::location { '/metrics/':
@@ -208,9 +217,8 @@ class apps::websecmap::frontend (
     ssl                  => true,
     ssl_only             => true,
     www_root             => undef,
-    proxy                => "\$backend",
+    proxy                => 'http://127.0.0.1:9100/metrics',
     location_cfg_append  => {
-      'set $backend'       => 'http://127.0.0.1:9100/metrics',
       'proxy_no_cache'     =>'yes',
       'proxy_cache_bypass' =>'yes',
     },
@@ -232,7 +240,6 @@ class apps::websecmap::frontend (
     auth_basic_user_file => $auth_basic_user_file,
   }
 
-
   nginx::resource::location { '/flower/':
     server               => $apps::websecmap::hostname,
     ssl                  => true,
@@ -244,55 +251,12 @@ class apps::websecmap::frontend (
     auth_basic_user_file => $auth_basic_user_file,
   }
 
-  file { "/etc/nginx/conf.d/${hostname}.rate_limit.conf":
-    ensure  => present,
-    content => "limit_req_zone \$binary_remote_addr zone=authentication:10m rate=3r/s;",
-  } ~> Nginx::Resource::Server[$hostname]
-
-  file { "/etc/nginx/conf.d/${hostname}.game.rate_limit.conf":
-    ensure  => present,
-    content => "limit_req_zone \$binary_remote_addr zone=game:10m rate=10r/s;",
-  } ~> Nginx::Resource::Server[$hostname]
-
-  nginx::resource::location { "${hostname}-authentication":
-    server                     => $hostname,
-    ssl                        => true,
-    ssl_only                   => true,
-    www_root                   => undef,
-    location                   => '/authentication/',
-    proxy                      => "http://${apps::websecmap::hosts["${pod}-interactive"][ip]}:8000",
-    location_custom_cfg_append => {
-      'limit_req' => 'zone=authentication;',
-    },
-  }
-
-  nginx::resource::location { "${hostname}-game":
-    server                     => $hostname,
-    ssl                        => true,
-    ssl_only                   => true,
-    www_root                   => undef,
-    location                   => '/game/',
-    proxy                      => "http://${apps::websecmap::hosts["${pod}-interactive"][ip]}:8000",
-    location_custom_cfg_append => {
-      # if not authenticated this endpoint is not visible
-      'if'                 => "(\$cookie_sessionid = \"\") { return 404; }",
-      'proxy_no_cache'     => "\$cookie_sessionid;",
-      'proxy_cache_bypass' =>  "\$cookie_sessionid;",
-    },
-  }
-
-  nginx::resource::location { "${hostname}-game-public":
-    server                     => $hostname,
-    ssl                        => true,
-    ssl_only                   => true,
-    www_root                   => undef,
-    location                   => '/game/scores/',
-    proxy                      => "http://${appname}:8000",
-    location_custom_cfg_append => {
-      'limit_req'          => 'zone=game;',
-      'proxy_no_cache'     =>'yes;',
-      'proxy_cache_bypass' =>'yes;',
-    },
+  nginx::resource::location { '/logout':
+    server              => $apps::websecmap::hostname,
+    ssl                 => true,
+    ssl_only            => true,
+    www_root            => undef,
+    location_cfg_append => {'return' => '401'},
   }
 
   nginx::resource::location { "${hostname}-maptile-proxy":

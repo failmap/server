@@ -48,7 +48,7 @@ set +x
 echo
 echo "Admin restarted, please verify and press [enter] to continue deploy or [ctrl-c] to rollback."
 echo
-echo "https://<%= @hostname %>/"
+echo "https://<%= @hostname %>/manage"
 echo
 # wait for user input
 read -r
@@ -58,8 +58,7 @@ set -x
 /usr/local/bin/websecmap celery control shutdown || true
 
 # restart all services
-systemctl start $(cd /etc/systemd/system/; ls docker-websecmap-*.service)
-systemctl start $(cd /etc/systemd/system/; ls docker-websecmap-*.service)
+cd /etc/systemd/system/; ls docker-websecmap-*.service | xargs systemctl restart
 
 # wait for admin backend to be available
 timeout 30 /bin/sh -c 'while ! curl -s <%= @admin_ip %>:8000 -H host:<%= @hostname %> >/dev/null ;do sleep 1; done'

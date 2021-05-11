@@ -1,6 +1,6 @@
 # Configure the Admin frontend as well as the basic service requirements (database, queue broker)
 class apps::websecmap::admin (
-  $hostname  = "admin.${apps::websecmap::hostname}",
+  $hostname  = $apps::websecmap::hostname,
   $pod       = $apps::websecmap::pod,
   $image     = $apps::websecmap::image,
   $client_ca = undef,
@@ -41,7 +41,7 @@ class apps::websecmap::admin (
   if $hostname == 'admin.default' {
     $allowed_hosts = '*'
   } else {
-    $allowed_hosts = join([$hostname, $apps::websecmap::hostname], ',')
+    $allowed_hosts = $apps::websecmap::hostname
   }
 
   # disable basic auth (user/password authentication) if client certificate authentication is enabled
@@ -116,22 +116,6 @@ class apps::websecmap::admin (
     systemd_restart  => 'always',
     extra_parameters => "--ip=${apps::websecmap::hosts[$appname][ip]}",
     hostentries      => $apps::websecmap::hostentries,
-  }
-  # ensure containers are up before restarting nginx
-  # https://gitlab.com/internet-cleanup-foundation/server/issues/8
-  Docker::Run[$appname] -> Service['nginx']
-
-  sites::vhosts::proxy { $hostname:
-    proxy                => "${appname}:8000",
-    nowww_compliance     => class_c,
-    client_ca            => $client_ca,
-    auth_basic           => $auth_basic,
-    auth_basic_user_file => $auth_basic_user_file,
-    location_cfg_append  => $location_cfg_append,
-    # admin is accessible for authenticated users only that need to see a live view
-    # of changes, do not cache anything
-    caching              => disabled,
-    proxy_timeout        => '90s',
   }
 
   # add convenience command to run admin actions via container
