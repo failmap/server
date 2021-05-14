@@ -180,7 +180,6 @@ class apps::websecmap::frontend (
     www_root             => undef,
     proxy                => "http://${apps::websecmap::hosts["${pod}-admin"][ip]}:8000",
     location_cfg_append  => merge({}, $remote_user_header),
-    location             => '/admin/',
     auth_basic           => $auth_basic,
     auth_basic_user_file => $auth_basic_user_file,
   }
@@ -273,4 +272,50 @@ class apps::websecmap::frontend (
     content => template('apps/websecmap-frontend-clear-cache.erb'),
     mode    => '0744',
   }
+
+  # Zorg Preview
+  $auth_basic_preview = 'Please login'
+  $auth_basic_preview_user_file = '/etc/nginx/preview.htpasswd'
+
+  nginx::resource::location { '/zorgpreview/':
+    server               => $apps::websecmap::hostname,
+    ssl                  => true,
+    ssl_only             => true,
+    www_root             => undef,
+    proxy                => "http://${appname}:8000",
+    auth_basic           => $auth_basic_preview,
+    auth_basic_user_file => $auth_basic_preview_user_file,
+  }
+
+  nginx::resource::location { '/data/map_health/NL/healthcare/':
+    server               => $apps::websecmap::hostname,
+    ssl                  => true,
+    ssl_only             => true,
+    www_root             => undef,
+    proxy                => "http://${appname}:8000",
+    auth_basic           => $auth_basic_preview,
+    auth_basic_user_file => $auth_basic_preview_user_file,
+  }
+
+  $preview_user = 'preview'
+  $preview_password = simplib::passgen('preview_user', {'length' => 32})
+  $preview_password_hash = ht_crypt($preview_password, simplib::passgen('htpasswd_seed'))
+
+  file { '/opt/websecmap/secrets/':
+    ensure => directory,
+    mode   => '0700',
+  }
+
+  file { '/opt/websecmap/secrets/preview_user_password':
+    content => $preview_password,
+    mode    => '0600',
+  }
+
+  file { '/etc/nginx/preview.htpasswd':
+    content => "${preview_user}:${preview_password_hash}\n",
+    owner   => 'www-data',
+    group   => root,
+    mode    => '0600',
+  }
 }
+
