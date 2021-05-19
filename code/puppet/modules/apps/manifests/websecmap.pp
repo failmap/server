@@ -58,7 +58,7 @@ class apps::websecmap (
   # since systemd 239 is not running on 18.04, fake it
   ~> exec {'symlink override for all containers':
     command     => '/bin/ls /etc/systemd/system/docker-websecmap-*.service \
-    | /usr/bin/xargs -n1 -I% ln -fs /etc/systemd/system/docker-websecmap-.service.d %.d',
+    | /usr/bin/xargs -n1 -I% ln -Tfs /etc/systemd/system/docker-websecmap-.service.d %.d',
     refreshonly => true,
   } ~> Class[Systemd::Systemctl::Daemon_reload]
 

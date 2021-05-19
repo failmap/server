@@ -94,4 +94,10 @@ class base (
     enable   => false,
     provider => systemd,
   }
+
+  service {'mcollective':
+    ensure   => stopped,
+    enable   => false,
+    provider => systemd,
+  }
 }

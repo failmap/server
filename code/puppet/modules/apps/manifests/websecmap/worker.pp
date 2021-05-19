@@ -53,7 +53,7 @@ class apps::websecmap::worker (
     if $workers_configuration[$role] {
       $worker_args = join($workers_configuration[$role], ' ')
     } else {
-      $worker_args = ''
+      $worker_args = join($workers_configuration['default'], ' ')
     }
 
     docker::run { "${appname}-${role}":
