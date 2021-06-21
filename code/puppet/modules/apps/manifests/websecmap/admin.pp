@@ -196,7 +196,8 @@ class apps::websecmap::admin (
   }
 
   docker::run { 'websecmap-flower':
-  image              => $image,
+    ensure           => absent,
+    image            => $image,
     command          => 'celery flower --broker=redis://broker:6379/0 --port=8000 --url_prefix=flower',
     # combine specific and generic docker environment options
     env              => $docker_environment,
