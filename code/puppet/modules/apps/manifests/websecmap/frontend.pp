@@ -287,16 +287,6 @@ class apps::websecmap::frontend (
     auth_basic_user_file => $auth_basic_preview_user_file,
   }
 
-  nginx::resource::location { '/data/map_health/NL/healthcare/':
-    server               => $apps::websecmap::hostname,
-    ssl                  => true,
-    ssl_only             => true,
-    www_root             => undef,
-    proxy                => "http://${appname}:8000",
-    auth_basic           => $auth_basic_preview,
-    auth_basic_user_file => $auth_basic_preview_user_file,
-  }
-
   $preview_user = 'preview'
   $preview_password = simplib::passgen('preview_user', {'length' => 32})
   $preview_password_hash = ht_crypt($preview_password, simplib::passgen('htpasswd_seed'))
