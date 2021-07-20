@@ -33,6 +33,10 @@ mysql::server::override_options:
     # bind to lo and adress reachable within docker
     bind_address: "127.0.0.1,172.18.0.1"
 
+# Prevent backing up tons of gigabytes of derived data
+# https://github.com/puppetlabs/puppetlabs-mysql/blob/main/manifests/server/backup.pp#L66-L67
+mysql::server::backup::optional_args: "--ignore-table=mysql.event --ignore-table=websecmap.map_organizationreport --ignore-table=websecmap.app_job --ignore-table=websecmap.reporting_urlreport --ignore-table=websecmap.scanners_tlsqualysscratchpad --ignore-table=websecmap.api_sidnupload --ignore-table=websecmap.map_mapdatacache --ignore-table=websecmap.scanners_plannedscan --ignore-table=websecmap.scanners_internetnlv2scan --ignore-table=websecmap.scanners_plannedscanstatistic"
+
 nginx::gzip: "on"
 
 lookup_options:
