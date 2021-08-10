@@ -114,6 +114,6 @@ base::firewall::rules:
 apps::websecmap::worker::workers_configuration:
   default: [--pool=gevent --concurrency=20]
   # no eventlet on storage due to simultaneous write errors
-  storage: [--concurrency=6]
+  storage: [--concurrency=20]
   reporting: [--concurrency=6]
   qualys: [--pool=gevent --concurrency=40]
