@@ -34,3 +34,10 @@ apps::websecmap::worker::workers_configuration:
   claim_proxy: [--pool=gevent --concurrency=10]
   # scanner is deprecated, or a class?
   scanner: [--pool=gevent --concurrency=10]
+
+# Override defaults so mariadb is used instead of mysql
+mysql::params::client_package_name: mariadb-client
+mysql::params::server_package_name: mariadb-server
+mysql::params::server_service_name: mariadb
+mysql::params::client_dev_package_name: libmariadbclient-dev
+mysql::params::daemon_dev_package_name: libmariadbd-dev
